@@ -1,0 +1,220 @@
+"""API endpoints for chatbot interactions with RAG"""
+import logging
+from typing import Optional
+from uuid import UUID
+from datetime import datetime
+from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import StreamingResponse
+import json
+
+from backend.src.models.rag import (
+    RAGRequest, RAGResponse, RAGResponseData, RAGQueryCreate,
+    RetrievalMode, ResponseStatus, RetrievedChunkData
+)
+from backend.src.services.rag_service import RAGService
+from backend.src.services.chatbot_service import ChatbotService
+from backend.src.services.response_verifier import ResponseVerifier
+from backend.src.config import settings
+from sqlalchemy.orm import Session
+
+logger = logging.getLogger(__name__)
+
+router = APIRouter(prefix="/api/chatbot", tags=["chatbot"])
+
+
+def get_db():
+    """Database session dependency"""
+    # TODO: Implement proper database session management
+    # This is a placeholder for dependency injection
+    pass
+
+
+@router.post("/query", response_model=RAGResponse)
+async def query_chatbot(
+    request: RAGRequest,
+    db: Session = Depends(get_db)
+) -> RAGResponse:
+    """
+    Submit a question to the RAG chatbot.
+
+    The chatbot retrieves relevant context and generates a response using only that context.
+
+    Request:
+    - query_text: User's question (10-500 chars)
+    - chapter_id: (Optional) Limit search to specific chapter
+    - selected_text: (Optional) Limit search to selected text
+
+    Response:
+    - success: bool indicating if response was generated
+    - data: RAGResponseData with response and metadata
+    - error: Error message if failed
+    - timestamp: Query timestamp
+
+    Returns:
+        RAGResponse with streaming or full response
+    """
+    try:
+        # Validate request
+        if not request.query_text or len(request.query_text) < 10:
+            raise HTTPException(
+                status_code=400,
+                detail="Query must be at least 10 characters"
+            )
+
+        # Initialize services
+        rag_service = RAGService(db)
+        chatbot_service = ChatbotService()
+        verifier = ResponseVerifier()
+
+        # Determine retrieval mode
+        if request.selected_text:
+            retrieval_mode = RetrievalMode.TEXT_SELECTION
+        elif request.chapter_id:
+            retrieval_mode = RetrievalMode.CHAPTER_SPECIFIC
+        else:
+            retrieval_mode = RetrievalMode.GLOBAL
+
+        logger.info(
+            f"Processing query: {request.query_text[:50]}... "
+            f"(mode={retrieval_mode.value})"
+        )
+
+        # Step 1: Retrieve relevant chunks
+        retrieved_chunks = rag_service.retrieve_chunks(
+            query_text=request.query_text,
+            retrieval_mode=retrieval_mode,
+            chapter_id=request.chapter_id,
+            selected_text=request.selected_text,
+            top_k=settings.RAG_TOP_K
+        )
+
+        # Step 2: Check if context is sufficient
+        is_sufficient, reason = chatbot_service.check_context_sufficiency(retrieved_chunks)
+
+        if not is_sufficient:
+            logger.warning(f"Insufficient context: {reason}")
+            response_status = ResponseStatus.NO_CONTEXT
+
+            # Log query
+            query_id = rag_service.log_rag_query(
+                query_text=request.query_text,
+                retrieval_mode=retrieval_mode,
+                retrieved_chunks=retrieved_chunks,
+                response_status=response_status,
+                chapter_id=request.chapter_id,
+                selected_text=request.selected_text
+            )
+
+            return RAGResponse(
+                success=False,
+                data=RAGResponseData(
+                    query_id=query_id,
+                    query_text=request.query_text,
+                    retrieval_mode=retrieval_mode,
+                    response_status=response_status,
+                    retrieved_chunks=retrieved_chunks,
+                    timestamp=datetime.utcnow()
+                ),
+                error=f"Cannot answer: {reason}",
+                timestamp=datetime.utcnow()
+            )
+
+        # Step 3: Generate response (streaming)
+        def response_generator():
+            """Generate response tokens and stream them"""
+            full_response = ""
+            try:
+                for token in chatbot_service.generate_response(
+                    query_text=request.query_text,
+                    chunks=retrieved_chunks,
+                    stream=True
+                ):
+                    full_response += token
+                    # Stream as JSON chunks
+                    yield json.dumps({
+                        "type": "token",
+                        "data": token
+                    }) + "\n"
+
+                # Verify response grounding (in background)
+                verification = verifier.verify_context_only(
+                    response_text=full_response,
+                    chunks=retrieved_chunks
+                )
+
+                # Log query with final response
+                query_id = rag_service.log_rag_query(
+                    query_text=request.query_text,
+                    retrieval_mode=retrieval_mode,
+                    retrieved_chunks=retrieved_chunks,
+                    response_status=ResponseStatus.SUCCESS,
+                    chapter_id=request.chapter_id,
+                    selected_text=request.selected_text
+                )
+
+                # Send final metadata
+                yield json.dumps({
+                    "type": "metadata",
+                    "data": {
+                        "query_id": str(query_id),
+                        "chunks_used": len(retrieved_chunks),
+                        "total_tokens": chatbot_service.count_tokens(full_response),
+                        "verification": {
+                            "verified": verification.get("verified", False),
+                            "confidence": verification.get("confidence", "unknown"),
+                            "overall_similarity": verification.get("overall_similarity", 0.0)
+                        }
+                    }
+                }) + "\n"
+
+            except Exception as e:
+                logger.error(f"Error during response generation: {e}")
+                yield json.dumps({
+                    "type": "error",
+                    "data": str(e)
+                }) + "\n"
+
+        return StreamingResponse(
+            response_generator(),
+            media_type="application/x-ndjson"
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Chatbot query failed: {e}", exc_info=True)
+        return RAGResponse(
+            success=False,
+            error=f"Query processing failed: {str(e)}",
+            timestamp=datetime.utcnow()
+        )
+
+
+@router.get("/modes", response_model=list[str])
+async def get_retrieval_modes() -> list[str]:
+    """
+    Get available retrieval modes.
+
+    Returns:
+        List of available retrieval modes
+    """
+    return [mode.value for mode in RetrievalMode]
+
+
+@router.get("/stats", response_model=dict)
+async def get_rag_stats(db: Session = Depends(get_db)) -> dict:
+    """
+    Get statistics about RAG system and indexed content.
+
+    Returns:
+        Dictionary with system statistics
+    """
+    try:
+        rag_service = RAGService(db)
+        return rag_service.get_retrieval_stats()
+    except Exception as e:
+        logger.error(f"Failed to get RAG stats: {e}")
+        return {
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }

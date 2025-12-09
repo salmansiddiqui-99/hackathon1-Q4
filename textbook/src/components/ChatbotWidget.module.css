@@ -106,30 +106,136 @@
 }
 
 /* Chat Body */
+.modeSelector {
+  padding: 0.75rem 1rem;
+  background-color: var(--color-bg-darker);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.modeLabel {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.radioGroup {
+  display: flex;
+  gap: 1rem;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-text);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.radioLabel input[type="radio"] {
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.radioLabel input[type="radio"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .chatBody {
   flex: 1;
   padding: 1.5rem;
   overflow-y: auto;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .placeholderMessage {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 .placeholderText {
   color: var(--color-text);
   font-size: 1rem;
-  margin-bottom: 1rem;
+  margin: 0 0 1rem 0;
   line-height: 1.5;
 }
 
-.comingSoon {
+.hintText {
   color: var(--color-text-muted);
-  font-size: 0.9rem;
-  font-style: italic;
+  font-size: 0.85rem;
+  margin: 0;
+  max-width: 90%;
+}
+
+.assistantMessage {
+  background-color: rgba(0, 217, 255, 0.1);
+  border-left: 3px solid var(--color-primary);
+  padding: 1rem;
+  border-radius: 6px;
+  align-self: flex-start;
+  max-width: 95%;
+}
+
+.messageContent {
+  color: var(--color-text);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.chunksInfo {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(0, 217, 255, 0.2);
+}
+
+.loadingMessage {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-primary);
+  font-size: 0.95rem;
+  align-self: flex-start;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(0, 217, 255, 0.3);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.errorMessage {
+  background-color: rgba(255, 0, 0, 0.1);
+  border-left: 3px solid #ff4444;
+  padding: 1rem;
+  border-radius: 6px;
+  color: #ff8888;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  align-self: flex-start;
+  max-width: 95%;
 }
 
 /* Chat Footer */

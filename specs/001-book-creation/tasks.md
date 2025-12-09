@@ -21,15 +21,15 @@ description: "Task list for AI/Spec-Driven Book Creation feature"
 
 **Purpose**: Project initialization, Docusaurus scaffolding, backend skeleton, environment setup
 
-- [ ] T001 Scaffold Docusaurus project: `npx create-docusaurus@latest textbook classic` in repo root
-- [ ] T002 [P] Initialize FastAPI backend: Create `backend/src/main.py` with app initialization, health endpoint
-- [ ] T003 [P] Configure environment: Create `backend/.env.example` with all required keys (OPENAI_API_KEY, QDRANT_URL, etc.)
-- [ ] T004 [P] Setup Python dependencies: Create `backend/requirements.txt` with FastAPI, Pydantic, OpenAI, Qdrant clients
-- [ ] T005 [P] Setup Node dependencies: Add theme customization packages to `textbook/package.json` (React 18, Docusaurus plugins)
-- [ ] T006 Configure linting: Setup `backend/.flake8` and `textbook/.eslintrc.json` for code quality
-- [ ] T007 Initialize git workflow: Create `.github/workflows/deploy.yml` for CI/CD (build, test, deploy frontend + backend)
+- [X] T001 Scaffold Docusaurus project: `npx create-docusaurus@latest textbook classic` in repo root
+- [X] T002 [P] Initialize FastAPI backend: Create `backend/src/main.py` with app initialization, health endpoint
+- [X] T003 [P] Configure environment: Create `backend/.env.example` with all required keys (OPENAI_API_KEY, QDRANT_URL, etc.)
+- [X] T004 [P] Setup Python dependencies: Create `backend/requirements.txt` with FastAPI, Pydantic, OpenAI, Qdrant clients
+- [X] T005 [P] Setup Node dependencies: Add theme customization packages to `textbook/package.json` (React 18, Docusaurus plugins)
+- [X] T006 Configure linting: Setup `backend/.flake8` and `textbook/.eslintrc.json` for code quality
+- [X] T007 Initialize git workflow: Create `.github/workflows/deploy.yml` for CI/CD (build, test, deploy frontend + backend)
 
-**Checkpoint**: Project structure initialized; both frontend and backend can run locally.
+**Checkpoint**: Project structure initialized; both frontend and backend can run locally. ✅ COMPLETE
 
 ---
 

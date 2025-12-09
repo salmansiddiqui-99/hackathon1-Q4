@@ -315,7 +315,7 @@ description: "Task list for AI/Spec-Driven Book Creation feature"
 
 ### RAG Service Implementation
 
-- [ ] T054 Implement RAG retrieval service: Create `backend/src/services/rag_service.py`
+- [X] T054 Implement RAG retrieval service: Create `backend/src/services/rag_service.py` ✅
   - Function: `retrieve_chunks(query: str, mode: str, chapter_id?: str, selected_text?: str) → List[RetrievedChunk]`
   - Logic:
     - If text-selection: keyword match in selected_text; return directly (no vector search)
@@ -323,7 +323,7 @@ description: "Task list for AI/Spec-Driven Book Creation feature"
     - If chapter-specific: filter chunks by chapter_id before search
     - Return top-5 chunks with similarity scores; insert RetrievedChunk records in Postgres
 
-- [ ] T055 Implement response generation service: Create `backend/src/services/chatbot_service.py`
+- [X] T055 Implement response generation service: Create `backend/src/services/chatbot_service.py` ✅
   - Function: `generate_response(query: str, chunks: List[str]) → str (streaming)`
   - Prompt template:
     ```
@@ -339,7 +339,7 @@ description: "Task list for AI/Spec-Driven Book Creation feature"
     ```
   - Stream response via OpenAI API; yield tokens as they arrive
 
-- [ ] T056 Implement response verification: Create `backend/src/services/response_verifier.py`
+- [X] T056 Implement response verification: Create `backend/src/services/response_verifier.py` ✅
   - Function: `verify_context_only(response: str, chunks: List[str]) → Dict`
   - For each sentence in response: embed; check cosine similarity to chunks
   - Return: { "verified": bool, "similarity_scores": [...], "non_matching_sentences": [...] }
@@ -347,7 +347,7 @@ description: "Task list for AI/Spec-Driven Book Creation feature"
 
 #### RAG API Endpoints
 
-- [ ] T057 Implement POST /api/chatbot/query: `backend/src/api/chatbot.py`
+- [X] T057 Implement POST /api/chatbot/query: `backend/src/api/chatbot.py` ✅
   - Request: `{ "query", "retrieval_mode", "chapter_id"?, "selected_text"? }`
   - Flow:
     1. Call `retrieve_chunks()` → get top-5 chunks
@@ -356,16 +356,16 @@ description: "Task list for AI/Spec-Driven Book Creation feature"
     4. Insert RAGQuery + RetrievedChunk records in Postgres
   - Response: streaming JSON with response_text + metadata (chunks_used, source_chapters, avg_similarity, generation_time_ms)
 
-- [ ] T058 Implement GET /api/rag/retrieve: `backend/src/api/rag.py` (internal endpoint)
+- [X] T058 Implement GET /api/rag/retrieve: `backend/src/api/rag.py` (internal endpoint) ✅
   - Request: `{ "query", "retrieval_mode", "chapter_id", "top_k", "similarity_threshold" }`
   - Response: `{ "chunks": [...], "total_found", "retrieval_time_ms" }`
 
-- [ ] T059 Implement GET /api/rag/stats: `backend/src/api/rag.py`
+- [X] T059 Implement GET /api/rag/stats: `backend/src/api/rag.py` ✅
   - Response: `{ "total_chunks_indexed", "total_chapters", "avg_chunk_tokens", "embedding_model", "storage_used_mb", "last_update" }`
 
 #### Frontend Chatbot Widget
 
-- [ ] T060 Implement ChatbotWidget component: `textbook/src/components/ChatbotWidget.jsx` (expand from stub)
+- [X] T060 Implement ChatbotWidget component: `textbook/src/components/ChatbotWidget.jsx` (expand from stub) ✅
   - UI:
     - Icon (bottom-right corner); click to open
     - Modal/panel with input + output
@@ -378,12 +378,12 @@ description: "Task list for AI/Spec-Driven Book Creation feature"
     - `onModeChange()`: update retrieval_mode
     - `onTextSelect()`: if text selected on page, pre-fill selected_text
 
-- [ ] T061 Integrate text selection: Add text selection listener to Docusaurus layout
+- [X] T061 Integrate text selection: Add text selection listener to Docusaurus layout ✅
   - When user selects text on any chapter page: store in component state
   - When opening chatbot: pre-fill `selected_text` field
   - Auto-set retrieval_mode to "text-selection"
 
-- [ ] T062 Style chatbot widget: `textbook/src/components/ChatbotWidget.css`
+- [X] T062 Style chatbot widget: `textbook/src/components/ChatbotWidget.css` ✅
   - Apply theme colors (neon-blue border, cyber-green accents)
   - Smooth animations (fade-in, slide-out)
   - Responsive: works on mobile (resizable modal)
@@ -438,7 +438,7 @@ description: "Task list for AI/Spec-Driven Book Creation feature"
   - For each query: verify response uses only context
   - Assert: 95%+ responses context-derived
 
-**Checkpoint**: RAG chatbot fully functional; users can ask questions in 3 retrieval modes; responses context-only; 95%+ accuracy verified.
+**Checkpoint**: RAG chatbot fully functional; users can ask questions in 3 retrieval modes; responses context-only; 95%+ accuracy verified. ✅ PHASE 5 CORE COMPLETE (T054-T062)
 
 ---
 

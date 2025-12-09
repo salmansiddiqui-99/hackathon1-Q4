@@ -9,7 +9,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './ChatbotWidget.module.css';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+// Get API URL - use environment variable if available, otherwise default to localhost
+const API_BASE_URL = typeof window !== 'undefined' && window.__DOCUSAURUS_API_URL__
+  ? window.__DOCUSAURUS_API_URL__
+  : 'http://localhost:8000/api';
 
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);

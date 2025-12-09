@@ -172,7 +172,7 @@ description: "Task list for AI/Spec-Driven Book Creation feature"
 
 ### Frontend Theme & Components
 
-- [ ] T033 [P] Create color palette: `textbook/src/css/colors.css`
+- [X] T033 [P] Create color palette: `textbook/src/css/colors.css`
   - Define CSS variables:
     - `--color-primary: #00D9FF` (neon blue)
     - `--color-secondary: #00FF41` (cyber green)
@@ -180,51 +180,51 @@ description: "Task list for AI/Spec-Driven Book Creation feature"
     - `--color-text: #E8E8E8` (off-white)
   - Use in all theme files
 
-- [ ] T034 [P] Create animation styles: `textbook/src/css/animations.css`
+- [X] T034 [P] Create animation styles: `textbook/src/css/animations.css`
   - Glow effect on hover (0.3s transition)
   - Fade-in on scroll (intersection observer)
   - Button press animation (scale + shadow)
 
-- [ ] T035 [P] Create theme override: `textbook/src/theme/CustomLayout.js`
+- [X] T035 [P] Create theme override: `textbook/src/theme/CustomLayout.js`
   - Docusaurus layout wrapper; force dark mode as default
   - Apply primary/secondary colors to navbar, sidebar, links
   - Remove light mode toggle (dark mode only per spec)
 
-- [ ] T036 [P] Create Hero Section component: `textbook/src/components/HeroSection.jsx`
+- [X] T036 [P] Create Hero Section component: `textbook/src/components/HeroSection.jsx`
   - Title: "Physical AI & Humanoid Robotics Course"
   - Tagline: "Master the intersection of AI and robotics"
   - CTA buttons: "Start Learning", "View on GitHub"
   - Full-width, centered, with gradient background
 
-- [ ] T037 [P] Create Module Card component: `textbook/src/components/ModuleCard.jsx`
+- [X] T037 [P] Create Module Card component: `textbook/src/components/ModuleCard.jsx`
   - Props: `{ module_id, name, description, chapters }`
   - Display: module name, description, 3 chapter titles as links
   - Hover: subtle glow effect; highlight chapter links
   - Navigation: click chapter → jump to chapter page
 
-- [ ] T038 [P] Create ChatbotWidget component: `textbook/src/components/ChatbotWidget.jsx`
+- [X] T038 [P] Create ChatbotWidget component: `textbook/src/components/ChatbotWidget.jsx`
   - Stub for now; will be populated in US3
   - Icon: bottom-right corner
   - Placeholder: "Ask me anything"
 
-- [ ] T039 [P] Create ActionButtons component: `textbook/src/components/ActionButtons.jsx`
+- [X] T039 [P] Create ActionButtons component: `textbook/src/components/ActionButtons.jsx`
   - Buttons: "Personalize this chapter", "Translate to Urdu"
   - Stub for now; will be functional in future features
   - Aligned to chapter header
 
-- [ ] T040 Override Docusaurus theme: `textbook/docusaurus.config.js`
+- [X] T040 Override Docusaurus theme: `textbook/docusaurus.config.js`
   - Set color scheme: `{ colorMode: { defaultMode: "dark", disableSwitch: true } }`
   - Import custom CSS: `stylesheets: ["src/css/colors.css", "src/css/animations.css"]`
   - Register custom components: `ChatbotWidget`, `ActionButtons`
 
-- [ ] T041 Create module list page: `textbook/docs/index.md`
+- [X] T041 Create module list page: `textbook/docs/index.md`
   - Hero section (auto-rendered via HeroSection component)
   - Module cards (auto-rendered via ModuleCard components for each module)
   - Embedded from generated `textbook/docs/module{1-4}/index.md` (module summaries)
 
 #### Documentation Structure
 
-- [ ] T042 Create module index files:
+- [X] T042 Create module index files:
   - `textbook/docs/module1/index.md` (Module 1 summary + learning outcomes)
   - `textbook/docs/module2/index.md` (Module 2 summary)
   - `textbook/docs/module3/index.md` (Module 3 summary)
@@ -232,7 +232,7 @@ description: "Task list for AI/Spec-Driven Book Creation feature"
 
 #### Sidebar Configuration
 
-- [ ] T043 Configure Docusaurus sidebar: `textbook/sidebars.js`
+- [X] T043 Configure Docusaurus sidebar: `textbook/sidebars.js`
   - Structure:
     ```js
     {
@@ -247,28 +247,28 @@ description: "Task list for AI/Spec-Driven Book Creation feature"
 
 #### Responsive Design & Layout
 
-- [ ] T044 [P] Add responsive media queries: `textbook/src/css/responsive.css`
+- [X] T044 [P] Add responsive media queries: `textbook/src/css/responsive.css`
   - Mobile (<768px): single-column layout; stacked module cards
   - Tablet (768-1024px): two-column cards; adjusted sidebar
   - Desktop (>1024px): three-column cards; full sidebar
   - Test: resize browser; verify layout changes
 
-- [ ] T045 [P] Test responsive design: Manual testing on devices
+- [X] T045 [P] Test responsive design: Manual testing on devices
   - Test: Chrome DevTools mobile emulation (iPhone 12, iPad, desktop)
   - Verify: text readable, buttons clickable, no horizontal scroll
 
 #### Build & Deployment
 
-- [ ] T046 Build Docusaurus: `cd textbook && yarn build`
+- [X] T046 Build Docusaurus: `cd textbook && yarn build`
   - Verify: zero errors, zero warnings
   - Output: static site in `textbook/build/`
 
-- [ ] T047 Configure GitHub Pages: `textbook/docusaurus.config.js`
+- [X] T047 Configure GitHub Pages: `textbook/docusaurus.config.js`
   - Set: `url: "https://YOUR_USERNAME.github.io"` (get from GitHub repo settings)
   - Set: `baseUrl: "/physical_ai_book/"` (repo name)
   - Set: `deploymentBranch: "gh-pages"`
 
-- [ ] T048 Create GitHub Actions workflow: `.github/workflows/deploy.yml`
+- [X] T048 Create GitHub Actions workflow: `.github/workflows/deploy.yml`
   - Trigger: push to `main` branch
   - Steps:
     1. Checkout code
@@ -277,24 +277,24 @@ description: "Task list for AI/Spec-Driven Book Creation feature"
     4. Deploy to `gh-pages` (using `peaceiris/actions-gh-pages`)
   - Result: Site live at `https://YOUR_USERNAME.github.io/physical_ai_book/`
 
-- [ ] T049 Test deployment locally: `yarn deploy`
+- [X] T049 Test deployment locally: `yarn deploy`
   - Manually push build to gh-pages (if GitHub Actions not set up)
 
 #### Tests for User Story 2
 
-- [ ] T050 Integration test for frontend build: `textbook/tests/integration/build.test.js`
+- [X] T050 Integration test for frontend build: `textbook/tests/integration/build.test.js`
   - Run `yarn build`; assert zero errors/warnings
   - Verify: `build/` directory created; index.html present
 
-- [ ] T051 Snapshot test for Hero Section: `textbook/tests/unit/HeroSection.test.jsx`
+- [X] T051 Snapshot test for Hero Section: `textbook/tests/unit/HeroSection.test.jsx`
   - Render component; verify title, tagline, buttons present
   - Assert: buttons have correct onClick handlers
 
-- [ ] T052 Snapshot test for Module Cards: `textbook/tests/unit/ModuleCard.test.jsx`
+- [X] T052 Snapshot test for Module Cards: `textbook/tests/unit/ModuleCard.test.jsx`
   - Render with mock props; verify structure
   - Assert: chapter links render; hover effects apply
 
-- [ ] T053 E2E test for responsive design: `textbook/tests/e2e/responsive.test.js`
+- [X] T053 E2E test for responsive design: `textbook/tests/e2e/responsive.test.js`
   - Use Puppeteer/Playwright; test viewport sizes
   - Assert: layout adapts correctly at breakpoints
 

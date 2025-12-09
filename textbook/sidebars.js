@@ -16,6 +16,10 @@ const sidebars = {
     {
       type: 'category',
       label: 'Module 1: ROS 2',
+      link: {
+        type: 'doc',
+        id: 'module1/module1-index',
+      },
       items: [
         'module1/chapter1',
         'module1/chapter2',
@@ -25,6 +29,10 @@ const sidebars = {
     {
       type: 'category',
       label: 'Module 2: Simulation',
+      link: {
+        type: 'doc',
+        id: 'module2/module2-index',
+      },
       items: [
         'module2/chapter4',
         'module2/chapter5',
@@ -34,6 +42,10 @@ const sidebars = {
     {
       type: 'category',
       label: 'Module 3: NVIDIA Isaac',
+      link: {
+        type: 'doc',
+        id: 'module3/module3-index',
+      },
       items: [
         'module3/chapter7',
         'module3/chapter8',
@@ -43,6 +55,10 @@ const sidebars = {
     {
       type: 'category',
       label: 'Module 4: VLA & Capstone',
+      link: {
+        type: 'doc',
+        id: 'module4/module4-index',
+      },
       items: [
         'module4/chapter10',
         'module4/chapter11',

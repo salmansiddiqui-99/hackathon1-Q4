@@ -1,0 +1,279 @@
+/**
+ * Futuristic Robotics Color Palette
+ * Dark mode with neon-blue and cyber-green accents
+ */
+
+:root {
+  /* Primary Colors */
+  --color-primary: #00D9FF;        /* Neon Blue */
+  --color-secondary: #00FF41;      /* Cyber Green */
+  --color-accent: #FF00FF;         /* Neon Magenta (for special elements) */
+
+  /* Background Colors */
+  --color-bg-dark: #0A0E27;        /* Deep Navy - Main background */
+  --color-bg-darker: #050710;      /* Even darker for contrast */
+  --color-bg-light: #1a1f3a;       /* Lighter navy for cards/sections */
+
+  /* Text Colors */
+  --color-text: #E8E8E8;           /* Off-white - Main text */
+  --color-text-muted: #9CA3AF;     /* Muted text for secondary info */
+  --color-text-dim: #6B7280;       /* Dimmed text for hints */
+
+  /* Semantic Colors */
+  --color-success: #00FF41;        /* Green - Success states */
+  --color-warning: #FFB700;        /* Orange - Warnings */
+  --color-error: #FF2E4E;          /* Red - Errors */
+  --color-info: #00D9FF;           /* Blue - Info */
+
+  /* Border Colors */
+  --color-border: #2A3F5F;         /* Dark slate for borders */
+  --color-border-light: #3D5A80;   /* Lighter borders for visibility */
+
+  /* Shadow Colors */
+  --shadow-sm: 0 1px 2px rgba(0, 217, 255, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 217, 255, 0.15);
+  --shadow-lg: 0 12px 32px rgba(0, 217, 255, 0.2);
+  --shadow-glow: 0 0 20px rgba(0, 217, 255, 0.4);
+
+  /* Gradient Backgrounds */
+  --gradient-primary: linear-gradient(135deg, #00D9FF 0%, #00FF41 100%);
+  --gradient-dark: linear-gradient(135deg, #0A0E27 0%, #1a1f3a 100%);
+  --gradient-neon: linear-gradient(135deg, #00D9FF 0%, #FF00FF 100%);
+}
+
+/* Apply dark mode globally */
+html[data-theme="dark"],
+html {
+  color-scheme: dark;
+}
+
+/* Text color adjustments for theme */
+body {
+  color: var(--color-text);
+  background-color: var(--color-bg-dark);
+}
+
+/* Link styling */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-secondary);
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+}
+
+/* Button base styling */
+button,
+.button,
+.btn {
+  border-color: var(--color-primary);
+  color: var(--color-text);
+  background-color: transparent;
+  transition: all 0.3s ease;
+}
+
+button:hover,
+.button:hover,
+.btn:hover {
+  border-color: var(--color-secondary);
+  background-color: rgba(0, 255, 65, 0.1);
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+}
+
+/* Primary button */
+button.primary,
+.button.primary,
+.btn.primary {
+  background-color: var(--color-primary);
+  color: var(--color-bg-dark);
+  border-color: var(--color-primary);
+}
+
+button.primary:hover,
+.button.primary:hover,
+.btn.primary:hover {
+  background-color: var(--color-secondary);
+  border-color: var(--color-secondary);
+  box-shadow: var(--shadow-glow);
+}
+
+/* Code blocks */
+code,
+pre {
+  background-color: var(--color-bg-darker);
+  color: var(--color-secondary);
+  border-color: var(--color-border);
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text);
+}
+
+h1 {
+  text-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+}
+
+/* Docusaurus specific overrides */
+.docusaurus-wrapper {
+  background-color: var(--color-bg-dark);
+  color: var(--color-text);
+}
+
+.navbar {
+  background-color: var(--color-bg-darker);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.navbar__logo,
+.navbar__brand {
+  color: var(--color-text);
+}
+
+.navbar__item {
+  color: var(--color-text);
+}
+
+.navbar__item:hover {
+  color: var(--color-primary);
+}
+
+.sidebar {
+  background-color: var(--color-bg-light);
+}
+
+.sidebar .menu__item {
+  color: var(--color-text);
+}
+
+.sidebar .menu__item:hover {
+  background-color: rgba(0, 217, 255, 0.1);
+  color: var(--color-primary);
+}
+
+.sidebar .menu__item.menu__item--active {
+  background-color: rgba(0, 217, 255, 0.15);
+  color: var(--color-primary);
+  border-left: 3px solid var(--color-primary);
+}
+
+/* Cards and boxes */
+.card,
+.box {
+  background-color: var(--color-bg-light);
+  border-color: var(--color-border-light);
+}
+
+/* Docusaurus DocCard */
+.doccard {
+  background-color: var(--color-bg-light);
+  border-color: var(--color-border);
+}
+
+.doccard:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.2);
+}
+
+/* Markdown table styling */
+table {
+  color: var(--color-text);
+}
+
+table tr:hover {
+  background-color: rgba(0, 217, 255, 0.05);
+}
+
+table th {
+  background-color: var(--color-bg-darker);
+  color: var(--color-primary);
+  border-color: var(--color-border);
+}
+
+table td {
+  border-color: var(--color-border);
+}
+
+/* Blockquote styling */
+blockquote {
+  border-left-color: var(--color-primary);
+  color: var(--color-text-muted);
+}
+
+/* Inline code */
+:not(pre) > code {
+  background-color: var(--color-bg-darker);
+  color: var(--color-secondary);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+/* Docusaurus admonition styling */
+.admonition {
+  background-color: var(--color-bg-light);
+  border-left-color: var(--color-primary);
+}
+
+.admonition-note {
+  border-left-color: var(--color-info);
+}
+
+.admonition-warning {
+  border-left-color: var(--color-warning);
+}
+
+.admonition-danger {
+  border-left-color: var(--color-error);
+}
+
+.admonition-tip {
+  border-left-color: var(--color-success);
+}
+
+/* Footer */
+footer {
+  background-color: var(--color-bg-darker);
+  color: var(--color-text-muted);
+  border-top: 1px solid var(--color-border);
+}
+
+footer a {
+  color: var(--color-primary);
+}
+
+footer a:hover {
+  color: var(--color-secondary);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-secondary);
+}
+
+/* Selection styling */
+::selection {
+  background-color: var(--color-primary);
+  color: var(--color-bg-dark);
+}
+
+::-moz-selection {
+  background-color: var(--color-primary);
+  color: var(--color-bg-dark);
+}

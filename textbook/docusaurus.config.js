@@ -52,7 +52,12 @@ const config = {
             'https://github.com/yourname/physical_ai_book/tree/main/textbook/',
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: [
+            require.resolve('./src/css/custom.css'),
+            require.resolve('./src/css/colors.css'),
+            require.resolve('./src/css/animations.css'),
+            require.resolve('./src/css/responsive.css'),
+          ],
         },
       }),
     ],

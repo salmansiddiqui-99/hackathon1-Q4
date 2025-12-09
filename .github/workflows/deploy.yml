@@ -54,7 +54,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: textbook
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Run ESLint
         working-directory: textbook
@@ -90,7 +90,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: textbook
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Build Docusaurus
         working-directory: textbook

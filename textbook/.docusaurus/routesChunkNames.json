@@ -1,0 +1,65 @@
+{
+  "/physical_ai_book/docs-d89": {
+    "__comp": "1be78505",
+    "__context": {
+      "plugin": "ec8dc07a"
+    },
+    "versionMetadata": "935f2afb"
+  },
+  "/physical_ai_book/docs/-52e": {
+    "__comp": "17896441",
+    "content": "c377a04b"
+  },
+  "/physical_ai_book/docs/intro-d6d": {
+    "__comp": "17896441",
+    "content": "0e384e19"
+  },
+  "/physical_ai_book/docs/module1/chapter1-485": {
+    "__comp": "17896441",
+    "content": "58c5c77c"
+  },
+  "/physical_ai_book/docs/module1/chapter2-361": {
+    "__comp": "17896441",
+    "content": "9b2552da"
+  },
+  "/physical_ai_book/docs/module1/chapter3-6b6": {
+    "__comp": "17896441",
+    "content": "08acf008"
+  },
+  "/physical_ai_book/docs/module2/chapter4-154": {
+    "__comp": "17896441",
+    "content": "897d42e5"
+  },
+  "/physical_ai_book/docs/module2/chapter5-517": {
+    "__comp": "17896441",
+    "content": "2f18dc03"
+  },
+  "/physical_ai_book/docs/module2/chapter6-b3e": {
+    "__comp": "17896441",
+    "content": "17fe873c"
+  },
+  "/physical_ai_book/docs/module3/chapter7-5ee": {
+    "__comp": "17896441",
+    "content": "54da1215"
+  },
+  "/physical_ai_book/docs/module3/chapter8-412": {
+    "__comp": "17896441",
+    "content": "333ca4e9"
+  },
+  "/physical_ai_book/docs/module3/chapter9-342": {
+    "__comp": "17896441",
+    "content": "fc2d84ed"
+  },
+  "/physical_ai_book/docs/module4/chapter10-f0e": {
+    "__comp": "17896441",
+    "content": "f38d3061"
+  },
+  "/physical_ai_book/docs/module4/chapter11-803": {
+    "__comp": "17896441",
+    "content": "ade192fd"
+  },
+  "/physical_ai_book/docs/module4/chapter12-5ab": {
+    "__comp": "17896441",
+    "content": "ca70daaa"
+  }
+}

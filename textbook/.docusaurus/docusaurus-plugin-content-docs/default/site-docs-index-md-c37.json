@@ -1,0 +1,17 @@
+{
+  "unversionedId": "index",
+  "id": "index",
+  "title": "Welcome to Physical AI & Humanoid Robotics",
+  "description": "Master the Intersection of AI and Robotics",
+  "source": "@site/docs/index.md",
+  "sourceDirName": ".",
+  "slug": "/",
+  "permalink": "/physical_ai_book/docs/",
+  "draft": false,
+  "editUrl": "https://github.com/yourname/physical_ai_book/tree/main/textbook/docs/index.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "slug": "/"
+  }
+}

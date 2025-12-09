@@ -67,24 +67,24 @@ description: "Task list for AI/Spec-Driven Book Creation feature"
 
 #### Chapter Generation Service
 
-- [ ] T017 Create chapter generation subagent prompt: `backend/src/services/chapter_gen_prompt.txt`
+- [X] T017 Create chapter generation subagent prompt: `backend/src/services/chapter_gen_prompt.txt`
   - Template: constitution rules + module context → generates chapter Markdown
   - Ensures: citations present, code syntactically valid, <5000 tokens
 
-- [ ] T018 [P] Implement subagent orchestration: Create `backend/src/services/chapter_gen.py`
+- [X] T018 [P] Implement subagent orchestration: Create `backend/src/services/chapter_gen.py`
   - Function: `generate_chapter(module_id, chapter_number, title) → Chapter`
   - Invoke Claude Code subagent API with prompt
   - Parse response; extract Markdown content
   - Handle retries (3 attempts with exponential backoff)
 
-- [ ] T019 [P] Implement content validation service: Create `backend/src/services/validation.py`
+- [X] T019 [P] Implement content validation service: Create `backend/src/services/validation.py`
   - Functions:
     - `validate_citations(content: str) → List[str]` (extract citations; error if none found)
     - `validate_code_blocks(content: str) → bool` (check syntax validity)
     - `validate_claims(content: str) → List[Dict]` (flag claims without nearby citations)
   - Regex: `\[Citation: (.*?)\]` to extract sources
 
-- [ ] T020 [P] Implement chapter persistence: Create `backend/src/services/chapter_storage.py`
+- [X] T020 [P] Implement chapter persistence: Create `backend/src/services/chapter_storage.py`
   - Functions:
     - `save_chapter_markdown(chapter: Chapter, path: str)` (write to `textbook/docs/module{N}/{filename}.md`)
     - `commit_to_git(files: List[str], message: str)` (git add + commit)
@@ -92,13 +92,13 @@ description: "Task list for AI/Spec-Driven Book Creation feature"
 
 #### Content Chunks & Vector Indexing
 
-- [ ] T021 Implement chunk creation: Create `backend/src/services/chunking.py`
+- [X] T021 Implement chunk creation: Create `backend/src/services/chunking.py`
   - Function: `chunk_chapter(content: str) → List[ContentChunk]`
   - Split by headers (`## Section Title`); preserve section title metadata
   - Target: ~200 tokens per chunk; validate token count via OpenAI tokenizer
   - Create ContentChunk records in Postgres
 
-- [ ] T022 Implement embedding pipeline: Create `backend/src/services/embedding.py`
+- [X] T022 Implement embedding pipeline: Create `backend/src/services/embedding.py`
   - Function: `embed_chunks(chunks: List[ContentChunk]) → List[embedded_chunks]`
   - Use OpenAI text-embedding-3-small (384 dims)
   - Batch embed (100 at a time) for efficiency
@@ -106,51 +106,51 @@ description: "Task list for AI/Spec-Driven Book Creation feature"
 
 #### API Endpoints for Chapter Generation
 
-- [ ] T023 Implement POST /api/chapters/generate: `backend/src/api/chapters.py`
+- [X] T023 Implement POST /api/chapters/generate: `backend/src/api/chapters.py`
   - Request: `{ "module_id", "chapter_number", "title", "description" }`
   - Response: `{ "id", "status": "processing", "job_id" }`
   - Trigger subagent; return immediately with job_id
   - Background task: generate → validate → save → commit → chunk → embed
 
-- [ ] T024 Implement GET /api/chapters/jobs/{job_id}: `backend/src/api/chapters.py`
+- [X] T024 Implement GET /api/chapters/jobs/{job_id}: `backend/src/api/chapters.py`
   - Poll for generation status; return: `{ "job_id", "status", "chapter_id", "token_count" }`
 
-- [ ] T025 Implement GET /api/chapters: `backend/src/api/chapters.py`
+- [X] T025 Implement GET /api/chapters: `backend/src/api/chapters.py`
   - List all chapters with metadata (id, module_id, number, title, token_count, status)
   - Query params: `?module_id=...&status=published`
 
-- [ ] T026 Implement GET /api/chapters/{chapter_id}: `backend/src/api/chapters.py`
+- [X] T026 Implement GET /api/chapters/{chapter_id}: `backend/src/api/chapters.py`
   - Return full chapter content (Markdown + metadata)
 
-- [ ] T027 Implement POST /api/chapters/validate: `backend/src/api/chapters.py`
+- [X] T027 Implement POST /api/chapters/validate: `backend/src/api/chapters.py`
   - Request: `{ "chapter_id" }`
   - Run validation checks; return: `{ "passed", "issues", "warnings" }`
 
 #### Batch Generation Script
 
-- [ ] T028 Create batch generation script: `backend/scripts/generate-chapters.py`
+- [X] T028 Create batch generation script: `backend/scripts/generate-chapters.py`
   - Invoke 12 chapter generation jobs in parallel (4 workers for token efficiency)
   - Monitor job status; log completion
   - Generate all 12 chapters in ~30-60 minutes (depending on API quotas)
 
 #### Tests for User Story 1
 
-- [ ] T029 [P] Contract test for chapter generation: `backend/tests/contract/test_chapters_generate.py`
+- [X] T029 [P] Contract test for chapter generation: `backend/tests/contract/test_chapters_generate.py`
   - Test POST /api/chapters/generate; verify response schema
   - Test GET /api/chapters/jobs/{job_id}; poll until completion
   - Assert: chapter created with correct status, metadata
 
-- [ ] T030 [P] Integration test for generation pipeline: `backend/tests/integration/test_chapter_generation.py`
+- [X] T030 [P] Integration test for generation pipeline: `backend/tests/integration/test_chapter_generation.py`
   - Mock Claude subagent; generate test chapter
   - Validate citations extracted; code blocks valid
   - Assert chapter saved to git; committed with message
 
-- [ ] T031 Unit test for validation service: `backend/tests/unit/test_validation.py`
+- [X] T031 Unit test for validation service: `backend/tests/unit/test_validation.py`
   - Test citation extraction; ensure regex works
   - Test code block validation (Python, bash)
   - Test claim flagging for missing citations
 
-- [ ] T032 Unit test for chunking: `backend/tests/unit/test_chunking.py`
+- [X] T032 Unit test for chunking: `backend/tests/unit/test_chunking.py`
   - Test section splitting; verify chunks preserve headers
   - Test token counting; verify ~200 tokens per chunk
 

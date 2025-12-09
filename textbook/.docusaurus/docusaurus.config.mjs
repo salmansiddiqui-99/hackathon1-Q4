@@ -35,7 +35,12 @@ export default {
           "editUrl": "https://github.com/yourname/physical_ai_book/tree/main/textbook/"
         },
         "theme": {
-          "customCss": "C:\\Users\\haroon traders\\Desktop\\physical_ai_book\\textbook\\src\\css\\custom.css"
+          "customCss": [
+            "C:\\Users\\haroon traders\\Desktop\\physical_ai_book\\textbook\\src\\css\\custom.css",
+            "C:\\Users\\haroon traders\\Desktop\\physical_ai_book\\textbook\\src\\css\\colors.css",
+            "C:\\Users\\haroon traders\\Desktop\\physical_ai_book\\textbook\\src\\css\\animations.css",
+            "C:\\Users\\haroon traders\\Desktop\\physical_ai_book\\textbook\\src\\css\\responsive.css"
+          ]
         }
       }
     ]

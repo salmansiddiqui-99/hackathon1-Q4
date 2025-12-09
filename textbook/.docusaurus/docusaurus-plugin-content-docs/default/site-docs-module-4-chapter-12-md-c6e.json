@@ -1,0 +1,20 @@
+{
+  "unversionedId": "module4/chapter12",
+  "id": "module4/chapter12",
+  "title": "chapter12",
+  "description": "Capstone: Autonomous Humanoid System",
+  "source": "@site/docs/module4/chapter12.md",
+  "sourceDirName": "module4",
+  "slug": "/module4/chapter12",
+  "permalink": "/physical_ai_book/docs/module4/chapter12",
+  "draft": false,
+  "editUrl": "https://github.com/yourname/physical_ai_book/tree/main/textbook/docs/module4/chapter12.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "modules",
+  "previous": {
+    "title": "chapter11",
+    "permalink": "/physical_ai_book/docs/module4/chapter11"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "unversionedId": "module1/chapter2",
+  "id": "module1/chapter2",
+  "title": "chapter2",
+  "description": "Humanoid Control with ROS 2",
+  "source": "@site/docs/module1/chapter2.md",
+  "sourceDirName": "module1",
+  "slug": "/module1/chapter2",
+  "permalink": "/physical_ai_book/docs/module1/chapter2",
+  "draft": false,
+  "editUrl": "https://github.com/yourname/physical_ai_book/tree/main/textbook/docs/module1/chapter2.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "modules",
+  "previous": {
+    "title": "chapter1",
+    "permalink": "/physical_ai_book/docs/module1/chapter1"
+  },
+  "next": {
+    "title": "chapter3",
+    "permalink": "/physical_ai_book/docs/module1/chapter3"
+  }
+}

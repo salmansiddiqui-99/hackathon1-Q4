@@ -1,0 +1,16 @@
+{
+  "unversionedId": "module1/urdf-robot-descriptions",
+  "id": "module1/urdf-robot-descriptions",
+  "title": "urdf-robot-descriptions",
+  "description": "URDF and Robot Descriptions",
+  "source": "@site/docs/module1/03-urdf-robot-descriptions.md",
+  "sourceDirName": "module1",
+  "slug": "/module1/urdf-robot-descriptions",
+  "permalink": "/physical_ai_book/docs/module1/urdf-robot-descriptions",
+  "draft": false,
+  "editUrl": "https://github.com/yourname/physical_ai_book/tree/main/textbook/docs/module1/03-urdf-robot-descriptions.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 3,
+  "frontMatter": {}
+}

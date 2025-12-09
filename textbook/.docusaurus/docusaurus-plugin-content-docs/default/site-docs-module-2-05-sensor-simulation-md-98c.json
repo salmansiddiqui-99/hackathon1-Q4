@@ -1,0 +1,16 @@
+{
+  "unversionedId": "module2/sensor-simulation",
+  "id": "module2/sensor-simulation",
+  "title": "sensor-simulation",
+  "description": "Sensor Simulation and Perception",
+  "source": "@site/docs/module2/05-sensor-simulation.md",
+  "sourceDirName": "module2",
+  "slug": "/module2/sensor-simulation",
+  "permalink": "/physical_ai_book/docs/module2/sensor-simulation",
+  "draft": false,
+  "editUrl": "https://github.com/yourname/physical_ai_book/tree/main/textbook/docs/module2/05-sensor-simulation.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 5,
+  "frontMatter": {}
+}

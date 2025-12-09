@@ -17,7 +17,13 @@
       "Bash(npm run serve:*)",
       "Bash(pip install:*)",
       "Bash(alembic init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nPhase 2: Foundational Infrastructure - Complete\n\nImplemented all 9 foundational infrastructure tasks:\n- T008: Alembic migration framework with initial schema (modules, chapters, content_chunks, rag_queries, retrieved_chunks)\n- T009: Pydantic models for all entities (chapter, module, rag, content_chunk)\n- T010: API route stubs (chapters.py, rag.py) with OpenAPI schemas\n- T011: Comprehensive error handling with custom exceptions (21 exception types)\n- T012: Structured logging configuration (JSON format support, contextual logging)\n- T013: Environment configuration with BaseSettings validation (60+ config options)\n- T014: Qdrant collection setup script with client initialization\n- T015: SQLAlchemy ORM models with constraints, relationships, indexes\n- T016: Health check endpoints (GET /health, /ready, /live) with service status\n\nInfrastructure components:\n- Database: PostgreSQL with UUID PKs, CHECK constraints, indices for performance\n- API: FastAPI with CORS middleware, exception handlers, 6+ endpoints\n- Validation: Pydantic v2 with custom validators, min/max length constraints\n- Logging: Structured JSON logging with Python logging integration\n\nAll Phase 2 tasks marked as complete. Ready for Phase 3 (User Story 1: Chapter Generation).\n\n🤖 Generated with Claude Code\n\nCo-Authored-By: Claude Haiku 4.5 <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(if [ -d \"C:\\Users\\haroon traders\\Desktop\\physical_ai_book\\specs\\001-book-creation\\checklists\" ])",
+      "Bash(then ls -la \"C:\\Users\\haroon traders\\Desktop\\physical_ai_book\\specs\\001-book-creation\\checklists\")",
+      "Bash(else echo \"No checklists directory\")",
+      "Bash(python:*)",
+      "Bash(curl:*)"
     ]
   }
 }

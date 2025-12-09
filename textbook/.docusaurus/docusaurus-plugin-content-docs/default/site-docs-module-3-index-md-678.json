@@ -1,0 +1,30 @@
+{
+  "unversionedId": "module3/module3-index",
+  "id": "module3/module3-index",
+  "title": "Module 3 - NVIDIA Isaac Platform",
+  "description": "Overview",
+  "source": "@site/docs/module3/index.md",
+  "sourceDirName": "module3",
+  "slug": "/module3/",
+  "permalink": "/physical_ai_book/docs/module3/",
+  "draft": false,
+  "editUrl": "https://github.com/yourname/physical_ai_book/tree/main/textbook/docs/module3/index.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 0,
+  "frontMatter": {
+    "id": "module3-index",
+    "title": "Module 3 - NVIDIA Isaac Platform",
+    "sidebar_label": "Overview",
+    "sidebar_position": 0
+  },
+  "sidebar": "modules",
+  "previous": {
+    "title": "chapter6",
+    "permalink": "/physical_ai_book/docs/module2/chapter6"
+  },
+  "next": {
+    "title": "chapter7",
+    "permalink": "/physical_ai_book/docs/module3/chapter7"
+  }
+}

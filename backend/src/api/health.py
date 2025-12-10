@@ -6,7 +6,6 @@ import logging
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from qdrant_client import QdrantClient
-from qdrant_client.http.exceptions import QdrantException
 import openai
 
 from src.config import settings

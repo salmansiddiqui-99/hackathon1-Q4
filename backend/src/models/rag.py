@@ -18,6 +18,83 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 from uuid import UUID
 from enum import Enum
+from datetime import datetime
+
+
+# ============================================================================
+# RETRIEVAL MODES AND RESPONSE MODELS
+# ============================================================================
+
+class RetrievalMode(str, Enum):
+    """Retrieval mode enumeration"""
+    GLOBAL = "global"
+    CHAPTER_SPECIFIC = "chapter-specific"
+    TEXT_SELECTION = "text-selection"
+
+
+class ResponseStatus(str, Enum):
+    """Response status enumeration"""
+    SUCCESS = "success"
+    NO_CONTEXT = "no-context"
+    ERROR = "error"
+
+
+class RetrievedChunkData(BaseModel):
+    """Retrieved chunk data with similarity score"""
+    chunk_id: Optional[UUID] = None
+    text: str
+    section_title: Optional[str] = None
+    similarity_score: float = 0.0
+    chapter_id: Optional[UUID] = None
+
+    class Config:
+        from_attributes = True
+
+
+class RAGResponseData(BaseModel):
+    """RAG response data"""
+    query_id: Optional[UUID] = None
+    query_text: str
+    retrieval_mode: RetrievalMode = RetrievalMode.GLOBAL
+    response_status: ResponseStatus = ResponseStatus.SUCCESS
+    retrieved_chunks: List[RetrievedChunkData] = []
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+    class Config:
+        json_encoders = {
+            datetime: lambda v: v.isoformat()
+        }
+
+
+class RAGRequest(BaseModel):
+    """Generic RAG request"""
+    query_text: str = Field(..., min_length=10, max_length=500)
+    chapter_id: Optional[UUID] = None
+    selected_text: Optional[str] = None
+
+
+class RAGResponse(BaseModel):
+    """Generic RAG response"""
+    success: bool
+    data: Optional[RAGResponseData] = None
+    error: Optional[str] = None
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+    class Config:
+        json_encoders = {
+            datetime: lambda v: v.isoformat()
+        }
+
+
+class RAGQueryCreate(BaseModel):
+    """RAG query creation model"""
+    query_text: str
+    retrieval_mode: RetrievalMode
+    chapter_id: Optional[UUID] = None
+    selected_text: Optional[str] = None
+
+    class Config:
+        from_attributes = True
 
 
 # ============================================================================

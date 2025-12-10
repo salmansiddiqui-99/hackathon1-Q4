@@ -44,7 +44,9 @@
       "Bash(wc:*)",
       "Bash(ls:*)",
       "Bash(cd:*)",
-      "Bash(timeout 120 python:*)"
+      "Bash(timeout 120 python:*)",
+      "Bash(timeout 15 python:*)",
+      "Bash(timeout 20 python:*)"
     ]
   }
 }

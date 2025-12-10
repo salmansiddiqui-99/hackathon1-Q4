@@ -203,7 +203,6 @@ async def get_generation_job(job_id: str) -> dict:
 async def list_chapters(
     module_id: Optional[str] = Query(None),
     chapter_status: Optional[str] = Query(None, alias="status"),
-    db: Session = None,
 ) -> List[ChapterListResponse]:
     """
     List all chapters with optional filtering.

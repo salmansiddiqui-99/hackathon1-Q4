@@ -67,13 +67,24 @@ export default function ChatbotWidget() {
     setChunks([]);
 
     try {
-      const requestBody = {
+      // Determine which endpoint to use based on retrieval mode
+      let endpoint = `${API_BASE_URL}/chatbot/query`;
+      let requestBody = {
         query_text: query,
         chapter_id: retrievalMode === 'chapter-specific' ? getCurrentChapterId() : null,
         selected_text: retrievalMode === 'text-selection' ? selectedText : null,
       };
 
-      const response = await fetch(`${API_BASE_URL}/chatbot/query`, {
+      // For text-selection mode, use the dedicated endpoint
+      if (retrievalMode === 'text-selection') {
+        endpoint = `${API_BASE_URL}/selected-text/query`;
+        requestBody = {
+          query_text: query,
+          selected_text: selectedText,
+        };
+      }
+
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -85,40 +96,53 @@ export default function ChatbotWidget() {
         throw new Error(`API error: ${response.status}`);
       }
 
-      // Handle streaming response (NDJSON format)
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let fullResponse = '';
-      let metadata = null;
+      // For selected-text mode, handle non-streaming JSON response
+      if (retrievalMode === 'text-selection') {
+        const data = await response.json();
+        if (data.success && data.response_text) {
+          setResponse(data.response_text);
+          if (!data.used_selection) {
+            setError('Response may not be constrained to selected text');
+          }
+        } else {
+          setError(data.response_text || 'Failed to generate response');
+        }
+      } else {
+        // Handle streaming response (NDJSON format) for global/chapter-specific modes
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let fullResponse = '';
+        let metadata = null;
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
 
-        const text = decoder.decode(value);
-        const lines = text.split('\n').filter((l) => l.trim());
+          const text = decoder.decode(value);
+          const lines = text.split('\n').filter((l) => l.trim());
 
-        for (const line of lines) {
-          try {
-            const json = JSON.parse(line);
+          for (const line of lines) {
+            try {
+              const json = JSON.parse(line);
 
-            if (json.type === 'token') {
-              fullResponse += json.data;
-              setResponse(fullResponse);
-            } else if (json.type === 'metadata') {
-              metadata = json.data;
-              setChunks(metadata.chunks_used || []);
-            } else if (json.type === 'error') {
-              setError(json.data);
+              if (json.type === 'token') {
+                fullResponse += json.data;
+                setResponse(fullResponse);
+              } else if (json.type === 'metadata') {
+                metadata = json.data;
+                setChunks(metadata.chunks_used || []);
+              } else if (json.type === 'error') {
+                setError(json.data);
+              }
+            } catch (e) {
+              console.error('Failed to parse response line:', e);
             }
-          } catch (e) {
-            console.error('Failed to parse response line:', e);
           }
         }
-      }
 
-      if (!fullResponse) {
-        setError('No response generated');
+        if (!fullResponse) {
+          setError('No response generated');
+        }
       }
     } catch (err) {
       setError(err.message || 'Failed to get response');

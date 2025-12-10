@@ -24,7 +24,7 @@ class ServiceStatus(BaseModel):
     """Service status schema"""
     status: str  # "operational" | "degraded" | "down"
     last_checked: datetime
-    error: str = None
+    error: str | None = None
 
 
 class HealthCheckResponse(BaseModel):

@@ -6,9 +6,9 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from backend.src.models.rag import RetrievedChunkData, RetrievalMode
-from backend.src.services.rag_service import RAGService
-from backend.src.config import settings
+from src.models.rag import RetrievedChunkData, RetrievalMode
+from src.services.rag_service import RAGService
+from src.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -162,7 +162,7 @@ async def health_check(db: Session = Depends(get_db)) -> dict:
         db_status = "down"
         try:
             # Try a simple query
-            from backend.src.models.database import Chapter
+            from src.models.database import Chapter
             db.query(Chapter).first()
             db_status = "operational"
         except Exception as e:

@@ -3,8 +3,8 @@ import logging
 from typing import List, AsyncGenerator, Iterator
 import openai
 
-from backend.src.config import settings
-from backend.src.models.rag import RetrievedChunkData, ResponseStatus
+from src.config import settings
+from src.models.rag import RetrievedChunkData, ResponseStatus
 
 logger = logging.getLogger(__name__)
 

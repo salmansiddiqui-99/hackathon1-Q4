@@ -7,10 +7,10 @@ export default {
   "title": "Physical AI & Humanoid Robotics",
   "tagline": "Master the intersection of AI and robotics",
   "favicon": "img/favicon.ico",
-  "url": "https://yourname.github.io",
-  "baseUrl": "/physical_ai_book/",
-  "organizationName": "yourname",
-  "projectName": "physical_ai_book",
+  "url": "https://salmansiddiqui-99.github.io",
+  "baseUrl": "/hackathon1-Q4/",
+  "organizationName": "salmansiddiqui-99",
+  "projectName": "hackathon1-Q4",
   "deploymentBranch": "gh-pages",
   "onBrokenLinks": "warn",
   "onBrokenMarkdownLinks": "warn",
@@ -27,26 +27,25 @@ export default {
       "classic",
       {
         "docs": {
-          "sidebarPath": "C:\\Users\\haroon traders\\Desktop\\physical_ai_book\\textbook\\sidebars.js",
-          "editUrl": "https://github.com/yourname/physical_ai_book/tree/main/textbook/"
+          "sidebarPath": "./sidebars.js",
+          "editUrl": "https://github.com/salmansiddiqui-99/hackathon1-Q4/tree/main/"
         },
         "blog": {
           "showReadingTime": true,
-          "editUrl": "https://github.com/yourname/physical_ai_book/tree/main/textbook/"
+          "editUrl": "https://github.com/salmansiddiqui-99/hackathon1-Q4/tree/main/"
         },
         "theme": {
           "customCss": [
-            "C:\\Users\\haroon traders\\Desktop\\physical_ai_book\\textbook\\src\\css\\custom.css",
-            "C:\\Users\\haroon traders\\Desktop\\physical_ai_book\\textbook\\src\\css\\colors.css",
-            "C:\\Users\\haroon traders\\Desktop\\physical_ai_book\\textbook\\src\\css\\animations.css",
-            "C:\\Users\\haroon traders\\Desktop\\physical_ai_book\\textbook\\src\\css\\responsive.css"
+            "./src/css/custom.css",
+            "./src/css/colors.css",
+            "./src/css/animations.css",
+            "./src/css/responsive.css"
           ]
         }
       }
     ]
   ],
   "themeConfig": {
-    "image": "img/social-card.jpg",
     "colorMode": {
       "defaultMode": "dark",
       "disableSwitch": true,
@@ -62,11 +61,11 @@ export default {
         {
           "type": "docSidebar",
           "sidebarId": "modules",
-          "position": "left",
-          "label": "Modules"
+          "label": "Modules",
+          "position": "left"
         },
         {
-          "href": "https://github.com/yourname/physical_ai_book",
+          "href": "https://github.com/salmansiddiqui-99/hackathon1-Q4",
           "label": "GitHub",
           "position": "right"
         }
@@ -102,7 +101,7 @@ export default {
           "items": [
             {
               "label": "GitHub",
-              "href": "https://github.com/yourname/physical_ai_book"
+              "href": "https://github.com/salmansiddiqui-99/hackathon1-Q4"
             }
           ]
         }
@@ -112,89 +111,102 @@ export default {
     "prism": {
       "theme": {
         "plain": {
-          "color": "#F8F8F2",
-          "backgroundColor": "#282A36"
+          "color": "#393A34",
+          "backgroundColor": "#f6f8fa"
         },
         "styles": [
           {
             "types": [
+              "comment",
               "prolog",
-              "constant",
-              "builtin"
+              "doctype",
+              "cdata"
             ],
             "style": {
-              "color": "rgb(189, 147, 249)"
-            }
-          },
-          {
-            "types": [
-              "inserted",
-              "function"
-            ],
-            "style": {
-              "color": "rgb(80, 250, 123)"
-            }
-          },
-          {
-            "types": [
-              "deleted"
-            ],
-            "style": {
-              "color": "rgb(255, 85, 85)"
-            }
-          },
-          {
-            "types": [
-              "changed"
-            ],
-            "style": {
-              "color": "rgb(255, 184, 108)"
-            }
-          },
-          {
-            "types": [
-              "punctuation",
-              "symbol"
-            ],
-            "style": {
-              "color": "rgb(248, 248, 242)"
-            }
-          },
-          {
-            "types": [
-              "string",
-              "char",
-              "tag",
-              "selector"
-            ],
-            "style": {
-              "color": "rgb(255, 121, 198)"
-            }
-          },
-          {
-            "types": [
-              "keyword",
-              "variable"
-            ],
-            "style": {
-              "color": "rgb(189, 147, 249)",
+              "color": "#999988",
               "fontStyle": "italic"
             }
           },
           {
             "types": [
-              "comment"
+              "namespace"
             ],
             "style": {
-              "color": "rgb(98, 114, 164)"
+              "opacity": 0.7
             }
           },
           {
             "types": [
-              "attr-name"
+              "string",
+              "attr-value"
             ],
             "style": {
-              "color": "rgb(241, 250, 140)"
+              "color": "#e3116c"
+            }
+          },
+          {
+            "types": [
+              "punctuation",
+              "operator"
+            ],
+            "style": {
+              "color": "#393A34"
+            }
+          },
+          {
+            "types": [
+              "entity",
+              "url",
+              "symbol",
+              "number",
+              "boolean",
+              "variable",
+              "constant",
+              "property",
+              "regex",
+              "inserted"
+            ],
+            "style": {
+              "color": "#36acaa"
+            }
+          },
+          {
+            "types": [
+              "atrule",
+              "keyword",
+              "attr-name",
+              "selector"
+            ],
+            "style": {
+              "color": "#00a4db"
+            }
+          },
+          {
+            "types": [
+              "function",
+              "deleted",
+              "tag"
+            ],
+            "style": {
+              "color": "#d73a49"
+            }
+          },
+          {
+            "types": [
+              "function-variable"
+            ],
+            "style": {
+              "color": "#6f42c1"
+            }
+          },
+          {
+            "types": [
+              "tag",
+              "selector",
+              "keyword"
+            ],
+            "style": {
+              "color": "#00009f"
             }
           }
         ]
@@ -318,11 +330,11 @@ export default {
       "maxHeadingLevel": 3
     }
   },
-  "baseUrlIssueBanner": true,
-  "onDuplicateRoutes": "warn",
   "staticDirectories": [
     "static"
   ],
+  "baseUrlIssueBanner": true,
+  "onDuplicateRoutes": "warn",
   "customFields": {},
   "plugins": [],
   "themes": [],

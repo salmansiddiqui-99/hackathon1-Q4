@@ -19,11 +19,20 @@
       "Bash(alembic init:*)",
       "Bash(git add:*)",
       "Bash(git commit -m \"$(cat <<''EOF''\nPhase 2: Foundational Infrastructure - Complete\n\nImplemented all 9 foundational infrastructure tasks:\n- T008: Alembic migration framework with initial schema (modules, chapters, content_chunks, rag_queries, retrieved_chunks)\n- T009: Pydantic models for all entities (chapter, module, rag, content_chunk)\n- T010: API route stubs (chapters.py, rag.py) with OpenAPI schemas\n- T011: Comprehensive error handling with custom exceptions (21 exception types)\n- T012: Structured logging configuration (JSON format support, contextual logging)\n- T013: Environment configuration with BaseSettings validation (60+ config options)\n- T014: Qdrant collection setup script with client initialization\n- T015: SQLAlchemy ORM models with constraints, relationships, indexes\n- T016: Health check endpoints (GET /health, /ready, /live) with service status\n\nInfrastructure components:\n- Database: PostgreSQL with UUID PKs, CHECK constraints, indices for performance\n- API: FastAPI with CORS middleware, exception handlers, 6+ endpoints\n- Validation: Pydantic v2 with custom validators, min/max length constraints\n- Logging: Structured JSON logging with Python logging integration\n\nAll Phase 2 tasks marked as complete. Ready for Phase 3 (User Story 1: Chapter Generation).\n\n🤖 Generated with Claude Code\n\nCo-Authored-By: Claude Haiku 4.5 <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(if [ -d \"C:\\Users\\haroon traders\\Desktop\\physical_ai_book\\specs\\001-book-creation\\checklists\" ])",
-      "Bash(then ls -la \"C:\\Users\\haroon traders\\Desktop\\physical_ai_book\\specs\\001-book-creation\\checklists\")",
+      "Bash(if [ -d \"C:\\Users\\haroon traders\\Desktop\\projects\\hackathon1-Q4\\specs\\hackathon1-Q4\\checklists\" ])",
+      "Bash(then ls -la \"C:\\Users\\haroon traders\\Desktop\\projects\\hackathon1-Q4\\specs\\hackathon1-Q4\\checklists\")",
       "Bash(else echo \"No checklists directory\")",
       "Bash(python:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(find:*)",
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(call venvScriptsactivate.bat)",
+      "Bash(venvScriptspip install -r requirements.txt)",
+      "Bash(npm start)",
+      "Bash(npm run clear:*)",
+      "Bash(timeout 10 python:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nPhase 6: Localhost Testing & GitHub Deployment Setup\n\n- Fixed docusaurus config to use CommonJS (prism-react-renderer theme imports)\n- Fixed React 18 peer dependency conflicts with --legacy-peer-deps\n- Set up comprehensive backend .env configuration with all required settings\n- Fixed import paths: backend.src.* → src.* across all Python modules\n- Added missing get_db() stub function to config.py\n- Added ANTHROPIC_API_KEY to backend configuration\n- Updated requirements.txt for Python 3.13 compatibility\n- Verified GitHub Pages deployment configuration:\n  * URL: https://salmansiddiqui-99.github.io\n  * baseUrl: /hackathon1-Q4/\n  * deploymentBranch: gh-pages\n\nReady for GitHub Pages deployment.\n\n🤖 Generated with Claude Code\n\nCo-Authored-By: Claude Haiku 4.5 <noreply@anthropic.com>\nEOF\n)\")"
     ]
   }
 }

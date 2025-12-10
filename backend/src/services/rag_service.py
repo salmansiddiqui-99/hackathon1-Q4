@@ -9,9 +9,9 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Filter, FieldCondition, MatchValue
 import openai
 
-from backend.src.config import settings
-from backend.src.models.database import ContentChunk, RetrievedChunk, RAGQuery
-from backend.src.models.rag import RetrievalMode, ResponseStatus, RetrievedChunkData
+from src.config import settings
+from src.models.database import ContentChunk, RetrievedChunk, RAGQuery
+from src.models.rag import RetrievalMode, ResponseStatus, RetrievedChunkData
 
 logger = logging.getLogger(__name__)
 

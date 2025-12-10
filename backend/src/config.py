@@ -46,7 +46,8 @@ class Settings(BaseSettings):
     OPENAI_TEMPERATURE: float = 0.7
     OPENAI_TIMEOUT: int = 30
 
-    # Claude Code configuration
+    # Claude Code / Anthropic configuration
+    ANTHROPIC_API_KEY: Optional[str] = None
     CLAUDE_CODE_API_KEY: Optional[str] = None
     CLAUDE_CODE_TIMEOUT: int = 60
     CLAUDE_CODE_MAX_RETRIES: int = 3
@@ -123,6 +124,12 @@ class Settings(BaseSettings):
 
 # Load settings
 settings = Settings()
+
+
+def get_db():
+    """Database session dependency for FastAPI endpoints"""
+    # This is a stub for local testing - actual DB setup happens in models
+    return None
 
 
 def configure_logging() -> None:

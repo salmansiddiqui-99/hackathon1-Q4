@@ -12,7 +12,7 @@
       {
         "type": "link",
         "label": "Welcome to Physical AI & Humanoid Robotics",
-        "href": "/physical_ai_book/docs/intro",
+        "href": "/hackathon1-Q4/docs/intro",
         "docId": "intro"
       },
       {
@@ -22,25 +22,25 @@
           {
             "type": "link",
             "label": "chapter1",
-            "href": "/physical_ai_book/docs/module1/chapter1",
+            "href": "/hackathon1-Q4/docs/module1/chapter1",
             "docId": "module1/chapter1"
           },
           {
             "type": "link",
             "label": "chapter2",
-            "href": "/physical_ai_book/docs/module1/chapter2",
+            "href": "/hackathon1-Q4/docs/module1/chapter2",
             "docId": "module1/chapter2"
           },
           {
             "type": "link",
             "label": "chapter3",
-            "href": "/physical_ai_book/docs/module1/chapter3",
+            "href": "/hackathon1-Q4/docs/module1/chapter3",
             "docId": "module1/chapter3"
           }
         ],
         "collapsed": true,
         "collapsible": true,
-        "href": "/physical_ai_book/docs/module1/"
+        "href": "/hackathon1-Q4/docs/module1/"
       },
       {
         "type": "category",
@@ -49,25 +49,25 @@
           {
             "type": "link",
             "label": "chapter4",
-            "href": "/physical_ai_book/docs/module2/chapter4",
+            "href": "/hackathon1-Q4/docs/module2/chapter4",
             "docId": "module2/chapter4"
           },
           {
             "type": "link",
             "label": "chapter5",
-            "href": "/physical_ai_book/docs/module2/chapter5",
+            "href": "/hackathon1-Q4/docs/module2/chapter5",
             "docId": "module2/chapter5"
           },
           {
             "type": "link",
             "label": "chapter6",
-            "href": "/physical_ai_book/docs/module2/chapter6",
+            "href": "/hackathon1-Q4/docs/module2/chapter6",
             "docId": "module2/chapter6"
           }
         ],
         "collapsed": true,
         "collapsible": true,
-        "href": "/physical_ai_book/docs/module2/"
+        "href": "/hackathon1-Q4/docs/module2/"
       },
       {
         "type": "category",
@@ -76,25 +76,25 @@
           {
             "type": "link",
             "label": "chapter7",
-            "href": "/physical_ai_book/docs/module3/chapter7",
+            "href": "/hackathon1-Q4/docs/module3/chapter7",
             "docId": "module3/chapter7"
           },
           {
             "type": "link",
             "label": "chapter8",
-            "href": "/physical_ai_book/docs/module3/chapter8",
+            "href": "/hackathon1-Q4/docs/module3/chapter8",
             "docId": "module3/chapter8"
           },
           {
             "type": "link",
             "label": "chapter9",
-            "href": "/physical_ai_book/docs/module3/chapter9",
+            "href": "/hackathon1-Q4/docs/module3/chapter9",
             "docId": "module3/chapter9"
           }
         ],
         "collapsed": true,
         "collapsible": true,
-        "href": "/physical_ai_book/docs/module3/"
+        "href": "/hackathon1-Q4/docs/module3/"
       },
       {
         "type": "category",
@@ -103,25 +103,25 @@
           {
             "type": "link",
             "label": "chapter10",
-            "href": "/physical_ai_book/docs/module4/chapter10",
+            "href": "/hackathon1-Q4/docs/module4/chapter10",
             "docId": "module4/chapter10"
           },
           {
             "type": "link",
             "label": "chapter11",
-            "href": "/physical_ai_book/docs/module4/chapter11",
+            "href": "/hackathon1-Q4/docs/module4/chapter11",
             "docId": "module4/chapter11"
           },
           {
             "type": "link",
             "label": "chapter12",
-            "href": "/physical_ai_book/docs/module4/chapter12",
+            "href": "/hackathon1-Q4/docs/module4/chapter12",
             "docId": "module4/chapter12"
           }
         ],
         "collapsed": true,
         "collapsible": true,
-        "href": "/physical_ai_book/docs/module4/"
+        "href": "/hackathon1-Q4/docs/module4/"
       }
     ]
   },

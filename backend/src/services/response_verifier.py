@@ -4,8 +4,8 @@ from typing import List, Dict
 import openai
 import re
 
-from backend.src.config import settings
-from backend.src.models.rag import RetrievedChunkData
+from src.config import settings
+from src.models.rag import RetrievedChunkData
 
 logger = logging.getLogger(__name__)
 

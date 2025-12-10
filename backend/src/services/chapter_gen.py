@@ -9,8 +9,8 @@ from pathlib import Path
 
 from anthropic import Anthropic
 
-from backend.src.models.chapter import Chapter, ChapterCreate
-from backend.src.config import settings
+from src.models.chapter import Chapter, ChapterCreate
+from src.config import settings
 
 logger = logging.getLogger(__name__)
 

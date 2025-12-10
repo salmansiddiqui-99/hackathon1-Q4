@@ -182,7 +182,7 @@ Workflow includes:
 2. **Deploy Job**:
    - Download build artifacts
    - Deploy to GitHub Pages using `peaceiris/actions-gh-pages@v3`
-   - Triggered on push to main/001-book-creation
+   - Triggered on push to main/hackathon1-Q4
 
 **Deployment URL**: Will be available at `https://[username].github.io/physical_ai_book/`
 
@@ -312,7 +312,7 @@ npm run serve  # Test locally
 
 ### Deploy to GitHub Pages
 1. Ensure GitHub Pages is enabled in repository settings
-2. Push to `main` or `001-book-creation` branch
+2. Push to `main` or `hackathon1-Q4` branch
 3. GitHub Actions will automatically build and deploy
 4. Site will be available at: `https://[username].github.io/physical_ai_book/`
 

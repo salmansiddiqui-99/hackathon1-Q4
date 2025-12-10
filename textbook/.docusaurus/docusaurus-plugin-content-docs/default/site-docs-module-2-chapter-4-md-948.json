@@ -6,19 +6,19 @@
   "source": "@site/docs/module2/chapter4.md",
   "sourceDirName": "module2",
   "slug": "/module2/chapter4",
-  "permalink": "/physical_ai_book/docs/module2/chapter4",
+  "permalink": "/hackathon1-Q4/docs/module2/chapter4",
   "draft": false,
-  "editUrl": "https://github.com/yourname/physical_ai_book/tree/main/textbook/docs/module2/chapter4.md",
+  "editUrl": "https://github.com/salmansiddiqui-99/hackathon1-Q4/tree/main/docs/module2/chapter4.md",
   "tags": [],
   "version": "current",
   "frontMatter": {},
   "sidebar": "modules",
   "previous": {
     "title": "Overview",
-    "permalink": "/physical_ai_book/docs/module2/"
+    "permalink": "/hackathon1-Q4/docs/module2/"
   },
   "next": {
     "title": "chapter5",
-    "permalink": "/physical_ai_book/docs/module2/chapter5"
+    "permalink": "/hackathon1-Q4/docs/module2/chapter5"
   }
 }

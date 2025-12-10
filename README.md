@@ -26,8 +26,8 @@ The textbook is deployed to GitHub Pages and includes an interactive RAG chatbot
 
 1. **Clone and setup environment**:
 ```bash
-git clone https://github.com/yourname/physical_ai_book.git
-cd physical_ai_book
+git clone https://github.com/salmansiddiqui-99/hackathon1-Q4.git
+cd hackathon1-Q4
 
 # Create .env file
 cp backend/.env.example backend/.env
@@ -58,7 +58,7 @@ npm start
 ## Project Structure
 
 ```
-physical_ai_book/
+hackathon-Q4/
 ├── textbook/                # Docusaurus frontend
 │   ├── docs/               # Book chapters (auto-generated)
 │   ├── src/                # React components, themes, CSS
@@ -72,7 +72,7 @@ physical_ai_book/
 │   ├── requirements.txt
 │   └── .env.example
 ├── specs/                  # Specification documents
-│   └── 001-book-creation/
+│   └── hackathon1-Q4/
 ├── .github/workflows/      # GitHub Actions CI/CD
 └── README.md
 ```
@@ -151,8 +151,8 @@ physical_ai_book/
 ## Getting Help
 
 - **API Documentation**: http://localhost:8000/docs (Swagger UI)
-- **Spec Documents**: See `/specs/001-book-creation/`
-- **Development Guide**: See `/specs/001-book-creation/quickstart.md`
+- **Spec Documents**: See `/specs/hackathon1-Q4/`
+- **Development Guide**: See `/specs/hackathon1-Q4/quickstart.md`
 
 ## Contributing
 
@@ -173,5 +173,5 @@ Last updated: 2025-12-09
 
 ---
 
-**Repository**: https://github.com/yourname/physical_ai_book
-**Live Site**: https://yourname.github.io/physical_ai_book
+**Repository**: https://github.com/salmansiddiqui-99/hackathon1-Q4
+**Live Site**: https://salmansiddiqui-99.github.io/hackathon1-Q4

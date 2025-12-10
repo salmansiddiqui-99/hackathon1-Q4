@@ -7,14 +7,14 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
 import json
 
-from backend.src.models.rag import (
+from src.models.rag import (
     RAGRequest, RAGResponse, RAGResponseData, RAGQueryCreate,
     RetrievalMode, ResponseStatus, RetrievedChunkData
 )
-from backend.src.services.rag_service import RAGService
-from backend.src.services.chatbot_service import ChatbotService
-from backend.src.services.response_verifier import ResponseVerifier
-from backend.src.config import settings
+from src.services.rag_service import RAGService
+from src.services.chatbot_service import ChatbotService
+from src.services.response_verifier import ResponseVerifier
+from src.config import settings
 from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)

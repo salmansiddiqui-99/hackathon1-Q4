@@ -11,7 +11,7 @@ from openai import OpenAI, AsyncOpenAI
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
 
-from backend.src.config import settings
+from src.config import settings
 
 logger = logging.getLogger(__name__)
 

@@ -6,9 +6,9 @@
   "source": "@site/docs/intro.md",
   "sourceDirName": ".",
   "slug": "/intro",
-  "permalink": "/physical_ai_book/docs/intro",
+  "permalink": "/hackathon1-Q4/docs/intro",
   "draft": false,
-  "editUrl": "https://github.com/yourname/physical_ai_book/tree/main/textbook/docs/intro.md",
+  "editUrl": "https://github.com/salmansiddiqui-99/hackathon1-Q4/tree/main/docs/intro.md",
   "tags": [],
   "version": "current",
   "sidebarPosition": 1,
@@ -18,6 +18,6 @@
   "sidebar": "modules",
   "next": {
     "title": "Overview",
-    "permalink": "/physical_ai_book/docs/module1/"
+    "permalink": "/hackathon1-Q4/docs/module1/"
   }
 }

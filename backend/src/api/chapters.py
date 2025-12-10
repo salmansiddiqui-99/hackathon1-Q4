@@ -7,17 +7,17 @@ from fastapi import APIRouter, Query, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
-from backend.src.models.chapter import (
+from src.models.chapter import (
     Chapter, ChapterCreate, ChapterUpdate, ChapterListResponse, ChapterResponse
 )
-from backend.src.models.database import Chapter as ChapterDB, ContentChunk as ContentChunkDB, Module as ModuleDB
-from backend.src.errors import NotFoundError
-from backend.src.services.chapter_gen import ChapterGenerationService
-from backend.src.services.validation import ContentValidationService
-from backend.src.services.chapter_storage import ChapterStorageService
-from backend.src.services.chunking import ChunkingService
-from backend.src.services.embedding import EmbeddingService
-from backend.src.config import get_db
+from src.models.database import Chapter as ChapterDB, ContentChunk as ContentChunkDB, Module as ModuleDB
+from src.errors import NotFoundError
+from src.services.chapter_gen import ChapterGenerationService
+from src.services.validation import ContentValidationService
+from src.services.chapter_storage import ChapterStorageService
+from src.services.chunking import ChunkingService
+from src.services.embedding import EmbeddingService
+from src.config import get_db
 
 logger = logging.getLogger(__name__)
 

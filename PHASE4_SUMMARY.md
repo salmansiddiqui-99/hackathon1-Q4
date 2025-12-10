@@ -62,7 +62,7 @@ Phase 4 (User Story 2: Deploy to GitHub Pages with Futuristic Theme) has been su
 
 The site is ready for deployment to GitHub Pages:
 - GitHub Actions workflow configured
-- Automated build on push to main/001-book-creation
+- Automated build on push to main/hackathon1-Q4
 - Artifact upload and deployment steps configured
 
 ## Key Features Implemented
@@ -218,7 +218,7 @@ npm run serve  # Test production build locally
    ```bash
    git add .
    git commit -m "Phase 4: Futuristic theme complete"
-   git push origin 001-book-creation
+   git push origin hackathon1-Q4
    ```
 
 2. **Enable GitHub Pages**:

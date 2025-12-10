@@ -69,18 +69,20 @@ Final validation, deployment, documentation
 
 **Goal**: Define entities, schemas, and API contracts before implementation
 
-- [ ] T013 Create specs/002-rag-chatbot/research.md confirming stack decisions (OpenAI embeddings, Qdrant, Neon Postgres, GPT-4o)
-- [ ] T014 Create specs/002-rag-chatbot/data-model.md with entity definitions: TextChunk, Query, Response, ChatSession
-- [ ] T015 [P] Create specs/002-rag-chatbot/contracts/embed-contract.md with POST /api/embed endpoint schema
-- [ ] T016 [P] Create specs/002-rag-chatbot/contracts/query-contract.md with POST /api/query endpoint schema
-- [ ] T017 [P] Create specs/002-rag-chatbot/contracts/chat-contract.md with POST /api/chatbot/query streaming endpoint schema
-- [ ] T018 [P] Create specs/002-rag-chatbot/contracts/selected-text-contract.md with POST /api/selected-text endpoint schema
-- [ ] T019 Create specs/002-rag-chatbot/quickstart.md with developer setup guide (venv, pip install, .env config, running tests)
-- [ ] T020 Create backend/src/models/rag.py with Pydantic schemas: EmbedRequest, EmbedResponse, QueryRequest, QueryResponse, ChatRequest, ChatResponse
+- [x] T013 Create specs/002-rag-chatbot/research.md confirming stack decisions (OpenAI embeddings, Qdrant, Neon Postgres, GPT-4o)
+- [x] T014 Create specs/002-rag-chatbot/data-model.md with entity definitions: TextChunk, Query, Response, ChatSession
+- [x] T015 [P] Create specs/002-rag-chatbot/contracts/embed-contract.md with POST /api/embed endpoint schema
+- [x] T016 [P] Create specs/002-rag-chatbot/contracts/query-contract.md with POST /api/query endpoint schema
+- [x] T017 [P] Create specs/002-rag-chatbot/contracts/chat-contract.md with POST /api/chatbot/query streaming endpoint schema
+- [x] T018 [P] Create specs/002-rag-chatbot/contracts/selected-text-contract.md with POST /api/selected-text endpoint schema
+- [x] T019 Create specs/002-rag-chatbot/quickstart.md with developer setup guide (venv, pip install, .env config, running tests)
+- [x] T020 Create backend/src/models/rag.py with Pydantic schemas: EmbedRequest, EmbedResponse, QueryRequest, QueryResponse, ChatRequest, ChatResponse
 
 **Acceptance**: All spec artifacts created, API contracts documented, Pydantic schemas defined
 
 **Parallel Execution**: T015-T018 (API contract files are independent)
+
+**Status**: ✅ COMPLETE
 
 ---
 

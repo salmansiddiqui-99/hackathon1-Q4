@@ -22,7 +22,7 @@ def setup_qdrant_collection() -> None:
         # Check if collection exists
         try:
             collection_info = client.get_collection(settings.QDRANT_COLLECTION)
-            print(f"✓ Collection '{settings.QDRANT_COLLECTION}' already exists")
+            print(f"[OK] Collection '{settings.QDRANT_COLLECTION}' already exists")
             return
         except Exception:
             pass
@@ -34,19 +34,18 @@ def setup_qdrant_collection() -> None:
                 size=settings.QDRANT_VECTOR_SIZE,
                 distance=models.Distance.COSINE,
             ),
-            payload_schema_mode=models.PayloadSchemaMode.AUTO,
         )
 
-        print(f"✓ Created Qdrant collection '{settings.QDRANT_COLLECTION}'")
+        print(f"[OK] Created Qdrant collection '{settings.QDRANT_COLLECTION}'")
         print(f"  - Vector size: {settings.QDRANT_VECTOR_SIZE}")
         print(f"  - Distance metric: {settings.QDRANT_DISTANCE_METRIC}")
 
         # Verify collection was created
         collection_info = client.get_collection(settings.QDRANT_COLLECTION)
-        print(f"✓ Collection verified: {collection_info.points_count} points")
+        print(f"[OK] Collection verified: {collection_info.points_count} points")
 
     except Exception as e:
-        print(f"✗ Error setting up Qdrant collection: {e}")
+        print(f"[ERROR] Error setting up Qdrant collection: {e}")
         raise
 
 
@@ -54,7 +53,7 @@ if __name__ == "__main__":
     try:
         print("Setting up Qdrant collection...")
         setup_qdrant_collection()
-        print("\n✓ Qdrant setup complete!")
+        print("\n[OK] Qdrant setup complete!")
     except Exception as e:
-        print(f"\n✗ Setup failed: {e}")
+        print(f"\n[ERROR] Setup failed: {e}")
         sys.exit(1)

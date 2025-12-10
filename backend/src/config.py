@@ -60,8 +60,11 @@ class Settings(BaseSettings):
 
     # RAG configuration
     RAG_TOP_K: int = 5
+    RAG_TOP_K_CHUNKS: Optional[int] = None  # Alternative name
     RAG_SIMILARITY_THRESHOLD: float = 0.75
     RAG_CONTEXT_MAX_TOKENS: int = 3000
+    RAG_MAX_RESPONSE_TOKENS: Optional[int] = None
+    RAG_RESPONSE_TOKENS: Optional[int] = None
 
     # Chapter generation configuration
     CHAPTER_MIN_LENGTH: int = 1000
@@ -81,6 +84,28 @@ class Settings(BaseSettings):
     # Feature flags
     FEATURE_RAG_ENABLED: bool = True
     FEATURE_CHAPTER_GENERATION_ENABLED: bool = True
+    FEATURE_TEXT_SELECTION_MODE: Optional[bool] = None
+    FEATURE_PERFORMANCE_LOGGING: Optional[bool] = None
+    FEATURE_HALLUCINATION_DETECTION: Optional[bool] = None
+    FEATURE_STREAMING_RESPONSES: Optional[bool] = None
+
+    # Additional LLM models
+    GEMINI_API_KEY: Optional[str] = None
+    GEMINI_MODEL: Optional[str] = None
+    COHERE_API_KEY: Optional[str] = None
+
+    # Chat configuration
+    CHAT_LOG_RETENTION_DAYS: Optional[int] = None
+    CHAT_MAX_MESSAGES_PER_SESSION: Optional[int] = None
+
+    # Rate limiting
+    RATE_LIMIT_REQUESTS_PER_MINUTE: Optional[int] = None
+
+    # Collections
+    QDRANT_COLLECTION_NAME: Optional[str] = None
+
+    # API Debug
+    API_DEBUG: Optional[bool] = None
 
     # Performance limits
     REQUEST_TIMEOUT: int = 30
@@ -90,6 +115,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = str(env_file) if env_file.exists() else None
         case_sensitive = True
+        extra = "ignore"  # Ignore extra fields from .env
 
     def get_cors_origins(self) -> list:
         """Parse CORS origins from comma-separated string"""

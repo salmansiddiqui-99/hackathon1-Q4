@@ -1,0 +1,497 @@
+{
+  "entrypoints": [
+    "main"
+  ],
+  "origins": {
+    "774": [
+      774
+    ],
+    "17896441": [
+      869,
+      401
+    ],
+    "71585238": [
+      540
+    ],
+    "main": [
+      354,
+      869,
+      792
+    ],
+    "runtime~main": [
+      792,
+      869,
+      354
+    ],
+    "0abc89c2": [
+      453
+    ],
+    "0c036ed8": [
+      88
+    ],
+    "0e384e19": [
+      976
+    ],
+    "118dde73": [
+      910
+    ],
+    "1be78505": [
+      869,
+      774
+    ],
+    "210aef97": [
+      76
+    ],
+    "32bae843": [
+      151
+    ],
+    "373cdc21": [
+      175
+    ],
+    "382af739": [
+      700
+    ],
+    "44c1e677": [
+      500
+    ],
+    "48b36d6c": [
+      981
+    ],
+    "5d974474": [
+      57
+    ],
+    "678c53c9": [
+      445
+    ],
+    "8e1e8738": [
+      650
+    ],
+    "8ea278af": [
+      959
+    ],
+    "935f2afb": [
+      581
+    ],
+    "937a4796": [
+      761
+    ],
+    "9488e969": [
+      653
+    ],
+    "97d7b8a1": [
+      416
+    ],
+    "98cc90c7": [
+      759
+    ],
+    "9dd8a0d2": [
+      869,
+      617
+    ],
+    "a5888163": [
+      473
+    ],
+    "b1f21454": [
+      728
+    ],
+    "b2754de6": [
+      530
+    ],
+    "b623b035": [
+      744
+    ],
+    "c25a8be8": [
+      667
+    ],
+    "c377a04b": [
+      742
+    ],
+    "c5c934fe": [
+      621
+    ],
+    "c6ebbcaa": [
+      242
+    ],
+    "ce6df026": [
+      823
+    ],
+    "db4d6f7d": [
+      624
+    ],
+    "e8ee774b": [
+      450
+    ],
+    "ebdf6648": [
+      272
+    ],
+    "f4cfcb23": [
+      159
+    ],
+    "styles": [
+      354,
+      401,
+      617,
+      714,
+      792,
+      869
+    ]
+  },
+  "assets": {
+    "57": {
+      "js": [
+        {
+          "file": "assets/js/5d974474.0254fe6e.js",
+          "hash": "368479b6a773bb30",
+          "publicPath": "/hackathon1-Q4/assets/js/5d974474.0254fe6e.js"
+        }
+      ]
+    },
+    "76": {
+      "js": [
+        {
+          "file": "assets/js/210aef97.32d5a01f.js",
+          "hash": "5cff3fa17d153fec",
+          "publicPath": "/hackathon1-Q4/assets/js/210aef97.32d5a01f.js"
+        }
+      ]
+    },
+    "88": {
+      "js": [
+        {
+          "file": "assets/js/0c036ed8.62e05857.js",
+          "hash": "427e23559252724a",
+          "publicPath": "/hackathon1-Q4/assets/js/0c036ed8.62e05857.js"
+        }
+      ]
+    },
+    "151": {
+      "js": [
+        {
+          "file": "assets/js/32bae843.f6c5ae6d.js",
+          "hash": "6a389c5aa21daad2",
+          "publicPath": "/hackathon1-Q4/assets/js/32bae843.f6c5ae6d.js"
+        }
+      ]
+    },
+    "159": {
+      "js": [
+        {
+          "file": "assets/js/f4cfcb23.f296b190.js",
+          "hash": "c3015c0d62d196c6",
+          "publicPath": "/hackathon1-Q4/assets/js/f4cfcb23.f296b190.js"
+        }
+      ]
+    },
+    "175": {
+      "js": [
+        {
+          "file": "assets/js/373cdc21.0e3140d7.js",
+          "hash": "0ea643476a327164",
+          "publicPath": "/hackathon1-Q4/assets/js/373cdc21.0e3140d7.js"
+        }
+      ]
+    },
+    "242": {
+      "js": [
+        {
+          "file": "assets/js/c6ebbcaa.d664fa1d.js",
+          "hash": "a669aa0e78714dd8",
+          "publicPath": "/hackathon1-Q4/assets/js/c6ebbcaa.d664fa1d.js"
+        }
+      ]
+    },
+    "272": {
+      "js": [
+        {
+          "file": "assets/js/ebdf6648.dfbcb789.js",
+          "hash": "03fefe743d320425",
+          "publicPath": "/hackathon1-Q4/assets/js/ebdf6648.dfbcb789.js"
+        }
+      ]
+    },
+    "354": {
+      "js": [
+        {
+          "file": "assets/js/runtime~main.1179ae76.js",
+          "hash": "8ed06fdfe38cbac5",
+          "publicPath": "/hackathon1-Q4/assets/js/runtime~main.1179ae76.js"
+        }
+      ]
+    },
+    "401": {
+      "js": [
+        {
+          "file": "assets/js/17896441.afbcff1f.js",
+          "hash": "068bfb5edf4a5053",
+          "publicPath": "/hackathon1-Q4/assets/js/17896441.afbcff1f.js"
+        }
+      ]
+    },
+    "416": {
+      "js": [
+        {
+          "file": "assets/js/97d7b8a1.46a8812d.js",
+          "hash": "551ff0d78e95e416",
+          "publicPath": "/hackathon1-Q4/assets/js/97d7b8a1.46a8812d.js"
+        }
+      ]
+    },
+    "445": {
+      "js": [
+        {
+          "file": "assets/js/678c53c9.a816f5d8.js",
+          "hash": "3b065382399c2d1a",
+          "publicPath": "/hackathon1-Q4/assets/js/678c53c9.a816f5d8.js"
+        }
+      ]
+    },
+    "450": {
+      "js": [
+        {
+          "file": "assets/js/e8ee774b.b8e30307.js",
+          "hash": "74be79e32a76d139",
+          "publicPath": "/hackathon1-Q4/assets/js/e8ee774b.b8e30307.js"
+        }
+      ]
+    },
+    "453": {
+      "js": [
+        {
+          "file": "assets/js/0abc89c2.c4893b15.js",
+          "hash": "887aac330fe543dd",
+          "publicPath": "/hackathon1-Q4/assets/js/0abc89c2.c4893b15.js"
+        }
+      ]
+    },
+    "473": {
+      "js": [
+        {
+          "file": "assets/js/a5888163.d44ec88d.js",
+          "hash": "fc95364e0f0521f6",
+          "publicPath": "/hackathon1-Q4/assets/js/a5888163.d44ec88d.js"
+        }
+      ]
+    },
+    "500": {
+      "js": [
+        {
+          "file": "assets/js/44c1e677.355dd9e7.js",
+          "hash": "e6846a1674ba4dbf",
+          "publicPath": "/hackathon1-Q4/assets/js/44c1e677.355dd9e7.js"
+        }
+      ]
+    },
+    "530": {
+      "js": [
+        {
+          "file": "assets/js/b2754de6.0e2408f9.js",
+          "hash": "8ab0f4acb3749455",
+          "publicPath": "/hackathon1-Q4/assets/js/b2754de6.0e2408f9.js"
+        }
+      ]
+    },
+    "540": {
+      "js": [
+        {
+          "file": "assets/js/71585238.366e4df9.js",
+          "hash": "14affe06d1f57738",
+          "publicPath": "/hackathon1-Q4/assets/js/71585238.366e4df9.js"
+        }
+      ]
+    },
+    "581": {
+      "js": [
+        {
+          "file": "assets/js/935f2afb.83a57f16.js",
+          "hash": "70016b9938768f24",
+          "publicPath": "/hackathon1-Q4/assets/js/935f2afb.83a57f16.js"
+        }
+      ]
+    },
+    "617": {
+      "js": [
+        {
+          "file": "assets/js/9dd8a0d2.a7752a27.js",
+          "hash": "8447e34a1bd8a170",
+          "publicPath": "/hackathon1-Q4/assets/js/9dd8a0d2.a7752a27.js"
+        }
+      ]
+    },
+    "621": {
+      "js": [
+        {
+          "file": "assets/js/c5c934fe.406bf922.js",
+          "hash": "ae6ab6fd38955b79",
+          "publicPath": "/hackathon1-Q4/assets/js/c5c934fe.406bf922.js"
+        }
+      ]
+    },
+    "624": {
+      "js": [
+        {
+          "file": "assets/js/db4d6f7d.d921e083.js",
+          "hash": "3a3666b76a1b2eeb",
+          "publicPath": "/hackathon1-Q4/assets/js/db4d6f7d.d921e083.js"
+        }
+      ]
+    },
+    "650": {
+      "js": [
+        {
+          "file": "assets/js/8e1e8738.b70ad532.js",
+          "hash": "c3791a2ba090e7af",
+          "publicPath": "/hackathon1-Q4/assets/js/8e1e8738.b70ad532.js"
+        }
+      ]
+    },
+    "653": {
+      "js": [
+        {
+          "file": "assets/js/9488e969.8ffa10bf.js",
+          "hash": "8b8e450155f19422",
+          "publicPath": "/hackathon1-Q4/assets/js/9488e969.8ffa10bf.js"
+        }
+      ]
+    },
+    "667": {
+      "js": [
+        {
+          "file": "assets/js/c25a8be8.ff87067b.js",
+          "hash": "3a8522649774e710",
+          "publicPath": "/hackathon1-Q4/assets/js/c25a8be8.ff87067b.js"
+        }
+      ]
+    },
+    "700": {
+      "js": [
+        {
+          "file": "assets/js/382af739.705aa25e.js",
+          "hash": "f12138e46331c341",
+          "publicPath": "/hackathon1-Q4/assets/js/382af739.705aa25e.js"
+        }
+      ]
+    },
+    "728": {
+      "js": [
+        {
+          "file": "assets/js/b1f21454.6e3a0e60.js",
+          "hash": "d65e3436545051f2",
+          "publicPath": "/hackathon1-Q4/assets/js/b1f21454.6e3a0e60.js"
+        }
+      ]
+    },
+    "742": {
+      "js": [
+        {
+          "file": "assets/js/c377a04b.ea247e14.js",
+          "hash": "a891d0115b76efb9",
+          "publicPath": "/hackathon1-Q4/assets/js/c377a04b.ea247e14.js"
+        }
+      ]
+    },
+    "744": {
+      "js": [
+        {
+          "file": "assets/js/b623b035.42f488ed.js",
+          "hash": "7dc6d74e5ad18158",
+          "publicPath": "/hackathon1-Q4/assets/js/b623b035.42f488ed.js"
+        }
+      ]
+    },
+    "759": {
+      "js": [
+        {
+          "file": "assets/js/98cc90c7.ff8bed33.js",
+          "hash": "602d027ecff1a6cb",
+          "publicPath": "/hackathon1-Q4/assets/js/98cc90c7.ff8bed33.js"
+        }
+      ]
+    },
+    "761": {
+      "js": [
+        {
+          "file": "assets/js/937a4796.6f8b17c9.js",
+          "hash": "e1bc8a757c3d7080",
+          "publicPath": "/hackathon1-Q4/assets/js/937a4796.6f8b17c9.js"
+        }
+      ]
+    },
+    "774": {
+      "js": [
+        {
+          "file": "assets/js/774.3edfe3f2.js",
+          "hash": "8c8f26c86db338a2",
+          "publicPath": "/hackathon1-Q4/assets/js/774.3edfe3f2.js"
+        },
+        {
+          "file": "assets/js/1be78505.07fbf921.js",
+          "hash": "88cd2453b3794e25",
+          "publicPath": "/hackathon1-Q4/assets/js/1be78505.07fbf921.js"
+        }
+      ]
+    },
+    "792": {
+      "js": [
+        {
+          "file": "assets/js/main.7a07ad49.js",
+          "hash": "1203b1bdefc116e8",
+          "publicPath": "/hackathon1-Q4/assets/js/main.7a07ad49.js"
+        }
+      ]
+    },
+    "823": {
+      "js": [
+        {
+          "file": "assets/js/ce6df026.318e3b4a.js",
+          "hash": "3bbfb435982cca92",
+          "publicPath": "/hackathon1-Q4/assets/js/ce6df026.318e3b4a.js"
+        }
+      ]
+    },
+    "869": {
+      "css": [
+        {
+          "file": "assets/css/styles.b9be224a.css",
+          "hash": "5cfd9dd65c239b62",
+          "publicPath": "/hackathon1-Q4/assets/css/styles.b9be224a.css"
+        }
+      ]
+    },
+    "910": {
+      "js": [
+        {
+          "file": "assets/js/118dde73.89fa528d.js",
+          "hash": "17917973f3a4b05d",
+          "publicPath": "/hackathon1-Q4/assets/js/118dde73.89fa528d.js"
+        }
+      ]
+    },
+    "959": {
+      "js": [
+        {
+          "file": "assets/js/8ea278af.b021cc3c.js",
+          "hash": "f54501fc8ced4894",
+          "publicPath": "/hackathon1-Q4/assets/js/8ea278af.b021cc3c.js"
+        }
+      ]
+    },
+    "976": {
+      "js": [
+        {
+          "file": "assets/js/0e384e19.4364dde4.js",
+          "hash": "cdcbf6fc7b1bf6db",
+          "publicPath": "/hackathon1-Q4/assets/js/0e384e19.4364dde4.js"
+        }
+      ]
+    },
+    "981": {
+      "js": [
+        {
+          "file": "assets/js/48b36d6c.bc228d3b.js",
+          "hash": "f832d6603da119ff",
+          "publicPath": "/hackathon1-Q4/assets/js/48b36d6c.bc228d3b.js"
+        }
+      ]
+    }
+  }
+}

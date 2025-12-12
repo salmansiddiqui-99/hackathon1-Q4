@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Optional
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
 
 
 # Load environment variables
@@ -112,10 +113,11 @@ class Settings(BaseSettings):
     BATCH_SIZE: int = 100
     MAX_RETRIES: int = 3
 
-    class Config:
-        env_file = str(env_file) if env_file.exists() else None
-        case_sensitive = True
-        extra = "ignore"  # Ignore extra fields from .env
+    model_config = ConfigDict(
+        env_file=str(env_file) if env_file.exists() else None,
+        case_sensitive=True,
+        extra="ignore"  # Ignore extra fields from .env
+    )
 
     def get_cors_origins(self) -> list:
         """Parse CORS origins from comma-separated string"""

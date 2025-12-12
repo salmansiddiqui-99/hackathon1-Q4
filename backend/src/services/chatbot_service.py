@@ -50,13 +50,18 @@ class ChatbotService:
             yield "I cannot answer this based on the available content."
             return
 
-        # Build the prompt
+        # T055: Build strict system prompt to prevent hallucination
         system_prompt = (
-            "You are a helpful AI assistant for a Physical AI & Humanoid Robotics textbook. "
-            "Your role is to answer student questions using ONLY the provided context. "
-            "Do not use your general knowledge or training data. "
-            "If the context does not contain sufficient information to answer the question, "
-            "respond with: 'I cannot answer this based on the available content.'"
+            "You are an assistant for a Physical AI & Humanoid Robotics textbook. "
+            "CRITICAL CONSTRAINT: Answer ONLY using the provided textbook context. "
+            "Do NOT use general knowledge, external sources, or training data. "
+            "\n"
+            "Rules:\n"
+            "1. Base all answers exclusively on the context provided.\n"
+            "2. If context doesn't contain the answer, respond: 'I cannot answer this based on the available content.'\n"
+            "3. Never assume or infer beyond what is explicitly stated in the context.\n"
+            "4. If uncertain, say you cannot answer from available content.\n"
+            "5. Cite section titles when relevant.\n"
         )
 
         user_message = f"""Context from the textbook:
@@ -207,3 +212,122 @@ If the context doesn't contain relevant information, say you cannot answer based
             return False, f"Retrieved context too small ({total_tokens} tokens)"
 
         return True, "Context sufficient"
+
+    def filter_low_confidence_responses(
+        self,
+        response_text: str,
+        chunks: List[RetrievedChunkData],
+        confidence_threshold: float = 0.5
+    ) -> tuple[str, bool]:
+        """
+        T056: Filter responses that appear to lack grounding in context.
+
+        Checks if response contains key concepts from retrieved context.
+        If confidence is low, returns fallback message.
+
+        Args:
+            response_text: Generated response
+            chunks: Chunks used for context
+            confidence_threshold: Confidence threshold (0-1)
+
+        Returns:
+            Tuple of (final_response, is_confident)
+        """
+        if not chunks or not response_text:
+            return "I cannot answer this based on the available content.", False
+
+        # Extract important terms from context (nouns, technical terms)
+        context_terms = set()
+        for chunk in chunks:
+            # Get significant words (length > 5 chars, lowercase)
+            words = chunk.text.lower().split()
+            for word in words:
+                cleaned = word.strip(".,;:!?()")
+                if len(cleaned) > 5:
+                    context_terms.add(cleaned)
+
+        # Check response alignment with context
+        response_lower = response_text.lower()
+        matching_terms = sum(1 for term in context_terms if term in response_lower)
+
+        # T056: Calculate confidence score
+        if context_terms:
+            confidence = matching_terms / len(context_terms)
+        else:
+            confidence = 0.0
+
+        logger.debug(
+            f"Response confidence: {confidence:.2f} "
+            f"({matching_terms}/{len(context_terms)} terms matched)"
+        )
+
+        # T058: Return fallback if confidence too low
+        if confidence < confidence_threshold:
+            logger.warning(f"Low confidence response (score: {confidence:.2f})")
+            return "I cannot answer this based on the available content.", False
+
+        return response_text, True
+
+    def verify_grounding_in_context(
+        self,
+        response_text: str,
+        chunks: List[RetrievedChunkData]
+    ) -> dict:
+        """
+        T057: Verify response is grounded in provided context.
+
+        Uses multiple heuristics to detect hallucinations:
+        1. Keyword overlap with context
+        2. Absence of common hallucination markers
+        3. Response length consistency
+
+        Args:
+            response_text: Generated response
+            chunks: Chunks used for context
+
+        Returns:
+            Dictionary with verification results
+        """
+        if not chunks or not response_text:
+            return {"verified": False, "reason": "No context or response"}
+
+        # Check 1: Keyword overlap
+        context_keywords = set()
+        for chunk in chunks:
+            words = chunk.text.lower().split()
+            for word in words[:30]:  # Sample first 30 words per chunk
+                if len(word.strip(".,;:!?()")) > 4:
+                    context_keywords.add(word.strip(".,;:!?()"))
+
+        response_lower = response_text.lower()
+        keyword_matches = sum(1 for kw in context_keywords if kw in response_lower)
+        keyword_score = keyword_matches / len(context_keywords) if context_keywords else 0
+
+        # Check 2: Hallucination markers
+        hallucination_phrases = [
+            "i don't have information",
+            "i'm not sure",
+            "my knowledge cutoff",
+            "according to my training",
+            "in my experience",
+        ]
+        has_hallucination_marker = any(phrase in response_lower for phrase in hallucination_phrases)
+
+        # Check 3: Response is not just "I cannot answer"
+        is_refusal = "cannot answer" in response_lower and len(response_text) < 100
+
+        verified = keyword_score > 0.3 and not has_hallucination_marker and not is_refusal
+
+        logger.info(
+            f"Grounding verification: "
+            f"keyword_score={keyword_score:.2f}, "
+            f"has_marker={has_hallucination_marker}, "
+            f"verified={verified}"
+        )
+
+        return {
+            "verified": verified,
+            "keyword_score": keyword_score,
+            "has_hallucination_marker": has_hallucination_marker,
+            "is_refusal": is_refusal
+        }

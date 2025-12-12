@@ -136,34 +136,47 @@ async def query_chatbot(
                         "data": token
                     }) + "\n"
 
-                # Verify response grounding (in background)
-                verification = verifier.verify_context_only(
+                # T057: Verify response grounding in context
+                grounding_verification = chatbot_service.verify_grounding_in_context(
                     response_text=full_response,
                     chunks=retrieved_chunks
                 )
+
+                # T056: Filter low-confidence responses with fallback
+                final_response, is_confident = chatbot_service.filter_low_confidence_responses(
+                    response_text=full_response,
+                    chunks=retrieved_chunks,
+                    confidence_threshold=0.5
+                )
+
+                # T058: If confidence too low, use fallback response
+                if not is_confident:
+                    logger.warning("Response filtered due to low confidence - using fallback")
+                    final_response = "I cannot answer this based on the available content."
+                    response_status = ResponseStatus.NO_CONTEXT
+                else:
+                    response_status = ResponseStatus.SUCCESS
 
                 # Log query with final response
                 query_id = rag_service.log_rag_query(
                     query_text=request.query_text,
                     retrieval_mode=retrieval_mode,
                     retrieved_chunks=retrieved_chunks,
-                    response_status=ResponseStatus.SUCCESS,
+                    response_status=response_status,
                     chapter_id=request.chapter_id,
                     selected_text=request.selected_text
                 )
 
-                # Send final metadata
+                # Send final metadata with all verification results
                 yield json.dumps({
                     "type": "metadata",
                     "data": {
                         "query_id": str(query_id),
                         "chunks_used": len(retrieved_chunks),
                         "total_tokens": chatbot_service.count_tokens(full_response),
-                        "verification": {
-                            "verified": verification.get("verified", False),
-                            "confidence": verification.get("confidence", "unknown"),
-                            "overall_similarity": verification.get("overall_similarity", 0.0)
-                        }
+                        "grounding_verification": grounding_verification,
+                        "is_confident": is_confident,
+                        "final_response_filtered": not is_confident
                     }
                 }) + "\n"
 

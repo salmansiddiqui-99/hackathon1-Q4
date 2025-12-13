@@ -1,0 +1,16 @@
+= : The term '=' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the 
+spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:2 char:5
++   ` = @'
++     ~
+    + CategoryInfo          : ObjectNotFound: (=:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+C:\Users\haroon traders\Desktop\projects\hackathon1-Q4\.specify\scripts\powershell\create-new-feature.ps1 : Usage: 
+./create-new-feature.ps1 [-Json] [-ShortName <name>] <feature description>
+At line:57 char:3
++   .\.specify\scripts\powershell\create-new-feature.ps1 -Json -ShortNa ...
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,create-new-feature.ps1
+ 

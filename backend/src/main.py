@@ -9,7 +9,7 @@ import logging
 from datetime import datetime
 from src.config import settings
 from src.errors import BaseAPIException
-from src.api import chapters, rag, health
+from src.api import chapters, rag, health, chatbot, selected_text
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -74,6 +74,8 @@ async def root():
 app.include_router(health.router)
 app.include_router(chapters.router)
 app.include_router(rag.router)
+app.include_router(chatbot.router)
+app.include_router(selected_text.router)
 
 # Exception handlers
 @app.exception_handler(BaseAPIException)

@@ -3,6 +3,7 @@ import logging
 from typing import List, Optional
 from uuid import UUID
 from datetime import datetime
+import time
 import numpy as np
 from sqlalchemy.orm import Session
 from qdrant_client import QdrantClient
@@ -29,9 +30,13 @@ class RAGService:
         self.top_k = settings.RAG_TOP_K
         self.similarity_threshold = settings.RAG_SIMILARITY_THRESHOLD
 
+        # T052: Embedding cache to reduce redundant API calls
+        self.embedding_cache = {}  # {text: embedding_vector}
+        self.cache_max_size = settings.EMBEDDING_CACHE_SIZE if hasattr(settings, 'EMBEDDING_CACHE_SIZE') else 1000
+
     def embed_query(self, query_text: str) -> List[float]:
         """
-        Embed a query text using OpenAI embeddings.
+        Embed a query text using OpenAI embeddings with caching (T052).
 
         Args:
             query_text: The query to embed
@@ -43,11 +48,29 @@ class RAGService:
             ValueError: If embedding fails
         """
         try:
+            # T052: Check cache first to reduce API calls
+            cache_key = query_text.strip().lower()
+            if cache_key in self.embedding_cache:
+                logger.debug(f"Cache hit for embedding: {cache_key[:30]}...")
+                return self.embedding_cache[cache_key]
+
+            # Call OpenAI API if not cached
             response = self.openai_client.embeddings.create(
                 input=query_text,
                 model=self.embedding_model
             )
-            return response.data[0].embedding
+            embedding = response.data[0].embedding
+
+            # T052: Store in cache (with simple LRU eviction)
+            if len(self.embedding_cache) >= self.cache_max_size:
+                # Remove oldest entry
+                oldest_key = next(iter(self.embedding_cache))
+                del self.embedding_cache[oldest_key]
+
+            self.embedding_cache[cache_key] = embedding
+            logger.debug(f"Cached embedding: {cache_key[:30]}... (cache size: {len(self.embedding_cache)})")
+
+            return embedding
         except Exception as e:
             logger.error(f"Failed to embed query: {e}")
             raise ValueError(f"Embedding failed: {str(e)}")
@@ -73,6 +96,8 @@ class RAGService:
         Returns:
             List of retrieved chunk data with similarity scores
         """
+        start_time = time.time()  # T054: Performance logging
+
         if top_k is None:
             top_k = self.top_k
 
@@ -82,12 +107,27 @@ class RAGService:
 
         # Handle vector-based retrieval (global or chapter-specific)
         try:
+            # T054: Time embedding operation
+            embed_start = time.time()
             query_embedding = self.embed_query(query_text)
-            return self._search_vectors(
+            embed_time = time.time() - embed_start
+
+            # T051: Perform vector search with relevance threshold filtering
+            chunks = self._search_vectors(
                 query_embedding=query_embedding,
                 chapter_id=chapter_id if retrieval_mode == RetrievalMode.CHAPTER_SPECIFIC else None,
                 top_k=top_k
             )
+
+            # T054: Log performance metrics
+            total_time = time.time() - start_time
+            logger.info(
+                f"Retrieval pipeline completed (mode={retrieval_mode.value}): "
+                f"embed={embed_time*1000:.1f}ms, total={total_time*1000:.1f}ms, "
+                f"chunks_returned={len(chunks)}"
+            )
+
+            return chunks
         except Exception as e:
             logger.error(f"Vector retrieval failed: {e}")
             return []
@@ -159,6 +199,8 @@ class RAGService:
             List of retrieved chunks with similarity scores
         """
         try:
+            search_start = time.time()  # T054: Performance timing
+
             # Build filter for chapter if specified
             query_filter = None
             if chapter_id:
@@ -180,13 +222,34 @@ class RAGService:
                 score_threshold=self.similarity_threshold
             )
 
+            search_time = time.time() - search_start  # T054: Track search duration
+
+            # T053: Collect chunk IDs first, then batch fetch
+            # T051: Apply relevance threshold filtering
+            chunk_ids_to_fetch = []
+            score_map = {}
+
+            for result in search_results:
+                # T051: Skip chunks below similarity threshold
+                if float(result.score) < self.similarity_threshold:
+                    logger.debug(
+                        f"Skipping chunk (similarity {result.score:.3f} < {self.similarity_threshold})"
+                    )
+                    continue
+
+                chunk_id = UUID(result.payload.get("chunk_id"))
+                chunk_ids_to_fetch.append(chunk_id)
+                score_map[chunk_id] = float(result.score)
+
+            # T053: Batch fetch all chunks
+            fetch_start = time.time()
+            chunks_dict = self._batch_fetch_chunks(chunk_ids_to_fetch)
+            fetch_time = time.time() - fetch_start
+
             # Convert results to RetrievedChunkData
             retrieved_chunks = []
-            for rank, result in enumerate(search_results, 1):
-                chunk = self.db.query(ContentChunk).filter(
-                    ContentChunk.id == UUID(result.payload.get("chunk_id"))
-                ).first()
-
+            for rank, chunk_id in enumerate(chunk_ids_to_fetch, 1):
+                chunk = chunks_dict.get(chunk_id)
                 if chunk:
                     retrieved_chunks.append(
                         RetrievedChunkData(
@@ -194,20 +257,41 @@ class RAGService:
                             chapter_id=chunk.chapter_id,
                             section_title=chunk.section_title,
                             text=chunk.text,
-                            similarity_score=float(result.score),
+                            similarity_score=score_map[chunk_id],
                             rank=rank
                         )
                     )
 
-            logger.info(
-                f"Vector search: found {len(retrieved_chunks)} chunks "
-                f"(chapter_filter={chapter_id is not None})"
+            # T054: Log search performance with batch fetch timing
+            logger.debug(
+                f"Vector search: search={search_time*1000:.1f}ms, fetch={fetch_time*1000:.1f}ms, "
+                f"returned {len(retrieved_chunks)}/{len(search_results)} chunks "
+                f"(threshold={self.similarity_threshold}, chapter_filter={chapter_id is not None})"
             )
             return retrieved_chunks
 
         except Exception as e:
             logger.error(f"Vector search failed: {e}")
             return []
+
+    def _batch_fetch_chunks(self, chunk_ids: List[UUID]) -> dict:
+        """
+        T053: Batch fetch multiple chunks from database for efficiency.
+
+        Args:
+            chunk_ids: List of chunk IDs to fetch
+
+        Returns:
+            Dictionary mapping chunk_id to ContentChunk object
+        """
+        if not chunk_ids:
+            return {}
+
+        chunks = self.db.query(ContentChunk).filter(
+            ContentChunk.id.in_(chunk_ids)
+        ).all()
+
+        return {chunk.id: chunk for chunk in chunks}
 
     def log_rag_query(
         self,

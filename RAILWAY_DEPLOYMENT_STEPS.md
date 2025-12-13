@@ -85,7 +85,7 @@ DATABASE_URL=postgresql://...  # Auto-populated by PostgreSQL service
 # External Services
 QDRANT_URL=https://your-cluster.qdrant.io
 QDRANT_API_KEY=your-api-key
-OPENAI_API_KEY=sk-your-openai-key
+GEMINI_API_KEY=your-google-api-key
 NEON_API_KEY=pk-your-neon-key
 ANTHROPIC_API_KEY=sk-ant-your-key
 
@@ -107,10 +107,13 @@ LOG_LEVEL=INFO
    - Select your cluster
    - Copy URL and API key from cluster details
 
-2. **OPENAI_API_KEY**:
-   - Go to https://platform.openai.com/api-keys
-   - Create new API key
+2. **GEMINI_API_KEY**:
+   - Go to https://console.cloud.google.com/
+   - Create new project (or select existing)
+   - Enable **Generative Language API**
+   - Go to **Credentials** → **Create Credentials** → **API Key**
    - Copy and save securely
+   - Set quota limits in Google Cloud Console if needed
 
 3. **NEON_API_KEY**:
    - Go to https://console.neon.tech
@@ -301,7 +304,7 @@ To view request metrics:
 | `DATABASE_URL` | `postgresql://...` | PostgreSQL service (auto) |
 | `QDRANT_URL` | `https://xxx.qdrant.io` | Qdrant Cloud dashboard |
 | `QDRANT_API_KEY` | `ey...` | Qdrant Cloud dashboard |
-| `OPENAI_API_KEY` | `sk-...` | OpenAI API keys page |
+| `GEMINI_API_KEY` | `AIza...` | Google Cloud Console |
 
 ### Optional
 

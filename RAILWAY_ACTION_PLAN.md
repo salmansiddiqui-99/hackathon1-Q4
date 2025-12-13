@@ -36,14 +36,15 @@ Before starting deployment, you need:
   4. Copy **Cluster URL** and **API Key**
   5. Save both for Railway configuration
 
-### 3. OpenAI API Key
-- **Website**: https://platform.openai.com/api-keys
+### 3. Google Gemini API Key
+- **Website**: https://console.cloud.google.com/
 - **Get API Key**:
-  1. Login to OpenAI
-  2. Go to API Keys
-  3. Click "Create new secret key"
-  4. Copy and save (you won't see it again)
-  5. Recommended: Set usage limits
+  1. Go to https://console.cloud.google.com/
+  2. Create a new project (or select existing)
+  3. Enable **Generative Language API**
+  4. Go to **Credentials** → **Create Credentials** → **API Key**
+  5. Copy and save the API key
+  6. Recommended: Set API quota limits in Google Cloud Console
 
 ### 4. Neon Postgres (Database)
 - **Website**: https://console.neon.tech
@@ -116,7 +117,7 @@ git push origin 002-rag-chatbot  # Push to GitHub
    ```
    QDRANT_URL=https://[your-cluster].qdrant.io
    QDRANT_API_KEY=[your-api-key]
-   OPENAI_API_KEY=sk-[your-key]
+   GEMINI_API_KEY=[your-google-api-key]
    NEON_API_KEY=pk-[your-key]  (optional)
    ANTHROPIC_API_KEY=sk-ant-[your-key]  (optional)
 
@@ -250,7 +251,7 @@ git push origin 002-rag-chatbot  # Push to GitHub
 1. Check Railway logs for errors
 2. Monitor CPU/memory usage
 3. Test health endpoint: `GET /health`
-4. Check OpenAI API usage/cost
+4. Check Google Gemini API usage/quota
 
 ### Weekly Checks
 1. Review logs for patterns
@@ -304,7 +305,7 @@ git push origin 002-rag-chatbot  # Push to GitHub
 - [ ] Railway account created
 - [ ] GitHub repository pushed to `002-rag-chatbot` branch
 - [ ] Qdrant Cloud cluster created with API key
-- [ ] OpenAI API key obtained
+- [ ] Google Gemini API key obtained
 - [ ] Environment variables documented
 
 ### Phase 1 (GitHub)

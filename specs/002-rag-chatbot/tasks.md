@@ -201,8 +201,8 @@ Final validation, deployment, documentation
 - [x] T060 Create backend/tests/test_chatbot_service.py with unit tests for generate_response(), stream_response()
 - [x] T061 Create backend/tests/test_integration.py with end-to-end test (query → retrieval → LLM → streaming)
 - [x] T062 Run performance benchmark (50 concurrent users) using locust or pytest-benchmark, verify <4s latency
-- [ ] T063 Deploy backend to Render/Railway with environment variables configured (QDRANT_URL, OPENAI_API_KEY, NEON_DATABASE_URL)
-- [ ] T064 Update textbook/docusaurus.config.js with production backend URL and deploy to GitHub Pages
+- [x] T063 Deploy backend to Render/Railway with environment variables configured (QDRANT_URL, OPENAI_API_KEY, NEON_DATABASE_URL)
+- [x] T064 Update textbook/docusaurus.config.js with production backend URL and deploy to GitHub Pages
 
 **Acceptance**: All tests pass, performance benchmarks meet targets, production deployment complete
 

@@ -21,7 +21,7 @@
   // This should be set during the build process or as a Railway environment variable
   else if (window.location.hostname === 'salmansiddiqui-99.github.io') {
     // Try to get from environment (injected during deployment)
-    apiUrl = window.RAILWAY_BACKEND_URL || 'https://your-railway-backend.up.railway.app/api';
+    apiUrl = window.RAILWAY_BACKEND_URL || 'https://hackathon1-q4-production.up.railway.app/api';
     console.log('[API Config] Production mode - using Railway API:', apiUrl);
   }
   // 4. Default fallback

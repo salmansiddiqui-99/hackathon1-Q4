@@ -20,8 +20,8 @@ class EmbeddingService:
     """Manages OpenAI embeddings and Qdrant vector storage."""
 
     def __init__(self):
-        self.openai_client = OpenAI(api_key=settings.OPENAI_API_KEY)
-        self.openai_async = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+        self._openai_client = None
+        self._openai_async = None
         self.qdrant_client = QdrantClient(
             url=settings.QDRANT_URL,
             api_key=settings.QDRANT_API_KEY,
@@ -29,6 +29,30 @@ class EmbeddingService:
         self.embedding_model = "text-embedding-3-small"
         self.embedding_dims = 384
         self.collection_name = "chapters"
+
+    @property
+    def openai_client(self):
+        """Lazily initialize OpenAI client on first access."""
+        if self._openai_client is None:
+            if not settings.OPENAI_API_KEY:
+                raise ValueError(
+                    "OPENAI_API_KEY not configured. "
+                    "Please set OPENAI_API_KEY environment variable or .env file."
+                )
+            self._openai_client = OpenAI(api_key=settings.OPENAI_API_KEY)
+        return self._openai_client
+
+    @property
+    def openai_async(self):
+        """Lazily initialize async OpenAI client on first access."""
+        if self._openai_async is None:
+            if not settings.OPENAI_API_KEY:
+                raise ValueError(
+                    "OPENAI_API_KEY not configured. "
+                    "Please set OPENAI_API_KEY environment variable or .env file."
+                )
+            self._openai_async = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+        return self._openai_async
 
     def create_or_update_collection(self) -> bool:
         """

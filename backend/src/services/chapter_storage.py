@@ -20,21 +20,37 @@ class ChapterStorageService:
         Args:
             repo_root: Root path of the git repository (defaults to project root)
         """
-        if repo_root is None:
-            # Find git root
-            result = subprocess.run(
-                ["git", "rev-parse", "--show-toplevel"],
-                capture_output=True,
-                text=True,
-                cwd=Path.cwd(),
-            )
-            if result.returncode == 0:
-                repo_root = Path(result.stdout.strip())
-            else:
-                repo_root = Path.cwd()
+        self._repo_root = repo_root
+        self._docs_root = None
 
-        self.repo_root = repo_root
-        self.docs_root = repo_root / "textbook" / "docs"
+    @property
+    def repo_root(self) -> Path:
+        """Lazily resolve repo root on first access."""
+        if self._repo_root is None:
+            # Try to find git root, but don't fail if git isn't available (e.g., Railway)
+            try:
+                result = subprocess.run(
+                    ["git", "rev-parse", "--show-toplevel"],
+                    capture_output=True,
+                    text=True,
+                    cwd=Path.cwd(),
+                    timeout=5,
+                )
+                if result.returncode == 0:
+                    self._repo_root = Path(result.stdout.strip())
+                else:
+                    self._repo_root = Path.cwd()
+            except (FileNotFoundError, subprocess.TimeoutExpired):
+                # git not available or timeout - use current directory
+                self._repo_root = Path.cwd()
+        return self._repo_root
+
+    @property
+    def docs_root(self) -> Path:
+        """Lazily resolve docs root on first access."""
+        if self._docs_root is None:
+            self._docs_root = self.repo_root / "textbook" / "docs"
+        return self._docs_root
 
     def save_chapter_markdown(
         self,

@@ -14,10 +14,22 @@ class ChatbotService:
 
     def __init__(self):
         """Initialize chatbot service with OpenAI client"""
-        self.openai_client = openai.Client(api_key=settings.OPENAI_API_KEY)
+        self._openai_client = None
         self.model = settings.OPENAI_MODEL
         self.max_tokens = settings.OPENAI_MAX_TOKENS
         self.temperature = settings.OPENAI_TEMPERATURE
+
+    @property
+    def openai_client(self):
+        """Lazily initialize OpenAI client on first access."""
+        if self._openai_client is None:
+            if not settings.OPENAI_API_KEY:
+                raise ValueError(
+                    "OPENAI_API_KEY not configured. "
+                    "Please set OPENAI_API_KEY environment variable or .env file."
+                )
+            self._openai_client = openai.Client(api_key=settings.OPENAI_API_KEY)
+        return self._openai_client
 
     def generate_response(
         self,

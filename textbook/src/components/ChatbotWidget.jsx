@@ -108,40 +108,60 @@ export default function ChatbotWidget() {
           setError(data.response_text || 'Failed to generate response');
         }
       } else {
-        // Handle streaming response (NDJSON format) for global/chapter-specific modes
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let fullResponse = '';
-        let metadata = null;
+        // Handle response for global/chapter-specific modes
+        // Check if this is an error response (no chunks) or streaming response
+        const contentType = response.headers.get('content-type');
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+        if (contentType && contentType.includes('application/json')) {
+          // Regular JSON response (error case - no chunks)
+          const data = await response.json();
 
-          const text = decoder.decode(value);
-          const lines = text.split('\n').filter((l) => l.trim());
+          if (!data.success) {
+            setError(data.error || 'Failed to get response');
+          } else if (data.data && data.data.response_text) {
+            setResponse(data.data.response_text);
+            if (data.data.retrieved_chunks && data.data.retrieved_chunks.length > 0) {
+              setChunks(data.data.retrieved_chunks);
+            }
+          } else {
+            setError('No response generated');
+          }
+        } else {
+          // Handle streaming response (NDJSON format)
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let fullResponse = '';
+          let metadata = null;
 
-          for (const line of lines) {
-            try {
-              const json = JSON.parse(line);
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-              if (json.type === 'token') {
-                fullResponse += json.data;
-                setResponse(fullResponse);
-              } else if (json.type === 'metadata') {
-                metadata = json.data;
-                setChunks(metadata.chunks_used || []);
-              } else if (json.type === 'error') {
-                setError(json.data);
+            const text = decoder.decode(value);
+            const lines = text.split('\n').filter((l) => l.trim());
+
+            for (const line of lines) {
+              try {
+                const json = JSON.parse(line);
+
+                if (json.type === 'token') {
+                  fullResponse += json.data;
+                  setResponse(fullResponse);
+                } else if (json.type === 'metadata') {
+                  metadata = json.data;
+                  setChunks(metadata.chunks_used || []);
+                } else if (json.type === 'error') {
+                  setError(json.data);
+                }
+              } catch (e) {
+                console.error('Failed to parse response line:', e);
               }
-            } catch (e) {
-              console.error('Failed to parse response line:', e);
             }
           }
-        }
 
-        if (!fullResponse) {
-          setError('No response generated');
+          if (!fullResponse) {
+            setError('No response generated');
+          }
         }
       }
     } catch (err) {

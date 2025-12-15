@@ -1,5 +1,6 @@
 [build]
 # Railway build settings
+rootDirectory = "backend"
 nixpacks.providers = ["python"]
 
 [variables]
@@ -11,7 +12,7 @@ QDRANT_URL = "https://7076ae15-6fe8-4ba4-b563-d93ba005dc18.europe-west3-0.gcp.cl
 QDRANT_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.s0ptzbtPuXBQ0-JcXhixqDPQbPXou0CKuBx8J9XI7JM"
 QDRANT_COLLECTION = "chapter_chunks"
 QDRANT_COLLECTION_NAME = "aibook"
-QDRANT_VECTOR_SIZE = "384"
+QDRANT_VECTOR_SIZE = "1024"
 
 # LLM Configuration (OpenAI)
 # NOTE: Replace sk-... with your actual OpenAI API key
@@ -29,7 +30,7 @@ GEMINI_MODEL = "gemini-2.5-flash"
 CORS_ORIGINS = "https://salmansiddiqui-99.github.io"
 
 # RAG Configuration
-RAG_SIMILARITY_THRESHOLD = "0.75"
+RAG_SIMILARITY_THRESHOLD = "0.5"
 RAG_TOP_K = "5"
 RAG_TOP_K_CHUNKS = "5"
 RAG_MAX_RESPONSE_TOKENS = "1000"

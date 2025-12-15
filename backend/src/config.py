@@ -36,7 +36,7 @@ class Settings(BaseSettings):
     QDRANT_URL: str = "http://localhost:6333"
     QDRANT_API_KEY: Optional[str] = None
     QDRANT_COLLECTION: str = "chapter_chunks"
-    QDRANT_VECTOR_SIZE: int = 384
+    QDRANT_VECTOR_SIZE: int = 1024
     QDRANT_DISTANCE_METRIC: str = "Cosine"
 
     # OpenAI configuration

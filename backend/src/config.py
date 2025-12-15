@@ -134,7 +134,7 @@ class Settings(BaseSettings):
     def validate_required_keys(self) -> None:
         """Validate that all required environment keys are present"""
         required_keys = [
-            "OPENAI_API_KEY",
+            "GEMINI_API_KEY",
             "QDRANT_URL",
             "DATABASE_URL",
         ]

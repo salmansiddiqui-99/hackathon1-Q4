@@ -1,7 +1,7 @@
 """Response verification service for validating RAG response quality and context adherence"""
 import logging
 from typing import List, Dict
-import openai
+import google.generativeai as genai
 import re
 
 from src.config import settings
@@ -14,9 +14,10 @@ class ResponseVerifier:
     """Service for verifying that responses are grounded in provided context"""
 
     def __init__(self):
-        """Initialize verifier with OpenAI client"""
-        self.openai_client = openai.Client(api_key=settings.OPENAI_API_KEY)
-        self.embedding_model = settings.OPENAI_EMBEDDING_MODEL
+        """Initialize verifier with Gemini"""
+        if settings.GEMINI_API_KEY:
+            genai.configure(api_key=settings.GEMINI_API_KEY)
+        self.embedding_model = "embedding-001"  # Gemini's embedding model
 
     def verify_context_only(
         self,

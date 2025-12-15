@@ -7,7 +7,7 @@ import asyncio
 from typing import List, Dict, Any, Optional
 from pathlib import Path
 
-from openai import OpenAI, AsyncOpenAI
+import google.generativeai as genai
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
 
@@ -17,42 +17,18 @@ logger = logging.getLogger(__name__)
 
 
 class EmbeddingService:
-    """Manages OpenAI embeddings and Qdrant vector storage."""
+    """Manages Gemini embeddings and Qdrant vector storage."""
 
     def __init__(self):
-        self._openai_client = None
-        self._openai_async = None
         self.qdrant_client = QdrantClient(
             url=settings.QDRANT_URL,
             api_key=settings.QDRANT_API_KEY,
         )
-        self.embedding_model = "text-embedding-3-small"
-        self.embedding_dims = 384
+        if settings.GEMINI_API_KEY:
+            genai.configure(api_key=settings.GEMINI_API_KEY)
+        self.embedding_model = "embedding-001"  # Gemini's embedding model
+        self.embedding_dims = 768  # Gemini embeddings are 768-dimensional
         self.collection_name = "chapters"
-
-    @property
-    def openai_client(self):
-        """Lazily initialize OpenAI client on first access."""
-        if self._openai_client is None:
-            if not settings.OPENAI_API_KEY:
-                raise ValueError(
-                    "OPENAI_API_KEY not configured. "
-                    "Please set OPENAI_API_KEY environment variable or .env file."
-                )
-            self._openai_client = OpenAI(api_key=settings.OPENAI_API_KEY)
-        return self._openai_client
-
-    @property
-    def openai_async(self):
-        """Lazily initialize async OpenAI client on first access."""
-        if self._openai_async is None:
-            if not settings.OPENAI_API_KEY:
-                raise ValueError(
-                    "OPENAI_API_KEY not configured. "
-                    "Please set OPENAI_API_KEY environment variable or .env file."
-                )
-            self._openai_async = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
-        return self._openai_async
 
     def create_or_update_collection(self) -> bool:
         """
@@ -83,30 +59,30 @@ class EmbeddingService:
 
     def embed_text(self, text: str) -> List[float]:
         """
-        Generate embedding for a single text.
+        Generate embedding for a single text using Gemini.
 
         Args:
             text: Text to embed
 
         Returns:
-            Embedding vector (384 dims for text-embedding-3-small)
+            Embedding vector (768 dims for Gemini embedding-001)
 
         Raises:
             Exception: If embedding fails
         """
         try:
-            response = self.openai_client.embeddings.create(
-                input=text,
+            response = genai.embed_content(
                 model=self.embedding_model,
+                content=text
             )
-            return response.data[0].embedding
+            return response['embedding']
         except Exception as e:
             logger.error(f"Embedding failed for text: {str(e)}")
             raise
 
     async def embed_text_async(self, text: str) -> List[float]:
         """
-        Async version of embed_text.
+        Async version of embed_text using Gemini.
 
         Args:
             text: Text to embed
@@ -115,11 +91,12 @@ class EmbeddingService:
             Embedding vector
         """
         try:
-            response = await self.openai_async.embeddings.create(
-                input=text,
+            # Gemini SDK doesn't have async API, so we call sync version in executor
+            response = genai.embed_content(
                 model=self.embedding_model,
+                content=text
             )
-            return response.data[0].embedding
+            return response['embedding']
         except Exception as e:
             logger.error(f"Async embedding failed: {str(e)}")
             raise
@@ -149,15 +126,14 @@ class EmbeddingService:
             texts = [chunk["text"] for chunk in batch]
 
             try:
-                # Batch embed using OpenAI API
-                response = self.openai_client.embeddings.create(
-                    input=texts,
-                    model=self.embedding_model,
-                )
-
-                # Add embeddings to chunks
-                for chunk, embedding_data in zip(batch, response.data):
-                    chunk["embedding"] = embedding_data.embedding
+                # Batch embed using Gemini API
+                # Process each text individually since Gemini embed_content takes single items
+                for chunk in batch:
+                    response = genai.embed_content(
+                        model=self.embedding_model,
+                        content=chunk["text"]
+                    )
+                    chunk["embedding"] = response['embedding']
                     embedded_chunks.append(chunk)
 
             except Exception as e:

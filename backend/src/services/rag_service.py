@@ -8,7 +8,7 @@ import numpy as np
 from sqlalchemy.orm import Session
 from qdrant_client import QdrantClient
 from qdrant_client.models import Filter, FieldCondition, MatchValue
-import openai
+import google.generativeai as genai
 
 from src.config import settings
 from src.models.database import ContentChunk, RetrievedChunk, RAGQuery
@@ -24,8 +24,9 @@ class RAGService:
         """Initialize RAG service with database and vector store clients"""
         self.db = db_session
         self.qdrant_client = QdrantClient(url=settings.QDRANT_URL, api_key=settings.QDRANT_API_KEY)
-        self.openai_client = openai.Client(api_key=settings.OPENAI_API_KEY)
-        self.embedding_model = settings.OPENAI_EMBEDDING_MODEL
+        if settings.GEMINI_API_KEY:
+            genai.configure(api_key=settings.GEMINI_API_KEY)
+        self.embedding_model = "embedding-001"  # Gemini's embedding model
         self.collection_name = settings.QDRANT_COLLECTION
         self.top_k = settings.RAG_TOP_K
         self.similarity_threshold = settings.RAG_SIMILARITY_THRESHOLD
@@ -36,13 +37,13 @@ class RAGService:
 
     def embed_query(self, query_text: str) -> List[float]:
         """
-        Embed a query text using OpenAI embeddings with caching (T052).
+        Embed a query text using Gemini embeddings with caching (T052).
 
         Args:
             query_text: The query to embed
 
         Returns:
-            Embedding vector (384 dimensions for text-embedding-3-small)
+            Embedding vector (768 dimensions for Gemini embedding-001)
 
         Raises:
             ValueError: If embedding fails
@@ -54,12 +55,12 @@ class RAGService:
                 logger.debug(f"Cache hit for embedding: {cache_key[:30]}...")
                 return self.embedding_cache[cache_key]
 
-            # Call OpenAI API if not cached
-            response = self.openai_client.embeddings.create(
-                input=query_text,
-                model=self.embedding_model
+            # Call Gemini API if not cached
+            response = genai.embed_content(
+                model=self.embedding_model,
+                content=query_text
             )
-            embedding = response.data[0].embedding
+            embedding = response['embedding']
 
             # T052: Store in cache (with simple LRU eviction)
             if len(self.embedding_cache) >= self.cache_max_size:

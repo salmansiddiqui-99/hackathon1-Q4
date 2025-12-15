@@ -6,7 +6,7 @@ import logging
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from qdrant_client import QdrantClient
-import openai
+import google.generativeai as genai
 
 from src.config import settings
 
@@ -100,28 +100,28 @@ async def health_check() -> HealthCheckResponse:
         )
         overall_status = "degraded"
 
-    # 3. OpenAI API check (test with a simple API call)
+    # 3. Gemini API check (test with a simple API call)
     try:
-        if settings.OPENAI_API_KEY:
-            client = openai.Client(api_key=settings.OPENAI_API_KEY)
+        if settings.GEMINI_API_KEY:
+            genai.configure(api_key=settings.GEMINI_API_KEY)
             # Just check if the API key is valid by making a minimal request
             # We won't actually use the model, just verify connectivity
-            services["openai"] = ServiceStatus(
+            services["gemini"] = ServiceStatus(
                 status="operational",
                 last_checked=now
             )
         else:
-            services["openai"] = ServiceStatus(
+            services["gemini"] = ServiceStatus(
                 status="down",
                 last_checked=now,
-                error="OpenAI API key not configured"
+                error="Gemini API key not configured"
             )
             overall_status = "degraded"
     except Exception as e:
-        services["openai"] = ServiceStatus(
+        services["gemini"] = ServiceStatus(
             status="down",
             last_checked=now,
-            error=f"OpenAI API check failed: {str(e)}"
+            error=f"Gemini API check failed: {str(e)}"
         )
         overall_status = "degraded"
 
@@ -153,7 +153,7 @@ async def readiness_check() -> dict:
     try:
         # Check critical configuration
         required_keys = [
-            settings.OPENAI_API_KEY,
+            settings.GEMINI_API_KEY,
             settings.DATABASE_URL,
             settings.QDRANT_URL,
             settings.QDRANT_API_KEY
@@ -164,7 +164,7 @@ async def readiness_check() -> dict:
                 "ready": False,
                 "message": "Not all required configuration keys are set",
                 "missing_keys": [
-                    "OPENAI_API_KEY" if not settings.OPENAI_API_KEY else None,
+                    "GEMINI_API_KEY" if not settings.GEMINI_API_KEY else None,
                     "DATABASE_URL" if not settings.DATABASE_URL else None,
                     "QDRANT_URL" if not settings.QDRANT_URL else None,
                     "QDRANT_API_KEY" if not settings.QDRANT_API_KEY else None,

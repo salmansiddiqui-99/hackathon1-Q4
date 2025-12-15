@@ -1,7 +1,7 @@
-"""Chatbot service for generating RAG-based responses using Claude/OpenAI"""
+"""Chatbot service for generating RAG-based responses using Gemini"""
 import logging
 from typing import List, AsyncGenerator, Iterator
-import openai
+import google.generativeai as genai
 
 from src.config import settings
 from src.models.rag import RetrievedChunkData, ResponseStatus
@@ -13,23 +13,24 @@ class ChatbotService:
     """Service for generating context-aware responses using LLMs"""
 
     def __init__(self):
-        """Initialize chatbot service with OpenAI client"""
-        self._openai_client = None
-        self.model = settings.OPENAI_MODEL
+        """Initialize chatbot service with Gemini client"""
+        self._gemini_client = None
+        self.model = settings.GEMINI_MODEL or "gemini-2.0-flash"
         self.max_tokens = settings.OPENAI_MAX_TOKENS
         self.temperature = settings.OPENAI_TEMPERATURE
 
     @property
-    def openai_client(self):
-        """Lazily initialize OpenAI client on first access."""
-        if self._openai_client is None:
-            if not settings.OPENAI_API_KEY:
+    def gemini_client(self):
+        """Lazily initialize Gemini client on first access."""
+        if self._gemini_client is None:
+            if not settings.GEMINI_API_KEY:
                 raise ValueError(
-                    "OPENAI_API_KEY not configured. "
-                    "Please set OPENAI_API_KEY environment variable or .env file."
+                    "GEMINI_API_KEY not configured. "
+                    "Please set GEMINI_API_KEY environment variable or .env file."
                 )
-            self._openai_client = openai.Client(api_key=settings.OPENAI_API_KEY)
-        return self._openai_client
+            genai.configure(api_key=settings.GEMINI_API_KEY)
+            self._gemini_client = genai.GenerativeModel(self.model)
+        return self._gemini_client
 
     def generate_response(
         self,
@@ -87,38 +88,36 @@ Please answer the student's question using ONLY the provided context above.
 If the context doesn't contain relevant information, say you cannot answer based on available content."""
 
         try:
+            # Combine system prompt and user message for Gemini
+            full_message = f"{system_prompt}\n\n{user_message}"
+
             if stream:
-                # Stream response
-                with self.openai_client.messages.stream(
-                    model=self.model,
-                    max_tokens=self.max_tokens,
-                    temperature=self.temperature,
-                    system=system_prompt,
-                    messages=[
-                        {"role": "user", "content": user_message}
-                    ]
-                ) as stream_response:
-                    for text in stream_response.text_stream:
-                        yield text
+                # Stream response with Gemini
+                response = self.gemini_client.generate_content(
+                    full_message,
+                    stream=True,
+                    generation_config=genai.types.GenerationConfig(
+                        max_output_tokens=self.max_tokens,
+                        temperature=self.temperature,
+                    ),
+                )
+                for chunk in response:
+                    if chunk.text:
+                        yield chunk.text
             else:
                 # Generate full response at once
-                response = self.openai_client.messages.create(
-                    model=self.model,
-                    max_tokens=self.max_tokens,
-                    temperature=self.temperature,
-                    system=system_prompt,
-                    messages=[
-                        {"role": "user", "content": user_message}
-                    ]
+                response = self.gemini_client.generate_content(
+                    full_message,
+                    generation_config=genai.types.GenerationConfig(
+                        max_output_tokens=self.max_tokens,
+                        temperature=self.temperature,
+                    ),
                 )
-                yield response.content[0].text
+                yield response.text
 
-        except openai.APIError as e:
-            logger.error(f"OpenAI API error: {e}")
-            raise ValueError(f"Failed to generate response: {str(e)}")
         except Exception as e:
-            logger.error(f"Response generation error: {e}")
-            raise ValueError(f"Response generation failed: {str(e)}")
+            logger.error(f"Gemini API error: {e}")
+            raise ValueError(f"Failed to generate response: {str(e)}")
 
     def _build_context(self, chunks: List[RetrievedChunkData]) -> str:
         """

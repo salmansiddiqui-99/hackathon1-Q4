@@ -62,7 +62,7 @@ class Settings(BaseSettings):
     # RAG configuration
     RAG_TOP_K: int = 5
     RAG_TOP_K_CHUNKS: Optional[int] = None  # Alternative name
-    RAG_SIMILARITY_THRESHOLD: float = 0.75
+    RAG_SIMILARITY_THRESHOLD: float = 0.5
     RAG_CONTEXT_MAX_TOKENS: int = 3000
     RAG_MAX_RESPONSE_TOKENS: Optional[int] = None
     RAG_RESPONSE_TOKENS: Optional[int] = None

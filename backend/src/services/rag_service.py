@@ -222,23 +222,23 @@ class RAGService:
                     ]
                 )
 
-            # Search in Qdrant
-            search_results = self.qdrant_client.search(
+            # Search in Qdrant using query_points (newer SDK API)
+            search_results = self.qdrant_client.query_points(
                 collection_name=self.collection_name,
-                query_vector=query_embedding,
+                query=query_embedding,
                 query_filter=query_filter,
                 limit=top_k,
                 score_threshold=self.similarity_threshold
             )
+            # Extract points from QueryResponse
+            search_results = search_results.points
 
             search_time = time.time() - search_start  # T054: Track search duration
 
-            # T053: Collect chunk IDs first, then batch fetch
-            # T051: Apply relevance threshold filtering
-            chunk_ids_to_fetch = []
-            score_map = {}
-
-            for result in search_results:
+            # T051: Apply relevance threshold filtering and convert results
+            # Convert results to RetrievedChunkData directly from Qdrant payload
+            retrieved_chunks = []
+            for rank, result in enumerate(search_results, 1):
                 # T051: Skip chunks below similarity threshold
                 if float(result.score) < self.similarity_threshold:
                     logger.debug(
@@ -246,34 +246,22 @@ class RAGService:
                     )
                     continue
 
-                chunk_id = UUID(result.payload.get("chunk_id"))
-                chunk_ids_to_fetch.append(chunk_id)
-                score_map[chunk_id] = float(result.score)
-
-            # T053: Batch fetch all chunks
-            fetch_start = time.time()
-            chunks_dict = self._batch_fetch_chunks(chunk_ids_to_fetch)
-            fetch_time = time.time() - fetch_start
-
-            # Convert results to RetrievedChunkData
-            retrieved_chunks = []
-            for rank, chunk_id in enumerate(chunk_ids_to_fetch, 1):
-                chunk = chunks_dict.get(chunk_id)
-                if chunk:
+                # Extract chunk data from Qdrant payload
+                if result.payload:
                     retrieved_chunks.append(
                         RetrievedChunkData(
-                            chunk_id=chunk.id,
-                            chapter_id=chunk.chapter_id,
-                            section_title=chunk.section_title,
-                            text=chunk.text,
-                            similarity_score=score_map[chunk_id],
+                            chunk_id=result.id,  # Use Qdrant point ID
+                            chapter_id=None,  # Not available in indexed payload
+                            section_title=None,  # Not available in indexed payload
+                            text=result.payload.get("text", ""),
+                            similarity_score=float(result.score),
                             rank=rank
                         )
                     )
 
-            # T054: Log search performance with batch fetch timing
+            # T054: Log search performance
             logger.debug(
-                f"Vector search: search={search_time*1000:.1f}ms, fetch={fetch_time*1000:.1f}ms, "
+                f"Vector search: search={search_time*1000:.1f}ms, "
                 f"returned {len(retrieved_chunks)}/{len(search_results)} chunks "
                 f"(threshold={self.similarity_threshold}, chapter_filter={chapter_id is not None})"
             )

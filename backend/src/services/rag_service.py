@@ -248,14 +248,15 @@ class RAGService:
 
                 # Extract chunk data from Qdrant payload
                 if result.payload:
+                    # Convert Qdrant point ID to UUID (as a UUID with the integer as input)
+                    chunk_uuid = UUID(int=result.id) if isinstance(result.id, int) else UUID(result.id)
                     retrieved_chunks.append(
                         RetrievedChunkData(
-                            chunk_id=result.id,  # Use Qdrant point ID
+                            chunk_id=chunk_uuid,
                             chapter_id=None,  # Not available in indexed payload
                             section_title=None,  # Not available in indexed payload
                             text=result.payload.get("text", ""),
-                            similarity_score=float(result.score),
-                            rank=rank
+                            similarity_score=float(result.score)
                         )
                     )
 

@@ -8,7 +8,7 @@ import numpy as np
 from sqlalchemy.orm import Session
 from qdrant_client import QdrantClient
 from qdrant_client.models import Filter, FieldCondition, MatchValue
-import google.generativeai as genai
+import cohere
 
 from src.config import settings
 from src.models.database import ContentChunk, RetrievedChunk, RAGQuery
@@ -24,9 +24,11 @@ class RAGService:
         """Initialize RAG service with database and vector store clients"""
         self.db = db_session
         self.qdrant_client = QdrantClient(url=settings.QDRANT_URL, api_key=settings.QDRANT_API_KEY)
-        if settings.GEMINI_API_KEY:
-            genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.embedding_model = "embedding-001"  # Gemini's embedding model
+        if settings.COHERE_API_KEY:
+            self.cohere_client = cohere.ClientV2(api_key=settings.COHERE_API_KEY)
+        else:
+            self.cohere_client = None
+        self.embedding_model = "embed-english-v3.0"  # Cohere's embedding model
         self.collection_name = settings.QDRANT_COLLECTION
         self.top_k = settings.RAG_TOP_K
         self.similarity_threshold = settings.RAG_SIMILARITY_THRESHOLD
@@ -37,13 +39,13 @@ class RAGService:
 
     def embed_query(self, query_text: str) -> List[float]:
         """
-        Embed a query text using Gemini embeddings with caching (T052).
+        Embed a query text using Cohere embeddings with caching (T052).
 
         Args:
             query_text: The query to embed
 
         Returns:
-            Embedding vector (768 dimensions for Gemini embedding-001)
+            Embedding vector (1024 dimensions for Cohere embed-english-v3.0)
 
         Raises:
             ValueError: If embedding fails
@@ -55,12 +57,16 @@ class RAGService:
                 logger.debug(f"Cache hit for embedding: {cache_key[:30]}...")
                 return self.embedding_cache[cache_key]
 
-            # Call Gemini API if not cached
-            response = genai.embed_content(
+            # Call Cohere API if not cached
+            if not self.cohere_client:
+                raise ValueError("Cohere client not initialized. COHERE_API_KEY not set.")
+
+            response = self.cohere_client.embed(
                 model=self.embedding_model,
-                content=query_text
+                input_type="search_query",
+                texts=[query_text]
             )
-            embedding = response['embedding']
+            embedding = response.embeddings[0]
 
             # T052: Store in cache (with simple LRU eviction)
             if len(self.embedding_cache) >= self.cache_max_size:

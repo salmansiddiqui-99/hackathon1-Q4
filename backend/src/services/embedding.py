@@ -7,7 +7,7 @@ import asyncio
 from typing import List, Dict, Any, Optional
 from pathlib import Path
 
-import google.generativeai as genai
+import cohere
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
 
@@ -17,17 +17,19 @@ logger = logging.getLogger(__name__)
 
 
 class EmbeddingService:
-    """Manages Gemini embeddings and Qdrant vector storage."""
+    """Manages Cohere embeddings and Qdrant vector storage."""
 
     def __init__(self):
         self.qdrant_client = QdrantClient(
             url=settings.QDRANT_URL,
             api_key=settings.QDRANT_API_KEY,
         )
-        if settings.GEMINI_API_KEY:
-            genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.embedding_model = "embedding-001"  # Gemini's embedding model
-        self.embedding_dims = 768  # Gemini embeddings are 768-dimensional
+        if settings.COHERE_API_KEY:
+            self.cohere_client = cohere.ClientV2(api_key=settings.COHERE_API_KEY)
+        else:
+            self.cohere_client = None
+        self.embedding_model = "embed-english-v3.0"  # Cohere's embedding model
+        self.embedding_dims = 1024  # Cohere embeddings are 1024-dimensional
         self.collection_name = "chapters"
 
     def create_or_update_collection(self) -> bool:
@@ -59,30 +61,34 @@ class EmbeddingService:
 
     def embed_text(self, text: str) -> List[float]:
         """
-        Generate embedding for a single text using Gemini.
+        Generate embedding for a single text using Cohere.
 
         Args:
             text: Text to embed
 
         Returns:
-            Embedding vector (768 dims for Gemini embedding-001)
+            Embedding vector (1024 dims for Cohere embed-english-v3.0)
 
         Raises:
             Exception: If embedding fails
         """
         try:
-            response = genai.embed_content(
+            if not self.cohere_client:
+                raise ValueError("Cohere client not initialized. COHERE_API_KEY not set.")
+
+            response = self.cohere_client.embed(
                 model=self.embedding_model,
-                content=text
+                input_type="search_document",
+                texts=[text]
             )
-            return response['embedding']
+            return response.embeddings[0]
         except Exception as e:
             logger.error(f"Embedding failed for text: {str(e)}")
             raise
 
     async def embed_text_async(self, text: str) -> List[float]:
         """
-        Async version of embed_text using Gemini.
+        Async version of embed_text using Cohere.
 
         Args:
             text: Text to embed
@@ -91,12 +97,16 @@ class EmbeddingService:
             Embedding vector
         """
         try:
-            # Gemini SDK doesn't have async API, so we call sync version in executor
-            response = genai.embed_content(
+            if not self.cohere_client:
+                raise ValueError("Cohere client not initialized. COHERE_API_KEY not set.")
+
+            # Cohere SDK doesn't have async API, so we call sync version
+            response = self.cohere_client.embed(
                 model=self.embedding_model,
-                content=text
+                input_type="search_document",
+                texts=[text]
             )
-            return response['embedding']
+            return response.embeddings[0]
         except Exception as e:
             logger.error(f"Async embedding failed: {str(e)}")
             raise
@@ -126,14 +136,20 @@ class EmbeddingService:
             texts = [chunk["text"] for chunk in batch]
 
             try:
-                # Batch embed using Gemini API
-                # Process each text individually since Gemini embed_content takes single items
-                for chunk in batch:
-                    response = genai.embed_content(
-                        model=self.embedding_model,
-                        content=chunk["text"]
-                    )
-                    chunk["embedding"] = response['embedding']
+                if not self.cohere_client:
+                    raise ValueError("Cohere client not initialized. COHERE_API_KEY not set.")
+
+                # Batch embed using Cohere API
+                texts = [chunk["text"] for chunk in batch]
+                response = self.cohere_client.embed(
+                    model=self.embedding_model,
+                    input_type="search_document",
+                    texts=texts
+                )
+
+                # Add embeddings to chunks
+                for chunk, embedding in zip(batch, response.embeddings):
+                    chunk["embedding"] = embedding
                     embedded_chunks.append(chunk)
 
             except Exception as e:

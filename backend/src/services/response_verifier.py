@@ -1,7 +1,7 @@
 """Response verification service for validating RAG response quality and context adherence"""
 import logging
 from typing import List, Dict
-import google.generativeai as genai
+import cohere
 import re
 
 from src.config import settings
@@ -14,10 +14,12 @@ class ResponseVerifier:
     """Service for verifying that responses are grounded in provided context"""
 
     def __init__(self):
-        """Initialize verifier with Gemini"""
-        if settings.GEMINI_API_KEY:
-            genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.embedding_model = "embedding-001"  # Gemini's embedding model
+        """Initialize verifier with Cohere"""
+        if settings.COHERE_API_KEY:
+            self.cohere_client = cohere.ClientV2(api_key=settings.COHERE_API_KEY)
+        else:
+            self.cohere_client = None
+        self.embedding_model = "embed-english-v3.0"  # Cohere's embedding model
 
     def verify_context_only(
         self,

@@ -135,6 +135,7 @@ class Settings(BaseSettings):
         """Validate that all required environment keys are present"""
         required_keys = [
             "GEMINI_API_KEY",
+            "COHERE_API_KEY",
             "QDRANT_URL",
             "DATABASE_URL",
         ]

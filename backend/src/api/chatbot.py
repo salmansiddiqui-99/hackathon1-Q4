@@ -24,9 +24,9 @@ router = APIRouter(prefix="/api/chatbot", tags=["chatbot"])
 
 def get_db():
     """Database session dependency"""
-    # TODO: Implement proper database session management
-    # This is a placeholder for dependency injection
-    pass
+    # For now, return None since RAG service doesn't strictly require DB session
+    # Full database integration can be added later when using PostgreSQL for chat logs
+    return None
 
 
 @router.post("/query", response_model=RAGResponse)

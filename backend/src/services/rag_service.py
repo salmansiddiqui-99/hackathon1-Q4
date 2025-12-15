@@ -323,6 +323,11 @@ class RAGService:
         Returns:
             UUID of the created RAGQuery record
         """
+        # Skip logging if database is not available
+        if not self.db:
+            logger.debug("Database not available, skipping RAG query logging")
+            return UUID(int=0)  # Return dummy UUID
+
         try:
             # Create RAGQuery record
             rag_query = RAGQuery(
@@ -351,7 +356,8 @@ class RAGService:
             return rag_query.id
 
         except Exception as e:
-            self.db.rollback()
+            if self.db:
+                self.db.rollback()
             logger.error(f"Failed to log RAG query: {e}")
             raise
 
@@ -363,15 +369,21 @@ class RAGService:
             Dictionary with stats about chunks, chapters, and embeddings
         """
         try:
-            # Count chunks and chapters
-            total_chunks = self.db.query(ContentChunk).count()
-            total_chapters = self.db.query(ContentChunk).distinct(
-                ContentChunk.chapter_id
-            ).count()
+            # Initialize defaults if database not available
+            total_chunks = 0
+            total_chapters = 0
+            avg_tokens = 0
 
-            # Calculate average tokens per chunk
-            chunks = self.db.query(ContentChunk).all()
-            avg_tokens = sum(c.token_count for c in chunks) / len(chunks) if chunks else 0
+            # Count chunks and chapters if database available
+            if self.db:
+                total_chunks = self.db.query(ContentChunk).count()
+                total_chapters = self.db.query(ContentChunk).distinct(
+                    ContentChunk.chapter_id
+                ).count()
+
+                # Calculate average tokens per chunk
+                chunks = self.db.query(ContentChunk).all()
+                avg_tokens = sum(c.token_count for c in chunks) / len(chunks) if chunks else 0
 
             # Get collection info from Qdrant
             try:

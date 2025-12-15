@@ -66,7 +66,9 @@ class RAGService:
                 input_type="search_query",
                 texts=[query_text]
             )
-            embedding = response.embeddings[0]
+            # Extract embedding from response object (handle ClientV2 response format)
+            embeddings_list = response.embeddings.float if hasattr(response.embeddings, 'float') else response.embeddings
+            embedding = embeddings_list[0]
 
             # T052: Store in cache (with simple LRU eviction)
             if len(self.embedding_cache) >= self.cache_max_size:

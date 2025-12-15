@@ -81,7 +81,9 @@ class EmbeddingService:
                 input_type="search_document",
                 texts=[text]
             )
-            return response.embeddings[0]
+            # Extract embedding from response object (handle ClientV2 response format)
+            embeddings_list = response.embeddings.float if hasattr(response.embeddings, 'float') else response.embeddings
+            return embeddings_list[0]
         except Exception as e:
             logger.error(f"Embedding failed for text: {str(e)}")
             raise
@@ -106,7 +108,9 @@ class EmbeddingService:
                 input_type="search_document",
                 texts=[text]
             )
-            return response.embeddings[0]
+            # Extract embedding from response object (handle ClientV2 response format)
+            embeddings_list = response.embeddings.float if hasattr(response.embeddings, 'float') else response.embeddings
+            return embeddings_list[0]
         except Exception as e:
             logger.error(f"Async embedding failed: {str(e)}")
             raise
@@ -147,8 +151,11 @@ class EmbeddingService:
                     texts=texts
                 )
 
+                # Extract embeddings from response object (handle ClientV2 response format)
+                embeddings_list = response.embeddings.float if hasattr(response.embeddings, 'float') else response.embeddings
+
                 # Add embeddings to chunks
-                for chunk, embedding in zip(batch, response.embeddings):
+                for chunk, embedding in zip(batch, embeddings_list):
                     chunk["embedding"] = embedding
                     embedded_chunks.append(chunk)
 

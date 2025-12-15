@@ -1,8 +1,8 @@
 # Deployment Status
 
-## Current Status: Awaiting Railway Auto-Redeploy
+## Current Status: Railway Configuration Updated - Triggering Full Redeploy
 
-**Commit Hash:** 34c0622 (Fix RetrievedChunkData model fields)
+**Commit Hash:** 7bcab58 (Configure Railway root directory and fix vector/RAG settings)
 
 ### What's Been Done:
 - ✅ All code fixes committed and pushed to `002-rag-chatbot` branch
@@ -19,9 +19,11 @@
 5. UUID conversion for chunk IDs
 6. Production-ready indexing scripts
 
-### Expected Timeline:
-- Railway typically auto-redeploys within 5-10 minutes of code push
-- Current status: Waiting for automatic webhook trigger
+### Latest Update:
+- Railway configuration updated with proper root directory (`backend`)
+- Stats endpoint shows new vector_dimension (1024) - Railway IS picking up changes
+- Query endpoint still returning old code behavior - full rebuild needed
+- Committing status update to trigger fresh Railway build
 
 ### Testing Results:
 - Local: ✅ RAG retrieval working (5 chunks returned)

@@ -2,6 +2,11 @@
 FastAPI application entry point for Physical AI Textbook + RAG Chatbot
 """
 
+# CRITICAL: Print at module load time to ensure visibility in Railway logs
+print("=" * 80)
+print("📦 MAIN MODULE LOADING - This should appear in Railway logs!")
+print("=" * 80)
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -10,6 +15,19 @@ from datetime import datetime
 from src.config import settings
 from src.errors import BaseAPIException
 from src.api import chapters, rag, health, chatbot, selected_text
+
+# Print config immediately after import (module-level)
+print("=" * 80)
+print("🔍 MODULE-LEVEL CONFIG CHECK (runs before startup event):")
+print("=" * 80)
+print(f"QDRANT_COLLECTION: {settings.QDRANT_COLLECTION}")
+print(f"QDRANT_VECTOR_SIZE: {settings.QDRANT_VECTOR_SIZE}")
+print(f"RAG_SIMILARITY_THRESHOLD: {settings.RAG_SIMILARITY_THRESHOLD}")
+print(f"COHERE_API_KEY: {'SET ✅' if settings.COHERE_API_KEY else 'NOT SET ❌'}")
+print(f"GEMINI_API_KEY: {'SET ✅' if settings.GEMINI_API_KEY else 'NOT SET ❌'}")
+print(f"QDRANT_API_KEY: {'SET ✅' if settings.QDRANT_API_KEY else 'NOT SET ❌'}")
+print(f"RAG_TOP_K: {settings.RAG_TOP_K}")
+print("=" * 80)
 
 # Initialize FastAPI app
 app = FastAPI(

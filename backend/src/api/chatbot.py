@@ -88,8 +88,11 @@ async def query_chatbot(
             top_k=settings.RAG_TOP_K
         )
 
-        # Step 2: Check if context is sufficient
-        is_sufficient, reason = chatbot_service.check_context_sufficiency(retrieved_chunks)
+        # Step 2: Check if context is sufficient (use config threshold)
+        is_sufficient, reason = chatbot_service.check_context_sufficiency(
+            retrieved_chunks,
+            min_similarity=settings.RAG_SIMILARITY_THRESHOLD
+        )
 
         if not is_sufficient:
             logger.warning(f"Insufficient context: {reason}")

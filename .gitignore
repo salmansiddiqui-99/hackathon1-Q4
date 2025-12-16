@@ -109,6 +109,11 @@ service-account.json
 .credentials
 .secrets
 
+# Railway credentials (NEVER commit these!)
+RAILWAY_NEW_CREDENTIALS.md
+*CREDENTIALS*.md
+*credentials*.md
+
 # ============================================================================
 # Testing & Coverage
 # ============================================================================

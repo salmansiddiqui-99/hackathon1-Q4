@@ -75,15 +75,39 @@ Thumbs.db
 # ============================================================================
 # Environment & Secrets
 # ============================================================================
+# CRITICAL: Never commit environment files with API keys!
 .env
 .env.local
 .env.*.local
+.env.production
+.env.development
+.env.test
 backend/.env
 backend/.env.local
+backend/.env.production
+backend/.env.development
+frontend/.env
+frontend/.env.local
+textbook/.env
+textbook/.env.local
+
+# Secret files and credentials
 secrets/
 *.key
 *.pem
 *.crt
+*.p12
+*.pfx
+credentials.json
+service-account.json
+
+# API keys and tokens (common patterns)
+*apikey*
+*api-key*
+*secret*
+*token*
+.credentials
+.secrets
 
 # ============================================================================
 # Testing & Coverage

@@ -3,28 +3,35 @@
 rootDirectory = "backend"
 nixpacks.providers = ["python"]
 
+# ⚠️  SECURITY WARNING: Railway does NOT automatically load variables from this file!
+# Variables must be set manually in Railway Dashboard:
+# Project → Service → Variables tab
+#
+# This [variables] section is for REFERENCE ONLY
+# See backend/.env.example for all required variables and their descriptions
+
 [variables]
-# Database Configuration
-DATABASE_URL = "postgresql://neondb_owner:npg_ALd8aFzOyJC0@ep-summer-mountain-ad6bh2xv-pooler.c-2.us-east-1.aws.neon.tech/aibook?sslmode=require&channel_binding=require"
+# ============================================================================
+# 🔒 SENSITIVE CREDENTIALS - SET THESE IN RAILWAY DASHBOARD ONLY!
+# ============================================================================
+# DO NOT put actual API keys or credentials here - they will be exposed!
+#
+# Required variables to set in Railway Dashboard:
+# - DATABASE_URL (from Neon/PostgreSQL)
+# - QDRANT_URL (from Qdrant Cloud)
+# - QDRANT_API_KEY (from Qdrant Cloud)
+# - GEMINI_API_KEY (from Google AI Studio)
+# - COHERE_API_KEY (from Cohere Dashboard)
+#
+# See backend/.env.example for complete list and instructions
 
-# Vector Database Configuration (Qdrant Cloud)
-QDRANT_URL = "https://7076ae15-6fe8-4ba4-b563-d93ba005dc18.europe-west3-0.gcp.cloud.qdrant.io"
-QDRANT_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.s0ptzbtPuXBQ0-JcXhixqDPQbPXou0CKuBx8J9XI7JM"
+# ============================================================================
+# 🔧 NON-SENSITIVE CONFIGURATION (can be set here or in Railway Dashboard)
+# ============================================================================
+
+# Vector Database Configuration
 QDRANT_COLLECTION = "chapter_chunks"
-QDRANT_COLLECTION_NAME = "aibook"
 QDRANT_VECTOR_SIZE = "1024"
-
-# LLM Configuration (OpenAI)
-# NOTE: Replace sk-... with your actual OpenAI API key
-OPENAI_API_KEY = "sk-your_openai_api_key_here"
-OPENAI_MODEL = "gpt-4o"
-OPENAI_EMBEDDING_MODEL = "text-embedding-3-small"
-OPENAI_MAX_TOKENS = "2000"
-OPENAI_TEMPERATURE = "0.7"
-
-# Alternative LLM: Gemini
-GEMINI_API_KEY = "AIzaSyB-w0Tc9vH_DQl5sEXzZZtcwEKJfWsChpI"
-GEMINI_MODEL = "gemini-2.5-flash"
 
 # CORS Configuration
 CORS_ORIGINS = "https://salmansiddiqui-99.github.io"
@@ -37,12 +44,8 @@ RAG_MAX_RESPONSE_TOKENS = "1000"
 RAG_RESPONSE_TOKENS = "800"
 RAG_CONTEXT_MAX_TOKENS = "3000"
 
-# Chat Configuration
-CHAT_LOG_RETENTION_DAYS = "90"
-CHAT_MAX_MESSAGES_PER_SESSION = "50"
-
-# Rate Limiting
-RATE_LIMIT_REQUESTS_PER_MINUTE = "10"
+# LLM Model Selection
+GEMINI_MODEL = "gemini-2.0-flash"
 
 # Feature Flags
 FEATURE_RAG_ENABLED = "true"
@@ -75,13 +78,6 @@ DB_POOL_SIZE = "5"
 DB_MAX_OVERFLOW = "10"
 DB_POOL_TIMEOUT = "30"
 
-# Other settings
-CHAPTER_MIN_LENGTH = "1000"
-CHAPTER_MAX_LENGTH = "5000"
-CHAPTER_GENERATION_TIMEOUT = "300"
-REQUEST_TIMEOUT = "30"
-MAX_RETRIES = "3"
-
-# GitHub Integration (optional)
+# GitHub Integration
 GITHUB_REPO_OWNER = "salmansiddiqui-99"
 GITHUB_REPO_NAME = "hackathon1-Q4"

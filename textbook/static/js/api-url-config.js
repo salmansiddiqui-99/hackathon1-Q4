@@ -1,36 +1,37 @@
-// API URL configuration script
-// This script runs before the React app loads and sets the API URL for ChatbotWidget
+// API Endpoint configuration script
+// This script runs before the React app loads and sets the specific API endpoints for ChatbotWidget
 
 (function() {
   'use strict';
 
-  // Determine the backend API URL
-  let apiUrl = null;
+  // Determine the backend base URL based on environment
+  let backendUrl = null;
 
-  // 1. Check if API URL is set as a window variable (can be injected by deployment)
-  if (window.API_BACKEND_URL) {
-    apiUrl = window.API_BACKEND_URL;
-    console.log('[API Config] Using API URL from window.API_BACKEND_URL:', apiUrl);
+  // 1. Check if backend URL is set as a window variable (can be injected by deployment)
+  if (window.BACKEND_URL) {
+    backendUrl = window.BACKEND_URL;
+    console.log('[API Config] Using backend URL from window.BACKEND_URL:', backendUrl);
   }
   // 2. Check if we're in development (localhost)
   else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    apiUrl = 'http://localhost:8000/api';
-    console.log('[API Config] Development mode - using localhost API');
+    backendUrl = 'http://localhost:8000';
+    console.log('[API Config] Development mode - using localhost backend');
   }
-  // 3. For production on GitHub Pages, we need a deployed backend
-  // This should be set during the build process or as a Railway environment variable
+  // 3. For production on GitHub Pages, use Railway backend
   else if (window.location.hostname === 'salmansiddiqui-99.github.io') {
-    // Try to get from environment (injected during deployment)
-    apiUrl = window.RAILWAY_BACKEND_URL || 'https://hackathon1-q4-production.up.railway.app/api';
-    console.log('[API Config] Production mode - using Railway API:', apiUrl);
+    backendUrl = 'https://hackathon1-q4-production.up.railway.app';
+    console.log('[API Config] Production mode - using Railway backend');
   }
   // 4. Default fallback
   else {
-    apiUrl = '/api';
-    console.log('[API Config] Using relative API path');
+    backendUrl = window.location.origin;
+    console.log('[API Config] Using current origin as backend');
   }
 
-  // Set the global API URL for ChatbotWidget to use
-  window.__DOCUSAURUS_API_URL__ = apiUrl;
-  console.log('[API Config] Final API URL:', apiUrl);
+  // Set specific API endpoints (NOT base URLs)
+  window.CHATBOT_QUERY_ENDPOINT = backendUrl + '/api/chatbot/query';
+  window.HEALTH_CHECK_ENDPOINT = backendUrl + '/api/ready';
+
+  console.log('[API Config] Chatbot Query Endpoint:', window.CHATBOT_QUERY_ENDPOINT);
+  console.log('[API Config] Health Check Endpoint:', window.HEALTH_CHECK_ENDPOINT);
 })();

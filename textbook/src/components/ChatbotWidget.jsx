@@ -9,10 +9,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './ChatbotWidget.module.css';
 
-// Get API URL - use environment variable if available, otherwise default to localhost
-const API_BASE_URL = typeof window !== 'undefined' && window.__DOCUSAURUS_API_URL__
-  ? window.__DOCUSAURUS_API_URL__
-  : 'http://localhost:8000/api';
+// Get direct API endpoints set by api-url-config.js
+// These are specific endpoints, NOT base URLs
+const CHATBOT_QUERY_ENDPOINT = typeof window !== 'undefined' && window.CHATBOT_QUERY_ENDPOINT
+  ? window.CHATBOT_QUERY_ENDPOINT
+  : 'http://localhost:8000/api/chatbot/query';
+
+const HEALTH_CHECK_ENDPOINT = typeof window !== 'undefined' && window.HEALTH_CHECK_ENDPOINT
+  ? window.HEALTH_CHECK_ENDPOINT
+  : 'http://localhost:8000/api/ready';
 
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,7 +40,7 @@ export default function ChatbotWidget() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 2000); // 2-second timeout
 
-        const response = await fetch(`${API_BASE_URL}/ready`, {
+        const response = await fetch(HEALTH_CHECK_ENDPOINT, {
           method: 'GET',
           signal: controller.signal,
         });
@@ -70,7 +75,7 @@ export default function ChatbotWidget() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 2000);
 
-      const response = await fetch(`${API_BASE_URL}/ready`, {
+      const response = await fetch(HEALTH_CHECK_ENDPOINT, {
         method: 'GET',
         signal: controller.signal,
       });
@@ -142,7 +147,7 @@ export default function ChatbotWidget() {
         requestBody.selected_text = selectedText;
       }
 
-      const response = await fetch(`${API_BASE_URL}/chatbot/query`, {
+      const response = await fetch(CHATBOT_QUERY_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -24,7 +24,71 @@ export default function ChatbotWidget() {
   const [selectedText, setSelectedText] = useState('');
   const [chunks, setChunks] = useState([]);
   const [showChunks, setShowChunks] = useState(false);
+  const [backendAvailable, setBackendAvailable] = useState(true); // T046: Backend health state
+  const [healthCheckAttempts, setHealthCheckAttempts] = useState(0); // Track retry attempts
   const chatBodyRef = useRef(null);
+
+  // T046: Health check on component mount with 2-second timeout
+  useEffect(() => {
+    const checkBackendHealth = async () => {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000); // 2-second timeout
+
+        const response = await fetch(`${API_BASE_URL}/ready`, {
+          method: 'GET',
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          setBackendAvailable(true);
+          setHealthCheckAttempts(0);
+        } else {
+          setBackendAvailable(false);
+        }
+      } catch (err) {
+        console.warn('Backend health check failed:', err.message);
+        setBackendAvailable(false);
+      }
+    };
+
+    // Check health immediately on mount
+    checkBackendHealth();
+
+    // Optional: Periodically re-check health (every 30 seconds)
+    const healthCheckInterval = setInterval(checkBackendHealth, 30000);
+
+    return () => clearInterval(healthCheckInterval);
+  }, []);
+
+  // T047: Retry health check function
+  const retryHealthCheck = async () => {
+    setHealthCheckAttempts((prev) => prev + 1);
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+      const response = await fetch(`${API_BASE_URL}/ready`, {
+        method: 'GET',
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (response.ok) {
+        setBackendAvailable(true);
+        setHealthCheckAttempts(0);
+        setError(null);
+      } else {
+        setBackendAvailable(false);
+      }
+    } catch (err) {
+      console.warn('Retry health check failed:', err.message);
+      setBackendAvailable(false);
+    }
+  };
 
   // Auto-detect selected text on page
   useEffect(() => {
@@ -232,6 +296,23 @@ export default function ChatbotWidget() {
             </div>
           </div>
 
+          {/* T048: Backend Unavailable Message */}
+          {!backendAvailable && (
+            <div className={styles.backendErrorContainer}>
+              <div className={styles.backendErrorMessage}>
+                <strong>⚠️ Backend Temporarily Unavailable</strong>
+                <p>The AI assistant is currently offline. Please refresh the page or try again later.</p>
+                <button
+                  className={styles.retryButton}
+                  onClick={retryHealthCheck}
+                  title="Attempt to reconnect to backend"
+                >
+                  🔄 Retry Connection
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Chat Body */}
           <div className={styles.chatBody} ref={chatBodyRef}>
             {error && (
@@ -277,18 +358,18 @@ export default function ChatbotWidget() {
             <input
               type="text"
               className={styles.chatInput}
-              placeholder="Ask a question..."
+              placeholder={backendAvailable ? "Ask a question..." : "Backend offline..."}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              disabled={loading}
+              disabled={loading || !backendAvailable}
               aria-label="Chat input"
             />
             <button
               type="submit"
               className={styles.sendButton}
-              disabled={loading || !query.trim()}
+              disabled={loading || !query.trim() || !backendAvailable}
               aria-label="Send message"
-              title="Send (Enter)"
+              title={backendAvailable ? "Send (Enter)" : "Backend offline"}
             >
               {loading ? '⏳' : '➤'}
             </button>

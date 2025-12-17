@@ -131,26 +131,18 @@ export default function ChatbotWidget() {
     setChunks([]);
 
     try {
-      let endpoint = null;
-      let requestBody = null;
+      // Unified request body for all modes
+      const requestBody = {
+        query: query,
+        mode: retrievalMode,
+      };
 
-      // For text-selection mode, use the dedicated endpoint
+      // Add selected_text if in text-selection mode
       if (retrievalMode === 'text-selection') {
-        endpoint = `${API_BASE_URL}/selected-text/query`;
-        requestBody = {
-          query: query,
-          selected_text: selectedText,
-        };
-      } else {
-        // For global mode (default)
-        endpoint = `${API_BASE_URL}/chatbot/query`;
-        requestBody = {
-          query: query,
-          mode: 'global',
-        };
+        requestBody.selected_text = selectedText;
       }
 
-      const response = await fetch(endpoint, {
+      const response = await fetch(`${API_BASE_URL}/chatbot/query`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -162,73 +154,73 @@ export default function ChatbotWidget() {
         throw new Error(`API error: ${response.status}`);
       }
 
-      // For selected-text mode, handle non-streaming JSON response
-      if (retrievalMode === 'text-selection') {
-        const data = await response.json();
-        if (data.success && data.response_text) {
-          setResponse(data.response_text);
-          if (!data.used_selection) {
-            setError('Response may not be constrained to selected text');
-          }
-        } else {
-          setError(data.response_text || 'Failed to generate response');
-        }
-      } else {
-        // Handle response for global/chapter-specific modes
-        // Check if this is an error response (no chunks) or streaming response
-        const contentType = response.headers.get('content-type');
+      // Stream response as NDJSON (newline-delimited JSON)
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullResponse = '';
+      let buffer = ''; // Buffer for incomplete lines
 
-        if (contentType && contentType.includes('application/json')) {
-          // Regular JSON response (error case - no chunks)
-          const data = await response.json();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-          if (!data.success) {
-            setError(data.error || 'Failed to get response');
-          } else if (data.data && data.data.response_text) {
-            setResponse(data.data.response_text);
-            if (data.data.retrieved_chunks && data.data.retrieved_chunks.length > 0) {
-              setChunks(data.data.retrieved_chunks);
+        // Decode chunk and add to buffer
+        buffer += decoder.decode(value, { stream: true });
+
+        // Process complete lines
+        const lines = buffer.split('\n');
+
+        // Keep the last incomplete line in buffer
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+
+          try {
+            const json = JSON.parse(line);
+
+            // Handle token chunks - append to response in real-time
+            if (json.type === 'token') {
+              fullResponse += json.data;
+              setResponse(fullResponse);
             }
-          } else {
-            setError('No response generated');
-          }
-        } else {
-          // Handle streaming response (NDJSON format)
-          const reader = response.body.getReader();
-          const decoder = new TextDecoder();
-          let fullResponse = '';
-          let metadata = null;
-
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-
-            const text = decoder.decode(value);
-            const lines = text.split('\n').filter((l) => l.trim());
-
-            for (const line of lines) {
-              try {
-                const json = JSON.parse(line);
-
-                if (json.type === 'token') {
-                  fullResponse += json.data;
-                  setResponse(fullResponse);
-                } else if (json.type === 'metadata') {
-                  metadata = json.data;
-                  setChunks(metadata.chunks_used || []);
-                } else if (json.type === 'error') {
-                  setError(json.data);
-                }
-              } catch (e) {
-                console.error('Failed to parse response line:', e);
+            // Handle metadata separately
+            else if (json.type === 'metadata') {
+              const metadata = json.data;
+              if (metadata.chunks_used && metadata.chunks_used.length > 0) {
+                setChunks(metadata.chunks_used);
               }
             }
-          }
-
-          if (!fullResponse) {
-            setError('No response generated');
+            // Handle errors
+            else if (json.type === 'error') {
+              setError(json.data);
+            }
+          } catch (parseErr) {
+            console.error('Failed to parse NDJSON line:', line, parseErr);
           }
         }
+      }
+
+      // Process any remaining data in buffer
+      if (buffer.trim()) {
+        try {
+          const json = JSON.parse(buffer);
+          if (json.type === 'token') {
+            fullResponse += json.data;
+            setResponse(fullResponse);
+          } else if (json.type === 'metadata') {
+            const metadata = json.data;
+            if (metadata.chunks_used && metadata.chunks_used.length > 0) {
+              setChunks(metadata.chunks_used);
+            }
+          }
+        } catch (parseErr) {
+          console.error('Failed to parse final NDJSON line:', buffer, parseErr);
+        }
+      }
+
+      if (!fullResponse && !error) {
+        setError('No response generated');
       }
     } catch (err) {
       setError(err.message || 'Failed to get response');

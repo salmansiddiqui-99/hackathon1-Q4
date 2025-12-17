@@ -246,15 +246,20 @@ class RAGService:
                     )
                     continue
 
-                # Extract chunk data from Qdrant payload
+                # T056: Extract all available chunk data from Qdrant payload (batch optimization)
                 if result.payload:
-                    # Convert Qdrant point ID to UUID (as a UUID with the integer as input)
+                    # Convert Qdrant point ID to UUID
                     chunk_uuid = UUID(int=result.id) if isinstance(result.id, int) else UUID(result.id)
+
+                    # Extract metadata from payload (no additional database queries needed)
+                    chapter_id_str = result.payload.get("chapter_id")
+                    chapter_uuid = UUID(chapter_id_str) if chapter_id_str else None
+
                     retrieved_chunks.append(
                         RetrievedChunkData(
                             chunk_id=chunk_uuid,
-                            chapter_id=None,  # Not available in indexed payload
-                            section_title=None,  # Not available in indexed payload
+                            chapter_id=chapter_uuid,  # T056: Retrieved from payload
+                            section_title=result.payload.get("section_title", ""),  # T056: Retrieved from payload
                             text=result.payload.get("text", ""),
                             similarity_score=float(result.score)
                         )

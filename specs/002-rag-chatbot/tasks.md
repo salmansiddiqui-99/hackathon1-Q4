@@ -6,15 +6,15 @@
 
 ## Summary
 
-This task breakdown organizes the RAG chatbot implementation into **7 phases** covering 64 executable tasks. Tasks are mapped to **4 user stories** from spec.md:
+This task breakdown organizes the RAG chatbot implementation into **8 phases** covering 67 executable tasks. Tasks are mapped to **4 user stories** from spec.md:
 
 - **User Story 1 (P1)**: Global Search Mode - Core chatbot functionality
 - **User Story 2 (P2)**: Selected Text Mode - Precision questioning
 - **User Story 3 (P2)**: Performance & Retrieval - Sub-second latency
 - **User Story 4 (P2)**: Hallucination Prevention - Retrieval-only responses
 
-**Total Tasks**: 64
-**Parallelizable Tasks**: 28 (marked with [P])
+**Total Tasks**: 67 (added Phase 4.5 Health Validation)
+**Parallelizable Tasks**: 31 (marked with [P])
 **Critical Path Tasks**: 12 (performance-sensitive)
 
 ## Task Organization
@@ -31,13 +31,16 @@ Implementation: Embedding, chunking, RAG service, database layer
 ### Phase 4: User Story 1 - Global Search Mode (T036-T045) - 10 tasks
 Priority P1: Full chatbot with global book search
 
-### Phase 5: User Story 2 - Selected Text Mode (T046-T050) - 5 tasks
+### Phase 4.5: Backend Health Validation (T046-T048) - 3 tasks
+Critical for Production: Frontend health checks and offline error handling
+
+### Phase 5: User Story 2 - Selected Text Mode (T049-T053) - 5 tasks
 Priority P2: Text selection constraint
 
-### Phase 6: User Story 3 & 4 - Performance & Quality (T051-T058) - 8 tasks
+### Phase 6: User Story 3 & 4 - Performance & Quality (T054-T061) - 8 tasks
 Priority P2: Retrieval optimization, hallucination prevention
 
-### Phase 7: Testing, Deployment & Polish (T059-T064) - 6 tasks
+### Phase 7: Testing, Deployment & Polish (T062-T067) - 6 tasks
 Final validation, deployment, documentation
 
 ---
@@ -141,35 +144,56 @@ Final validation, deployment, documentation
 
 ---
 
-## Phase 5: User Story 2 - Selected Text Mode (P2) (T046-T050)
+## Phase 4.5: Backend Health Validation (T046-T048)
+
+**Goal**: Implement frontend health checks and error handling for offline backends
+
+**Critical for Production**: Prevents users from seeing generic 404 errors when backend is unreachable.
+
+- [ ] T046 [P] Implement GET /api/ready health check in textbook/src/components/ChatbotWidget.jsx on component mount (2-second timeout)
+- [ ] T047 [P] Add error state to ChatbotWidget to display "Backend temporarily unavailable. Please refresh the page or try again later." message when backend unreachable
+- [ ] T048 [P] Create offline error component: textbook/src/components/BackendErrorMessage.jsx with styling and "Retry" button to attempt reconnection
+
+**Acceptance Criteria (Health Validation)**:
+- ChatbotWidget calls GET /api/ready on component mount
+- If status !== 200 or timeout occurs, widget displays error message instead of input field
+- Retry button on error message calls health check again
+- Health check completes with <2s timeout
+- Error message is user-friendly and actionable
+
+**Parallel Execution**: T046-T048 (independent implementations)
+
+---
+
+## Phase 5: User Story 2 - Selected Text Mode (P2) (T049-T053)
 
 **Goal**: Implement text selection constraint for precision questioning
 
-- [ ] T046 [US2] Create backend/src/api/selected_text.py with POST /api/selected-text endpoint
-- [ ] T047 [US2] Implement selected-text mode logic in backend/src/api/selected_text.py (accepts selected_text parameter, bypasses Qdrant)
-- [ ] T048 [US2] Update textbook/src/components/ChatbotWidget.jsx to detect text selection (onMouseUp event, 20-char minimum)
-- [ ] T049 [US2] Add "Chat about this selection" button to ChatbotWidget.jsx when text is selected
-- [ ] T050 [US2] Wire ChatbotWidget.jsx to POST /api/selected-text endpoint with selected_text parameter
+- [ ] T049 [US2] Create backend/src/api/selected_text.py with POST /api/selected-text endpoint
+- [ ] T050 [US2] Implement selected-text mode logic in backend/src/api/selected_text.py (accepts selected_text parameter, bypasses Qdrant)
+- [ ] T051 [US2] Update textbook/src/components/ChatbotWidget.jsx to detect text selection (onMouseUp event, 20-char minimum)
+- [ ] T052 [US2] Add "Chat about this selection" button to ChatbotWidget.jsx when text is selected
+- [ ] T053 [US2] Wire ChatbotWidget.jsx to POST /api/selected-text endpoint with selected_text parameter
 
 **Acceptance Criteria (US2)**:
 - User highlights text, "Chat about selection" button appears in <500ms
 - User asks question, chatbot uses only highlighted text (no external knowledge)
 - Out-of-scope questions return "Not found in this selection"
 
-**Critical Path**: T048 (text detection <500ms)
+**Critical Path**: T051 (text detection <500ms)
 
 ---
 
-## Phase 6: User Story 3 & 4 - Performance & Quality (P2) (T051-T058)
+## Phase 6: User Story 3 & 4 - Performance & Quality (P2) (T054-T061)
 
 **Goal**: Optimize retrieval latency and prevent hallucinations
 
 ### User Story 3: Performance Optimization
 
-- [ ] T051 [US3] Implement relevance threshold filtering (0.5 default) in backend/src/services/rag_service.py retrieve_chunks()
-- [ ] T052 [US3] Add embedding cache (in-memory dict) in backend/src/services/embedding.py to reduce redundant API calls
-- [ ] T053 [US3] Optimize Qdrant query batching in backend/src/services/rag_service.py search_vectors()
-- [ ] T054 [US3] Add performance logging (latency metrics) to backend/src/services/rag_service.py retrieve_chunks()
+- [ ] T054 [US3] Implement relevance threshold filtering (0.5 default) in backend/src/services/rag_service.py retrieve_chunks()
+- [ ] T055 [US3] Add embedding cache (in-memory dict) in backend/src/services/embedding.py to reduce redundant API calls
+- [ ] T056 [US3] Optimize Qdrant query batching in backend/src/services/rag_service.py search_vectors()
+- [ ] T057 [US3] Add performance logging (latency metrics) to backend/src/services/rag_service.py retrieve_chunks()
 
 **Acceptance Criteria (US3)**:
 - Retrieval pipeline (embed → search → metadata) completes in <800ms average
@@ -179,34 +203,34 @@ Final validation, deployment, documentation
 
 ### User Story 4: Hallucination Prevention
 
-- [ ] T055 [US4] Update ChatbotService.generate_system_prompt() in backend/src/services/chatbot_service.py to enforce "Answer only from context" constraint
-- [ ] T056 [US4] Implement pre-LLM filtering in backend/src/services/rag_service.py retrieve_chunks() (skip chunks with similarity <0.5)
-- [ ] T057 [US4] Integrate response_verifier.py verify_grounding() into backend/src/services/chatbot_service.py generate_response()
-- [ ] T058 [US4] Implement fallback "Not found in the book" response in backend/src/api/chatbot.py when no chunks meet threshold
+- [ ] T058 [US4] Update ChatbotService.generate_system_prompt() in backend/src/services/chatbot_service.py to enforce "Answer only from context" constraint
+- [ ] T059 [US4] Implement pre-LLM filtering in backend/src/services/rag_service.py retrieve_chunks() (skip chunks with similarity <0.5)
+- [ ] T060 [US4] Integrate response_verifier.py verify_grounding() into backend/src/services/chatbot_service.py generate_response()
+- [ ] T061 [US4] Implement fallback "Not found in the book" response in backend/src/api/chatbot.py when no chunks meet threshold
 
 **Acceptance Criteria (US4)**:
 - Out-of-scope questions (not in book) return "Not found" with >95% consistency
 - Selected-text mode constrains answers to selection with 100% compliance
 - No external knowledge leakage in responses
 
-**Critical Path**: T051, T054 (retrieval latency optimization)
+**Critical Path**: T054, T057 (retrieval latency optimization)
 
 ---
 
-## Phase 7: Testing, Deployment & Polish (T059-T064)
+## Phase 7: Testing, Deployment & Polish (T062-T067)
 
 **Goal**: Validate success criteria, deploy to production, finalize documentation
 
-- [x] T059 Create backend/tests/test_rag_service.py with unit tests for retrieve_chunks(), search_vectors()
-- [x] T060 Create backend/tests/test_chatbot_service.py with unit tests for generate_response(), stream_response()
-- [x] T061 Create backend/tests/test_integration.py with end-to-end test (query → retrieval → LLM → streaming)
-- [x] T062 Run performance benchmark (50 concurrent users) using locust or pytest-benchmark, verify <4s latency
-- [x] T063 Deploy backend to Render/Railway with environment variables configured (QDRANT_URL, OPENAI_API_KEY, NEON_DATABASE_URL)
-- [x] T064 Update textbook/docusaurus.config.js with production backend URL and deploy to GitHub Pages
+- [x] T062 Create backend/tests/test_rag_service.py with unit tests for retrieve_chunks(), search_vectors()
+- [x] T063 Create backend/tests/test_chatbot_service.py with unit tests for generate_response(), stream_response()
+- [x] T064 Create backend/tests/test_integration.py with end-to-end test (query → retrieval → LLM → streaming)
+- [x] T065 Run performance benchmark (50 concurrent users) using locust or pytest-benchmark, verify <4s latency
+- [x] T066 Deploy backend to Render/Railway with environment variables configured (QDRANT_URL, OPENAI_API_KEY, NEON_DATABASE_URL)
+- [x] T067 Update textbook/docusaurus.config.js with production backend URL and deploy to GitHub Pages
 
 **Acceptance**: All tests pass, performance benchmarks meet targets, production deployment complete
 
-**Parallel Execution**: T059-T061 (test files are independent)
+**Parallel Execution**: T062-T064 (test files are independent)
 
 ---
 
@@ -218,10 +242,11 @@ Final validation, deployment, documentation
 | Phase 2: Data Modeling & API Design | T013-T020 (8) | - | 4 |
 | Phase 3: Backend Core Services | T021-T035 (15) | - | 3 |
 | Phase 4: Global Search Mode | T036-T045 (10) | US1 (P1) | 1 |
-| Phase 5: Selected Text Mode | T046-T050 (5) | US2 (P2) | 0 |
-| Phase 6: Performance & Quality | T051-T058 (8) | US3, US4 (P2) | 0 |
-| Phase 7: Testing & Deployment | T059-T064 (6) | - | 3 |
-| **Total** | **64 tasks** | **4 stories** | **28 parallel** |
+| Phase 4.5: Backend Health Validation | T046-T048 (3) | - | 3 |
+| Phase 5: Selected Text Mode | T049-T053 (5) | US2 (P2) | 0 |
+| Phase 6: Performance & Quality | T054-T061 (8) | US3, US4 (P2) | 0 |
+| Phase 7: Testing & Deployment | T062-T067 (6) | - | 3 |
+| **Total** | **67 tasks** | **4 stories** | **31 parallel** |
 
 ---
 
@@ -247,12 +272,12 @@ T036-T039 (ChatbotService) → T040-T042 (API Endpoints) → T044-T045 (Frontend
 T043 (Health Endpoint) - Independent
 
 Within Phase 5:
-T046-T047 (Backend API) → T050 (Frontend Integration)
-T048-T049 (Frontend UI) → T050 (Frontend Integration)
+T049-T050 (Backend API) → T053 (Frontend Integration)
+T051-T052 (Frontend UI) → T053 (Frontend Integration)
 
 Within Phase 6:
-T051-T054 (US3 Performance) - Sequential (optimize retrieve_chunks)
-T055-T058 (US4 Hallucination) - Sequential (update system prompt → filter → verify → fallback)
+T054-T057 (US3 Performance) - Sequential (optimize retrieve_chunks)
+T058-T061 (US4 Hallucination) - Sequential (update system prompt → filter → verify → fallback)
 ```
 
 ---
@@ -319,13 +344,13 @@ T061: Write test_integration.py
 1. **T030**: RAGService.retrieve_chunks() - <800ms retrieval latency
 2. **T038**: ChatbotService.generate_response() - LLM call with token limiting
 3. **T039**: ChatbotService.stream_response() - <2s end-to-end streaming
-4. **T048**: Text selection detection - <500ms trigger
-5. **T051**: Relevance threshold filtering - maintain <800ms latency
-6. **T052**: Embedding cache - reduce redundant API calls
-7. **T053**: Qdrant query batching - optimize vector search
-8. **T054**: Performance logging - monitor latency metrics
-9. **T057**: Response verification - hallucination detection without latency penalty
-10. **T062**: Load testing - validate <4s under 50 concurrent users
+4. **T051**: Text selection detection - <500ms trigger
+5. **T054**: Relevance threshold filtering - maintain <800ms latency
+6. **T055**: Embedding cache - reduce redundant API calls
+7. **T056**: Qdrant query batching - optimize vector search
+8. **T057**: Performance logging - monitor latency metrics
+9. **T060**: Response verification - hallucination detection without latency penalty
+10. **T065**: Load testing - validate <4s under 50 concurrent users
 
 ---
 

@@ -85,7 +85,7 @@ class Settings(BaseSettings):
     LOG_FORMAT: str = "json"
 
     # CORS
-    CORS_ORIGINS: str = "http://localhost:3000,http://localhost:3001,"
+    CORS_ORIGINS: str = "http://localhost:3000,http://localhost:3001,https://salmansiddiqui-99.github.io"
     CORS_ALLOW_CREDENTIALS: bool = True
     CORS_ALLOW_METHODS: str = "GET,POST,PUT,DELETE,OPTIONS"
     CORS_ALLOW_HEADERS: str = "Content-Type,Authorization"

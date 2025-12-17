@@ -1,10 +1,10 @@
-"""Chatbot service for generating RAG-based responses using Gemini"""
+"""Chatbot service for generating RAG-based responses using LLM adapters"""
 import logging
 from typing import List, AsyncGenerator, Iterator
-import google.generativeai as genai
 
 from src.config import settings
 from src.models.rag import RetrievedChunkData, ResponseStatus
+from src.llm import create_llm_adapter, LLMCompletionParams, LLMMessage
 
 logger = logging.getLogger(__name__)
 
@@ -13,24 +13,21 @@ class ChatbotService:
     """Service for generating context-aware responses using LLMs"""
 
     def __init__(self):
-        """Initialize chatbot service with Gemini client"""
-        self._gemini_client = None
-        self.model = settings.GEMINI_MODEL or "gemini-2.0-flash"
+        """Initialize chatbot service with LLM adapter"""
+        self._llm_adapter = None
         self.max_tokens = settings.OPENAI_MAX_TOKENS
         self.temperature = settings.OPENAI_TEMPERATURE
 
     @property
-    def gemini_client(self):
-        """Lazily initialize Gemini client on first access."""
-        if self._gemini_client is None:
-            if not settings.GEMINI_API_KEY:
-                raise ValueError(
-                    "GEMINI_API_KEY not configured. "
-                    "Please set GEMINI_API_KEY environment variable or .env file."
-                )
-            genai.configure(api_key=settings.GEMINI_API_KEY)
-            self._gemini_client = genai.GenerativeModel(self.model)
-        return self._gemini_client
+    def llm_adapter(self):
+        """Lazily initialize LLM adapter on first access."""
+        if self._llm_adapter is None:
+            self._llm_adapter = create_llm_adapter(settings)
+            logger.info(
+                f"Initialized LLM adapter: provider={self._llm_adapter.provider_name}, "
+                f"model={self._llm_adapter.model_name}"
+            )
+        return self._llm_adapter
 
     def generate_response(
         self,
@@ -88,35 +85,35 @@ Please answer the student's question using ONLY the provided context above.
 If the context doesn't contain relevant information, say you cannot answer based on available content."""
 
         try:
-            # Combine system prompt and user message for Gemini
-            full_message = f"{system_prompt}\n\n{user_message}"
+            # Create completion parameters
+            params = LLMCompletionParams(
+                messages=[
+                    LLMMessage(role="system", content=system_prompt),
+                    LLMMessage(role="user", content=user_message)
+                ],
+                model=self.llm_adapter.model_name,
+                temperature=self.temperature,
+                max_tokens=self.max_tokens,
+                stream=stream
+            )
 
             if stream:
-                # Stream response with Gemini
-                response = self.gemini_client.generate_content(
-                    full_message,
-                    stream=True,
-                    generation_config=genai.types.GenerationConfig(
-                        max_output_tokens=self.max_tokens,
-                        temperature=self.temperature,
-                    ),
-                )
-                for chunk in response:
-                    if chunk.text:
-                        yield chunk.text
+                # Stream response using adapter
+                for chunk in self.llm_adapter.create_completion_stream(params):
+                    # Extract text from OpenAI-format chunk
+                    if chunk.choices and len(chunk.choices) > 0:
+                        delta = chunk.choices[0].get("delta", {})
+                        if "content" in delta:
+                            yield delta["content"]
             else:
                 # Generate full response at once
-                response = self.gemini_client.generate_content(
-                    full_message,
-                    generation_config=genai.types.GenerationConfig(
-                        max_output_tokens=self.max_tokens,
-                        temperature=self.temperature,
-                    ),
-                )
-                yield response.text
+                response = self.llm_adapter.create_completion(params)
+                if response.choices and len(response.choices) > 0:
+                    message = response.choices[0].get("message", {})
+                    yield message.get("content", "")
 
         except Exception as e:
-            logger.error(f"Gemini API error: {e}")
+            logger.error(f"LLM API error: {e}")
             raise ValueError(f"Failed to generate response: {str(e)}")
 
     def _build_context(self, chunks: List[RetrievedChunkData]) -> str:
@@ -182,7 +179,8 @@ If the context doesn't contain relevant information, say you cannot answer based
         """
         Estimate token count for text.
 
-        Uses a simple heuristic: ~1 token per 4 characters (approximation for GPT models).
+        Uses the LLM adapter's token counting method if available,
+        otherwise falls back to simple heuristic.
 
         Args:
             text: Text to count tokens for
@@ -190,8 +188,11 @@ If the context doesn't contain relevant information, say you cannot answer based
         Returns:
             Estimated token count
         """
-        # Simple approximation: 1 token ~ 4 characters
-        return len(text) // 4
+        try:
+            return self.llm_adapter.count_tokens(text)
+        except Exception:
+            # Fallback: Simple approximation (1 token ~ 4 characters)
+            return len(text) // 4
 
     def check_context_sufficiency(
         self,

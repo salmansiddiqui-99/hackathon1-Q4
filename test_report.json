@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-12-15T15:09:41.674834",
+  "backend_url": "https://hackathon1-q4-production.up.railway.app",
+  "frontend_url": "https://salmansiddiqui-99.github.io",
+  "tests": {
+    "environment_variables": "FAIL",
+    "health_endpoint": "PASS",
+    "health_data": {
+      "status": "ok",
+      "service": "Physical AI Textbook API",
+      "version": "1.0.0",
+      "timestamp": "2025-12-15T15:09:43.150766"
+    },
+    "cors_configuration": "PASS",
+    "qdrant_connectivity": "FAIL",
+    "database_connectivity": "FAIL",
+    "gemini_api": "FAIL",
+    "chatbot_modes": "PASS",
+    "modes_data": [
+      "global",
+      "chapter-specific",
+      "text-selection"
+    ],
+    "chatbot_stats": "FAIL",
+    "chatbot_query": "FAIL"
+  }
+}

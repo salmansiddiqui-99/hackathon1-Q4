@@ -212,9 +212,9 @@
     "354": {
       "js": [
         {
-          "file": "assets/js/runtime~main.1179ae76.js",
-          "hash": "8ed06fdfe38cbac5",
-          "publicPath": "/hackathon1-Q4/assets/js/runtime~main.1179ae76.js"
+          "file": "assets/js/runtime~main.763bb11b.js",
+          "hash": "cf1b833ade5bccf8",
+          "publicPath": "/hackathon1-Q4/assets/js/runtime~main.763bb11b.js"
         }
       ]
     },
@@ -311,9 +311,9 @@
     "617": {
       "js": [
         {
-          "file": "assets/js/9dd8a0d2.a7752a27.js",
-          "hash": "8447e34a1bd8a170",
-          "publicPath": "/hackathon1-Q4/assets/js/9dd8a0d2.a7752a27.js"
+          "file": "assets/js/9dd8a0d2.6094ca43.js",
+          "hash": "c69f9e82a8cfe384",
+          "publicPath": "/hackathon1-Q4/assets/js/9dd8a0d2.6094ca43.js"
         }
       ]
     },
@@ -419,23 +419,23 @@
     "774": {
       "js": [
         {
-          "file": "assets/js/774.3edfe3f2.js",
-          "hash": "8c8f26c86db338a2",
-          "publicPath": "/hackathon1-Q4/assets/js/774.3edfe3f2.js"
+          "file": "assets/js/774.ec733d97.js",
+          "hash": "78e2164329845fc2",
+          "publicPath": "/hackathon1-Q4/assets/js/774.ec733d97.js"
         },
         {
-          "file": "assets/js/1be78505.07fbf921.js",
-          "hash": "88cd2453b3794e25",
-          "publicPath": "/hackathon1-Q4/assets/js/1be78505.07fbf921.js"
+          "file": "assets/js/1be78505.ae12ca09.js",
+          "hash": "0945e599ad0d22a2",
+          "publicPath": "/hackathon1-Q4/assets/js/1be78505.ae12ca09.js"
         }
       ]
     },
     "792": {
       "js": [
         {
-          "file": "assets/js/main.7a07ad49.js",
-          "hash": "1203b1bdefc116e8",
-          "publicPath": "/hackathon1-Q4/assets/js/main.7a07ad49.js"
+          "file": "assets/js/main.47632012.js",
+          "hash": "a885e9980307a5ba",
+          "publicPath": "/hackathon1-Q4/assets/js/main.47632012.js"
         }
       ]
     },
@@ -451,9 +451,9 @@
     "869": {
       "css": [
         {
-          "file": "assets/css/styles.b9be224a.css",
-          "hash": "5cfd9dd65c239b62",
-          "publicPath": "/hackathon1-Q4/assets/css/styles.b9be224a.css"
+          "file": "assets/css/styles.7d4c73f5.css",
+          "hash": "e86afcef0c83f639",
+          "publicPath": "/hackathon1-Q4/assets/css/styles.7d4c73f5.css"
         }
       ]
     },

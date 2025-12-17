@@ -45,6 +45,12 @@ export default {
       }
     ]
   ],
+  "scripts": [
+    {
+      "src": "/hackathon1-Q4/js/api-url-config.js",
+      "async": false
+    }
+  ],
   "themeConfig": {
     "colorMode": {
       "defaultMode": "dark",
@@ -338,7 +344,6 @@ export default {
   "customFields": {},
   "plugins": [],
   "themes": [],
-  "scripts": [],
   "headTags": [],
   "stylesheets": [],
   "clientModules": [],

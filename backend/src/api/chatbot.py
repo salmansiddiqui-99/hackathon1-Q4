@@ -9,7 +9,7 @@ import json
 
 from src.models.rag import (
     RAGRequest, RAGResponse, RAGResponseData, RAGQueryCreate,
-    RetrievalMode, ResponseStatus, RetrievedChunkData
+    RetrievalMode, ResponseStatus, RetrievedChunkData, ChatRequest
 )
 from src.services.rag_service import RAGService
 from src.services.chatbot_service import ChatbotService
@@ -31,7 +31,7 @@ def get_db():
 
 @router.post("/query", response_model=RAGResponse)
 async def query_chatbot(
-    request: RAGRequest,
+    request: ChatRequest,
     db: Session = Depends(get_db)
 ) -> RAGResponse:
     """
@@ -40,9 +40,9 @@ async def query_chatbot(
     The chatbot retrieves relevant context and generates a response using only that context.
 
     Request:
-    - query_text: User's question (10-500 chars)
-    - chapter_id: (Optional) Limit search to specific chapter
-    - selected_text: (Optional) Limit search to selected text
+    - query: User's question (1-8191 chars)
+    - mode: 'global' (search entire book) or 'selected_text' (use provided text only)
+    - selected_text: (Optional) Highlighted text for text-selection mode
 
     Response:
     - success: bool indicating if response was generated
@@ -55,7 +55,7 @@ async def query_chatbot(
     """
     try:
         # Validate request
-        if not request.query_text or len(request.query_text) < 10:
+        if not request.query or len(request.query) < 10:
             raise HTTPException(
                 status_code=400,
                 detail="Query must be at least 10 characters"
@@ -66,25 +66,23 @@ async def query_chatbot(
         chatbot_service = ChatbotService()
         verifier = ResponseVerifier()
 
-        # Determine retrieval mode
-        if request.selected_text:
+        # Determine retrieval mode based on request.mode
+        if request.mode == "selected_text" and request.selected_text:
             retrieval_mode = RetrievalMode.TEXT_SELECTION
-        elif request.chapter_id:
-            retrieval_mode = RetrievalMode.CHAPTER_SPECIFIC
         else:
             retrieval_mode = RetrievalMode.GLOBAL
 
         logger.info(
-            f"Processing query: {request.query_text[:50]}... "
+            f"Processing query: {request.query[:50]}... "
             f"(mode={retrieval_mode.value})"
         )
 
         # Step 1: Retrieve relevant chunks
         retrieved_chunks = rag_service.retrieve_chunks(
-            query_text=request.query_text,
+            query_text=request.query,
             retrieval_mode=retrieval_mode,
-            chapter_id=request.chapter_id,
-            selected_text=request.selected_text,
+            chapter_id=None,
+            selected_text=request.selected_text if request.mode == "selected_text" else None,
             top_k=settings.RAG_TOP_K
         )
 
@@ -100,19 +98,19 @@ async def query_chatbot(
 
             # Log query
             query_id = rag_service.log_rag_query(
-                query_text=request.query_text,
+                query_text=request.query,
                 retrieval_mode=retrieval_mode,
                 retrieved_chunks=retrieved_chunks,
                 response_status=response_status,
-                chapter_id=request.chapter_id,
-                selected_text=request.selected_text
+                chapter_id=None,
+                selected_text=request.selected_text if request.mode == "selected_text" else None
             )
 
             return RAGResponse(
                 success=False,
                 data=RAGResponseData(
                     query_id=query_id,
-                    query_text=request.query_text,
+                    query_text=request.query,
                     retrieval_mode=retrieval_mode,
                     response_status=response_status,
                     retrieved_chunks=retrieved_chunks,
@@ -128,7 +126,7 @@ async def query_chatbot(
             full_response = ""
             try:
                 for token in chatbot_service.generate_response(
-                    query_text=request.query_text,
+                    query_text=request.query,
                     chunks=retrieved_chunks,
                     stream=True
                 ):
@@ -162,12 +160,12 @@ async def query_chatbot(
 
                 # Log query with final response
                 query_id = rag_service.log_rag_query(
-                    query_text=request.query_text,
+                    query_text=request.query,
                     retrieval_mode=retrieval_mode,
                     retrieved_chunks=retrieved_chunks,
                     response_status=response_status,
-                    chapter_id=request.chapter_id,
-                    selected_text=request.selected_text
+                    chapter_id=None,
+                    selected_text=request.selected_text if request.mode == "selected_text" else None
                 )
 
                 # Send final metadata with all verification results

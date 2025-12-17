@@ -70,7 +70,7 @@ export default function ChatbotWidget() {
       // Determine which endpoint to use based on retrieval mode
       let endpoint = `${API_BASE_URL}/chatbot/query`;
       let requestBody = {
-        query_text: query,
+        query: query,
         chapter_id: retrievalMode === 'chapter-specific' ? getCurrentChapterId() : null,
         selected_text: retrievalMode === 'text-selection' ? selectedText : null,
       };
@@ -79,7 +79,7 @@ export default function ChatbotWidget() {
       if (retrievalMode === 'text-selection') {
         endpoint = `${API_BASE_URL}/selected-text/query`;
         requestBody = {
-          query_text: query,
+          query: query,
           selected_text: selectedText,
         };
       }

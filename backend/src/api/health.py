@@ -11,7 +11,7 @@ import cohere
 from src.config import settings
 
 logger = logging.getLogger(__name__)
-router = APIRouter(tags=["health"])
+router = APIRouter(prefix="/api", tags=["health"])
 
 
 def get_db():

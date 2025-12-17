@@ -67,13 +67,8 @@ export default function ChatbotWidget() {
     setChunks([]);
 
     try {
-      // Determine which endpoint to use based on retrieval mode
-      let endpoint = `${API_BASE_URL}/chatbot/query`;
-      let requestBody = {
-        query: query,
-        chapter_id: retrievalMode === 'chapter-specific' ? getCurrentChapterId() : null,
-        selected_text: retrievalMode === 'text-selection' ? selectedText : null,
-      };
+      let endpoint = null;
+      let requestBody = null;
 
       // For text-selection mode, use the dedicated endpoint
       if (retrievalMode === 'text-selection') {
@@ -81,6 +76,13 @@ export default function ChatbotWidget() {
         requestBody = {
           query: query,
           selected_text: selectedText,
+        };
+      } else {
+        // For global mode (default)
+        endpoint = `${API_BASE_URL}/chatbot/query`;
+        requestBody = {
+          query: query,
+          mode: 'global',
         };
       }
 
@@ -216,16 +218,6 @@ export default function ChatbotWidget() {
                   disabled={selectedText !== ''}
                 />
                 Global
-              </label>
-              <label className={styles.radioLabel}>
-                <input
-                  type="radio"
-                  value="chapter-specific"
-                  checked={retrievalMode === 'chapter-specific'}
-                  onChange={(e) => setRetrievalMode(e.target.value)}
-                  disabled={selectedText !== ''}
-                />
-                Chapter
               </label>
               <label className={styles.radioLabel}>
                 <input

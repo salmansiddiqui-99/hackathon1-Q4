@@ -93,21 +93,21 @@ Final validation, deployment, documentation
 
 **Goal**: Implement foundational services for embedding, chunking, and database operations
 
-- [ ] T021 Create backend/src/models/database.py with SQLAlchemy ORM models: Chapter, ContentChunk, RAGQuery, RetrievedChunk, ChatSession
+- [x] T021 Create backend/src/models/database.py with SQLAlchemy ORM models: Chapter, ContentChunk, RAGQuery, RetrievedChunk, ChatSession
 - [ ] T022 Create backend/alembic.ini configuration file for database migrations
 - [ ] T023 Initialize Alembic in backend/ directory and create initial migration for database schema
 - [ ] T024 Run Alembic migration to create tables in Neon Postgres database
-- [ ] T025 [P] Create backend/src/services/embedding.py with embed_text() function using OpenAI text-embedding-3-small
-- [ ] T026 [P] Create backend/src/services/chunking.py with chunk_text() function (200-400 tokens, tiktoken tokenizer)
-- [ ] T027 Create backend/src/services/rag_service.py with class RAGService and __init__() method (Qdrant client initialization)
-- [ ] T028 Implement RAGService.embed_query() method in backend/src/services/rag_service.py (uses embedding.py)
-- [ ] T029 Implement RAGService.search_vectors() method in backend/src/services/rag_service.py (Qdrant cosine similarity, top-k=5)
-- [ ] T030 Implement RAGService.retrieve_chunks() method in backend/src/services/rag_service.py (embed → search → metadata fetch, <800ms target)
-- [ ] T031 Implement RAGService.retrieve_from_selection() method in backend/src/services/rag_service.py (bypasses Qdrant, keyword matching)
-- [ ] T032 [P] Create backend/src/services/response_verifier.py with verify_grounding() function (hallucination detection, similarity check)
-- [ ] T033 Create backend/scripts/setup-qdrant.py to initialize Qdrant collection with 384-dimension vectors
-- [ ] T034 Create backend/scripts/ingest-chapters.py to load docs/, chunk text, embed, and store in Qdrant + Postgres
-- [ ] T035 Run backend/scripts/ingest-chapters.py to index all 12 chapters from textbook/docs/ directory
+- [x] T025 [P] Create backend/src/services/embedding.py with embed_text() function using OpenAI text-embedding-3-small
+- [x] T026 [P] Create backend/src/services/chunking.py with chunk_text() function (200-400 tokens, tiktoken tokenizer)
+- [x] T027 Create backend/src/services/rag_service.py with class RAGService and __init__() method (Qdrant client initialization)
+- [x] T028 Implement RAGService.embed_query() method in backend/src/services/rag_service.py (uses embedding.py)
+- [x] T029 Implement RAGService.search_vectors() method in backend/src/services/rag_service.py (Qdrant cosine similarity, top-k=5)
+- [x] T030 Implement RAGService.retrieve_chunks() method in backend/src/services/rag_service.py (embed → search → metadata fetch, <800ms target)
+- [x] T031 Implement RAGService.retrieve_from_selection() method in backend/src/services/rag_service.py (bypasses Qdrant, keyword matching)
+- [x] T032 [P] Create backend/src/services/response_verifier.py with verify_grounding() function (hallucination detection, similarity check)
+- [x] T033 Create backend/scripts/setup-qdrant.py to initialize Qdrant collection with 384-dimension vectors
+- [x] T034 Create backend/scripts/ingest-chapters.py to load docs/, chunk text, embed, and store in Qdrant + Postgres
+- [x] T035 Run backend/scripts/ingest-chapters.py to index all 12 chapters from textbook/docs/ directory
 
 **Acceptance**: All core services implemented, Qdrant collection created, 12 chapters indexed (~1200 chunks), retrieve_chunks() completes in <800ms
 
@@ -121,16 +121,16 @@ Final validation, deployment, documentation
 
 **Goal**: Implement core chatbot functionality with global book search
 
-- [ ] T036 [US1] Create backend/src/services/chatbot_service.py with class ChatbotService and __init__() method (OpenAI client, RAGService dependency)
-- [ ] T037 [US1] Implement ChatbotService.generate_system_prompt() method in backend/src/services/chatbot_service.py (retrieval-only constraint)
-- [ ] T038 [US1] Implement ChatbotService.generate_response() method in backend/src/services/chatbot_service.py (LLM call with retrieved chunks, 500-1000 token limit)
-- [ ] T039 [US1] Implement ChatbotService.stream_response() method in backend/src/services/chatbot_service.py (HTTP streaming with NDJSON format)
-- [ ] T040 [US1] Create backend/src/api/chatbot.py with POST /api/chatbot/query endpoint (orchestrates RAGService + ChatbotService)
-- [ ] T041 [US1] Implement error handling in backend/src/api/chatbot.py (RAGError, LLMError, 500 status codes)
-- [ ] T042 [US1] Implement CORS middleware in backend/src/main.py for Docusaurus frontend domain
-- [ ] T043 [US1] Create backend/src/api/health.py with GET /api/rag/health endpoint (indexed chapters count, Qdrant status, DB status)
-- [ ] T044 [US1] Update textbook/src/components/ChatbotWidget.jsx to call POST /api/chatbot/query with streaming response handling
-- [ ] T045 [US1] Verify ChatbotWidget.jsx renders responses with proper formatting (paragraphs, code blocks, loading state)
+- [x] T036 [US1] Create backend/src/services/chatbot_service.py with class ChatbotService and __init__() method (OpenAI client, RAGService dependency)
+- [x] T037 [US1] Implement ChatbotService.generate_system_prompt() method in backend/src/services/chatbot_service.py (retrieval-only constraint)
+- [x] T038 [US1] Implement ChatbotService.generate_response() method in backend/src/services/chatbot_service.py (LLM call with retrieved chunks, 500-1000 token limit)
+- [x] T039 [US1] Implement ChatbotService.stream_response() method in backend/src/services/chatbot_service.py (HTTP streaming with NDJSON format)
+- [x] T040 [US1] Create backend/src/api/chatbot.py with POST /api/chatbot/query endpoint (orchestrates RAGService + ChatbotService)
+- [x] T041 [US1] Implement error handling in backend/src/api/chatbot.py (RAGError, LLMError, 500 status codes)
+- [x] T042 [US1] Implement CORS middleware in backend/src/main.py for Docusaurus frontend domain
+- [x] T043 [US1] Create backend/src/api/health.py with GET /api/rag/health endpoint (indexed chapters count, Qdrant status, DB status)
+- [x] T044 [US1] Update textbook/src/components/ChatbotWidget.jsx to call POST /api/chatbot/query with streaming response handling
+- [x] T045 [US1] Verify ChatbotWidget.jsx renders responses with proper formatting (paragraphs, code blocks, loading state)
 
 **Acceptance Criteria (US1)**:
 - User can open ChatbotWidget on any Docusaurus page
@@ -169,8 +169,8 @@ Final validation, deployment, documentation
 
 **Goal**: Implement text selection constraint for precision questioning
 
-- [ ] T049 [US2] Create backend/src/api/selected_text.py with POST /api/selected-text endpoint
-- [ ] T050 [US2] Implement selected-text mode logic in backend/src/api/selected_text.py (accepts selected_text parameter, bypasses Qdrant)
+- [x] T049 [US2] Create backend/src/api/selected_text.py with POST /api/selected-text endpoint
+- [x] T050 [US2] Implement selected-text mode logic in backend/src/api/selected_text.py (accepts selected_text parameter, bypasses Qdrant)
 - [ ] T051 [US2] Update textbook/src/components/ChatbotWidget.jsx to detect text selection (onMouseUp event, 20-char minimum)
 - [ ] T052 [US2] Add "Chat about this selection" button to ChatbotWidget.jsx when text is selected
 - [ ] T053 [US2] Wire ChatbotWidget.jsx to POST /api/selected-text endpoint with selected_text parameter
@@ -190,10 +190,10 @@ Final validation, deployment, documentation
 
 ### User Story 3: Performance Optimization
 
-- [ ] T054 [US3] Implement relevance threshold filtering (0.5 default) in backend/src/services/rag_service.py retrieve_chunks()
-- [ ] T055 [US3] Add embedding cache (in-memory dict) in backend/src/services/embedding.py to reduce redundant API calls
+- [x] T054 [US3] Implement relevance threshold filtering (0.5 default) in backend/src/services/rag_service.py retrieve_chunks()
+- [x] T055 [US3] Add embedding cache (in-memory dict) in backend/src/services/embedding.py to reduce redundant API calls
 - [ ] T056 [US3] Optimize Qdrant query batching in backend/src/services/rag_service.py search_vectors()
-- [ ] T057 [US3] Add performance logging (latency metrics) to backend/src/services/rag_service.py retrieve_chunks()
+- [x] T057 [US3] Add performance logging (latency metrics) to backend/src/services/rag_service.py retrieve_chunks()
 
 **Acceptance Criteria (US3)**:
 - Retrieval pipeline (embed → search → metadata) completes in <800ms average
@@ -203,10 +203,10 @@ Final validation, deployment, documentation
 
 ### User Story 4: Hallucination Prevention
 
-- [ ] T058 [US4] Update ChatbotService.generate_system_prompt() in backend/src/services/chatbot_service.py to enforce "Answer only from context" constraint
-- [ ] T059 [US4] Implement pre-LLM filtering in backend/src/services/rag_service.py retrieve_chunks() (skip chunks with similarity <0.5)
-- [ ] T060 [US4] Integrate response_verifier.py verify_grounding() into backend/src/services/chatbot_service.py generate_response()
-- [ ] T061 [US4] Implement fallback "Not found in the book" response in backend/src/api/chatbot.py when no chunks meet threshold
+- [x] T058 [US4] Update ChatbotService.generate_system_prompt() in backend/src/services/chatbot_service.py to enforce "Answer only from context" constraint
+- [x] T059 [US4] Implement pre-LLM filtering in backend/src/services/rag_service.py retrieve_chunks() (skip chunks with similarity <0.5)
+- [x] T060 [US4] Integrate response_verifier.py verify_grounding() into backend/src/services/chatbot_service.py generate_response()
+- [x] T061 [US4] Implement fallback "Not found in the book" response in backend/src/api/chatbot.py when no chunks meet threshold
 
 **Acceptance Criteria (US4)**:
 - Out-of-scope questions (not in book) return "Not found" with >95% consistency

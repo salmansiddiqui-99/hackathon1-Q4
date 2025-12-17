@@ -7,24 +7,34 @@ import sys
 
 BACKEND_URL = "https://hackathon1-q4-production.up.railway.app"
 
-def test_endpoint(name, method, endpoint, data=None):
+def test_endpoint(name, method, endpoint, data=None, is_streaming=False):
     """Test an endpoint and return response"""
     url = f"{BACKEND_URL}{endpoint}"
     try:
         if method == "GET":
             response = requests.get(url, timeout=10)
         else:
-            response = requests.post(url, json=data, timeout=10)
-        
+            response = requests.post(url, json=data, timeout=10, stream=is_streaming)
+
         print(f"\n[{name}]")
         print(f"  URL: {url}")
         print(f"  Status: {response.status_code}")
-        
+
         if response.status_code == 200:
             try:
-                body = response.json()
-                print(f"  Response: {json.dumps(body, indent=2)}")
-                return True, body
+                # Handle streaming NDJSON responses
+                if is_streaming:
+                    print(f"  Response: Streaming NDJSON")
+                    ndjson_lines = []
+                    for line in response.iter_lines():
+                        if line:
+                            ndjson_lines.append(json.loads(line))
+                    return True, ndjson_lines
+                else:
+                    # Handle regular JSON responses
+                    body = response.json()
+                    print(f"  Response: {json.dumps(body, indent=2)}")
+                    return True, body
             except:
                 print(f"  Response: {response.text[:200]}")
                 return True, response.text
@@ -58,7 +68,7 @@ query_data = {
     "query": "What is ROS?",
     "mode": "global"
 }
-ok, data = test_endpoint("Query", "POST", "/api/chatbot/query", query_data)
+ok, data = test_endpoint("Query", "POST", "/api/chatbot/query", query_data, is_streaming=True)
 
 print("\n" + "=" * 70)
 print("DIAGNOSIS SUMMARY")

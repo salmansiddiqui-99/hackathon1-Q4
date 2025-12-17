@@ -108,6 +108,14 @@ class GeminiAdapter(BaseLLMAdapter):
             return self._convert_gemini_response_to_openai(response, params.model)
 
         except Exception as e:
+            # Handle quota exceeded errors gracefully (429 Too Many Requests)
+            error_message = str(e).lower()
+            if "429" in str(getattr(e, 'status_code', '')) or "quota" in error_message or "rate limit" in error_message:
+                raise LLMProviderError(
+                    "Gemini API quota exceeded. Free tier daily limit reached. Please try again after 24 hours or use a paid API key.",
+                    status_code=429
+                )
+
             raise LLMProviderError(
                 f"Gemini API error: {str(e)}",
                 status_code=getattr(e, 'status_code', None)
@@ -160,6 +168,15 @@ class GeminiAdapter(BaseLLMAdapter):
                 )
 
         except Exception as e:
+            # Handle quota exceeded errors gracefully (429 Too Many Requests)
+            # Don't retry - just provide clear error message to user
+            error_message = str(e).lower()
+            if "429" in str(getattr(e, 'status_code', '')) or "quota" in error_message or "rate limit" in error_message:
+                raise LLMProviderError(
+                    "Gemini API quota exceeded. Free tier daily limit reached. Please try again after 24 hours or use a paid API key.",
+                    status_code=429
+                )
+
             raise LLMProviderError(
                 f"Gemini streaming API error: {str(e)}",
                 status_code=getattr(e, 'status_code', None)

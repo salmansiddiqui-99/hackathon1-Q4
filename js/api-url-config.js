@@ -4,34 +4,46 @@
 (function() {
   'use strict';
 
-  // Determine the backend base URL based on environment
-  let backendUrl = null;
+  let chatbotQueryEndpoint = null;
+  let healthCheckEndpoint = null;
 
-  // 1. Check if backend URL is set as a window variable (can be injected by deployment)
-  if (window.BACKEND_URL) {
-    backendUrl = window.BACKEND_URL;
-    console.log('[API Config] Using backend URL from window.BACKEND_URL:', backendUrl);
+  // 1. Check if endpoints are set as window variables (can be injected by deployment)
+  if (window.CHATBOT_QUERY_ENDPOINT && window.HEALTH_CHECK_ENDPOINT) {
+    chatbotQueryEndpoint = window.CHATBOT_QUERY_ENDPOINT;
+    healthCheckEndpoint = window.HEALTH_CHECK_ENDPOINT;
+    console.log('[API Config] Using endpoints from window variables');
   }
   // 2. Check if we're in development (localhost)
   else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    backendUrl = 'http://localhost:8000';
+    chatbotQueryEndpoint = 'http://localhost:8000/api/chatbot/query';
+    healthCheckEndpoint = 'http://localhost:8000/api/ready';
     console.log('[API Config] Development mode - using localhost backend');
   }
-  // 3. For production on GitHub Pages, use Railway backend
+  // 3. For production on GitHub Pages, use Railway backend with EXACT endpoint URLs
   else if (window.location.hostname === 'salmansiddiqui-99.github.io') {
-    backendUrl = 'https://hackathon1-q4-production.up.railway.app';
+    chatbotQueryEndpoint = 'https://hackathon1-q4-production.up.railway.app/api/chatbot/query';
+    healthCheckEndpoint = 'https://hackathon1-q4-production.up.railway.app/api/ready';
     console.log('[API Config] Production mode - using Railway backend');
   }
-  // 4. Default fallback
+  // 4. Default fallback - NO FALLBACK TO /api paths
   else {
-    backendUrl = window.location.origin;
-    console.log('[API Config] Using current origin as backend');
+    console.warn('[API Config] Unknown environment, using relative paths');
+    chatbotQueryEndpoint = '/api/chatbot/query';
+    healthCheckEndpoint = '/api/ready';
   }
 
-  // Set specific API endpoints (NOT base URLs)
-  window.CHATBOT_QUERY_ENDPOINT = backendUrl + '/api/chatbot/query';
-  window.HEALTH_CHECK_ENDPOINT = backendUrl + '/api/ready';
+  // Validate endpoints - CRITICAL: endpoints must not be just base /api
+  if (chatbotQueryEndpoint && chatbotQueryEndpoint.endsWith('/api')) {
+    console.error('[API Config] ERROR: Chatbot endpoint is just "/api" base path, not a specific endpoint!', chatbotQueryEndpoint);
+  }
+  if (healthCheckEndpoint && healthCheckEndpoint.endsWith('/api')) {
+    console.error('[API Config] ERROR: Health endpoint is just "/api" base path, not a specific endpoint!', healthCheckEndpoint);
+  }
 
-  console.log('[API Config] Chatbot Query Endpoint:', window.CHATBOT_QUERY_ENDPOINT);
-  console.log('[API Config] Health Check Endpoint:', window.HEALTH_CHECK_ENDPOINT);
+  // Set the global endpoints
+  window.CHATBOT_QUERY_ENDPOINT = chatbotQueryEndpoint;
+  window.HEALTH_CHECK_ENDPOINT = healthCheckEndpoint;
+
+  console.log('[API Config] Final Chatbot Query Endpoint:', window.CHATBOT_QUERY_ENDPOINT);
+  console.log('[API Config] Final Health Check Endpoint:', window.HEALTH_CHECK_ENDPOINT);
 })();

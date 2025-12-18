@@ -62,7 +62,7 @@ module.exports = {
     },
     navbar: {
       title: "Physical AI",
-      logo: { alt: "Physical AI Logo", src: "img/logo.svg" },
+      logo: { alt: "Physical AI Logo", src: "img/logo.jpg" },
       items: [
         { type: "docSidebar", sidebarId: "modules", label: "Modules", position: "left" },
         { href: "https://github.com/salmansiddiqui-99/hackathon1-Q4", label: "GitHub", position: "right" },

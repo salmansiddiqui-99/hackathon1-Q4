@@ -144,12 +144,19 @@ async def health_check() -> HealthCheckResponse:
 @router.get("/ready", status_code=status.HTTP_200_OK)
 async def readiness_check() -> dict:
     """
-    Check if the API is ready to serve requests.
+    Check if the API is ready to serve requests (Health Check Contract: GET /api/ready).
 
-    A 200 response indicates the API is ready.
+    Response: {"status": "ok" | "unavailable", "uptime_seconds": int, "version": "1.0.0", "timestamp": "ISO8601"}
+
+    A 200 response with status="ok" indicates the API is ready.
     A 503 response indicates the API is not ready.
     """
+    import time
     try:
+        # Get uptime (seconds since startup)
+        from src.main import app_state
+        uptime = int((datetime.utcnow() - app_state.get("start_time", datetime.utcnow())).total_seconds())
+
         # Check critical configuration
         required_keys = [
             settings.GEMINI_API_KEY,
@@ -161,34 +168,45 @@ async def readiness_check() -> dict:
 
         if not all(required_keys):
             return {
-                "ready": False,
-                "message": "Not all required configuration keys are set",
-                "missing_keys": [
-                    "GEMINI_API_KEY" if not settings.GEMINI_API_KEY else None,
-                    "COHERE_API_KEY" if not settings.COHERE_API_KEY else None,
-                    "DATABASE_URL" if not settings.DATABASE_URL else None,
-                    "QDRANT_URL" if not settings.QDRANT_URL else None,
-                    "QDRANT_API_KEY" if not settings.QDRANT_API_KEY else None,
-                ]
+                "status": "unavailable",
+                "uptime_seconds": uptime,
+                "version": settings.API_VERSION,
+                "timestamp": datetime.utcnow().isoformat() + "Z",
+                "reason": "Missing required configuration"
             }
 
-        # Try to connect to Qdrant
-        qdrant_client = QdrantClient(
-            url=settings.QDRANT_URL,
-            api_key=settings.QDRANT_API_KEY,
-            timeout=5
-        )
-        collections = qdrant_client.get_collections()
+        # Try to connect to Qdrant (quick check with 2s timeout)
+        try:
+            qdrant_client = QdrantClient(
+                url=settings.QDRANT_URL,
+                api_key=settings.QDRANT_API_KEY,
+                timeout=2
+            )
+            collections = qdrant_client.get_collections()
 
-        return {
-            "ready": True,
-            "message": "API is ready to serve requests",
-            "collections_available": len(collections.collections)
-        }
+            return {
+                "status": "ok",
+                "uptime_seconds": uptime,
+                "version": settings.API_VERSION,
+                "timestamp": datetime.utcnow().isoformat() + "Z"
+            }
+        except Exception as qdrant_error:
+            logger.warning(f"Qdrant unavailable: {str(qdrant_error)}")
+            return {
+                "status": "unavailable",
+                "uptime_seconds": uptime,
+                "version": settings.API_VERSION,
+                "timestamp": datetime.utcnow().isoformat() + "Z",
+                "reason": f"Vector store unavailable: {str(qdrant_error)}"
+            }
     except Exception as e:
+        logger.error(f"Health check error: {str(e)}")
         return {
-            "ready": False,
-            "message": f"API is not ready: {str(e)}"
+            "status": "unavailable",
+            "uptime_seconds": 0,
+            "version": settings.API_VERSION,
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "reason": f"Internal error: {str(e)}"
         }
 
 

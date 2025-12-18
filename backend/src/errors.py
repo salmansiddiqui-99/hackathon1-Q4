@@ -136,3 +136,58 @@ class OpenAIError(ExternalServiceError):
     """Raised when OpenAI API calls fail"""
     def __init__(self, message: str, details: Optional[Dict] = None):
         super().__init__(service="OpenAI", message=message, details=details)
+
+
+class BackendUnavailableError(BaseAPIException):
+    """Raised when backend/dependency is unavailable"""
+    def __init__(self, message: str = "Backend temporarily unavailable", details: Optional[Dict] = None):
+        super().__init__(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            error="BACKEND_UNAVAILABLE",
+            message=message,
+            details=details
+        )
+
+
+class TimeoutError(BaseAPIException):
+    """Raised when request times out"""
+    def __init__(self, message: str = "Request timed out", details: Optional[Dict] = None):
+        super().__init__(
+            status_code=status.HTTP_504_GATEWAY_TIMEOUT,
+            error="TIMEOUT",
+            message=message,
+            details=details
+        )
+
+
+class EmptyContextError(BaseAPIException):
+    """Raised when RAG retrieval returns no results"""
+    def __init__(self, message: str = "Not found in the book", details: Optional[Dict] = None):
+        super().__init__(
+            status_code=status.HTTP_200_OK,
+            error="EMPTY_CONTEXT",
+            message=message,
+            details=details
+        )
+
+
+class InvalidInputError(BaseAPIException):
+    """Raised when input validation fails"""
+    def __init__(self, message: str = "Invalid input", details: Optional[Dict] = None):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            error="INVALID_INPUT",
+            message=message,
+            details=details
+        )
+
+
+class StreamingError(BaseAPIException):
+    """Raised when streaming response is interrupted"""
+    def __init__(self, message: str = "Stream interrupted", details: Optional[Dict] = None):
+        super().__init__(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            error="STREAMING_ERROR",
+            message=message,
+            details=details
+        )

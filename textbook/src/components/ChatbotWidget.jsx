@@ -9,10 +9,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './ChatbotWidget.module.css';
 
-// Get API URL - use environment variable if available, otherwise default to localhost
-const API_BASE_URL = typeof window !== 'undefined' && window.__DOCUSAURUS_API_URL__
-  ? window.__DOCUSAURUS_API_URL__
-  : 'http://localhost:8000/api';
+// Get direct API endpoints set by api-url-config.js
+// These are specific endpoints, NOT base URLs
+const CHATBOT_QUERY_ENDPOINT = typeof window !== 'undefined' && window.CHATBOT_QUERY_ENDPOINT
+  ? window.CHATBOT_QUERY_ENDPOINT
+  : 'http://localhost:8000/api/chatbot/query';
+
+const HEALTH_CHECK_ENDPOINT = typeof window !== 'undefined' && window.HEALTH_CHECK_ENDPOINT
+  ? window.HEALTH_CHECK_ENDPOINT
+  : 'http://localhost:8000/api/ready';
 
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,7 +29,71 @@ export default function ChatbotWidget() {
   const [selectedText, setSelectedText] = useState('');
   const [chunks, setChunks] = useState([]);
   const [showChunks, setShowChunks] = useState(false);
+  const [backendAvailable, setBackendAvailable] = useState(true); // T046: Backend health state
+  const [healthCheckAttempts, setHealthCheckAttempts] = useState(0); // Track retry attempts
   const chatBodyRef = useRef(null);
+
+  // T046: Health check on component mount with 2-second timeout
+  useEffect(() => {
+    const checkBackendHealth = async () => {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000); // 2-second timeout
+
+        const response = await fetch(HEALTH_CHECK_ENDPOINT, {
+          method: 'GET',
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          setBackendAvailable(true);
+          setHealthCheckAttempts(0);
+        } else {
+          setBackendAvailable(false);
+        }
+      } catch (err) {
+        console.warn('Backend health check failed:', err.message);
+        setBackendAvailable(false);
+      }
+    };
+
+    // Check health immediately on mount
+    checkBackendHealth();
+
+    // Optional: Periodically re-check health (every 30 seconds)
+    const healthCheckInterval = setInterval(checkBackendHealth, 30000);
+
+    return () => clearInterval(healthCheckInterval);
+  }, []);
+
+  // T047: Retry health check function
+  const retryHealthCheck = async () => {
+    setHealthCheckAttempts((prev) => prev + 1);
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+      const response = await fetch(HEALTH_CHECK_ENDPOINT, {
+        method: 'GET',
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (response.ok) {
+        setBackendAvailable(true);
+        setHealthCheckAttempts(0);
+        setError(null);
+      } else {
+        setBackendAvailable(false);
+      }
+    } catch (err) {
+      console.warn('Retry health check failed:', err.message);
+      setBackendAvailable(false);
+    }
+  };
 
   // Auto-detect selected text on page
   useEffect(() => {
@@ -67,24 +136,18 @@ export default function ChatbotWidget() {
     setChunks([]);
 
     try {
-      // Determine which endpoint to use based on retrieval mode
-      let endpoint = `${API_BASE_URL}/chatbot/query`;
-      let requestBody = {
-        query_text: query,
-        chapter_id: retrievalMode === 'chapter-specific' ? getCurrentChapterId() : null,
-        selected_text: retrievalMode === 'text-selection' ? selectedText : null,
+      // Unified request body for all modes
+      const requestBody = {
+        query: query,
+        mode: retrievalMode,
       };
 
-      // For text-selection mode, use the dedicated endpoint
+      // Add selected_text if in text-selection mode
       if (retrievalMode === 'text-selection') {
-        endpoint = `${API_BASE_URL}/selected-text/query`;
-        requestBody = {
-          query_text: query,
-          selected_text: selectedText,
-        };
+        requestBody.selected_text = selectedText;
       }
 
-      const response = await fetch(endpoint, {
+      const response = await fetch(CHATBOT_QUERY_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -96,53 +159,73 @@ export default function ChatbotWidget() {
         throw new Error(`API error: ${response.status}`);
       }
 
-      // For selected-text mode, handle non-streaming JSON response
-      if (retrievalMode === 'text-selection') {
-        const data = await response.json();
-        if (data.success && data.response_text) {
-          setResponse(data.response_text);
-          if (!data.used_selection) {
-            setError('Response may not be constrained to selected text');
-          }
-        } else {
-          setError(data.response_text || 'Failed to generate response');
-        }
-      } else {
-        // Handle streaming response (NDJSON format) for global/chapter-specific modes
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let fullResponse = '';
-        let metadata = null;
+      // Stream response as NDJSON (newline-delimited JSON)
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullResponse = '';
+      let buffer = ''; // Buffer for incomplete lines
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-          const text = decoder.decode(value);
-          const lines = text.split('\n').filter((l) => l.trim());
+        // Decode chunk and add to buffer
+        buffer += decoder.decode(value, { stream: true });
 
-          for (const line of lines) {
-            try {
-              const json = JSON.parse(line);
+        // Process complete lines
+        const lines = buffer.split('\n');
 
-              if (json.type === 'token') {
-                fullResponse += json.data;
-                setResponse(fullResponse);
-              } else if (json.type === 'metadata') {
-                metadata = json.data;
-                setChunks(metadata.chunks_used || []);
-              } else if (json.type === 'error') {
-                setError(json.data);
+        // Keep the last incomplete line in buffer
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+
+          try {
+            const json = JSON.parse(line);
+
+            // Handle token chunks - append to response in real-time
+            if (json.type === 'token') {
+              fullResponse += json.data;
+              setResponse(fullResponse);
+            }
+            // Handle metadata separately
+            else if (json.type === 'metadata') {
+              const metadata = json.data;
+              if (metadata.chunks_used && metadata.chunks_used.length > 0) {
+                setChunks(metadata.chunks_used);
               }
-            } catch (e) {
-              console.error('Failed to parse response line:', e);
+            }
+            // Handle errors
+            else if (json.type === 'error') {
+              setError(json.data);
+            }
+          } catch (parseErr) {
+            console.error('Failed to parse NDJSON line:', line, parseErr);
+          }
+        }
+      }
+
+      // Process any remaining data in buffer
+      if (buffer.trim()) {
+        try {
+          const json = JSON.parse(buffer);
+          if (json.type === 'token') {
+            fullResponse += json.data;
+            setResponse(fullResponse);
+          } else if (json.type === 'metadata') {
+            const metadata = json.data;
+            if (metadata.chunks_used && metadata.chunks_used.length > 0) {
+              setChunks(metadata.chunks_used);
             }
           }
+        } catch (parseErr) {
+          console.error('Failed to parse final NDJSON line:', buffer, parseErr);
         }
+      }
 
-        if (!fullResponse) {
-          setError('No response generated');
-        }
+      if (!fullResponse && !error) {
+        setError('No response generated');
       }
     } catch (err) {
       setError(err.message || 'Failed to get response');
@@ -200,16 +283,6 @@ export default function ChatbotWidget() {
               <label className={styles.radioLabel}>
                 <input
                   type="radio"
-                  value="chapter-specific"
-                  checked={retrievalMode === 'chapter-specific'}
-                  onChange={(e) => setRetrievalMode(e.target.value)}
-                  disabled={selectedText !== ''}
-                />
-                Chapter
-              </label>
-              <label className={styles.radioLabel}>
-                <input
-                  type="radio"
                   value="text-selection"
                   checked={retrievalMode === 'text-selection'}
                   onChange={(e) => setRetrievalMode(e.target.value)}
@@ -219,6 +292,23 @@ export default function ChatbotWidget() {
               </label>
             </div>
           </div>
+
+          {/* T048: Backend Unavailable Message */}
+          {!backendAvailable && (
+            <div className={styles.backendErrorContainer}>
+              <div className={styles.backendErrorMessage}>
+                <strong>⚠️ Backend Temporarily Unavailable</strong>
+                <p>The AI assistant is currently offline. Please refresh the page or try again later.</p>
+                <button
+                  className={styles.retryButton}
+                  onClick={retryHealthCheck}
+                  title="Attempt to reconnect to backend"
+                >
+                  🔄 Retry Connection
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Chat Body */}
           <div className={styles.chatBody} ref={chatBodyRef}>
@@ -265,18 +355,18 @@ export default function ChatbotWidget() {
             <input
               type="text"
               className={styles.chatInput}
-              placeholder="Ask a question..."
+              placeholder={backendAvailable ? "Ask a question..." : "Backend offline..."}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              disabled={loading}
+              disabled={loading || !backendAvailable}
               aria-label="Chat input"
             />
             <button
               type="submit"
               className={styles.sendButton}
-              disabled={loading || !query.trim()}
+              disabled={loading || !query.trim() || !backendAvailable}
               aria-label="Send message"
-              title="Send (Enter)"
+              title={backendAvailable ? "Send (Enter)" : "Backend offline"}
             >
               {loading ? '⏳' : '➤'}
             </button>

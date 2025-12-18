@@ -48,6 +48,13 @@ module.exports = {
     ],
   ],
 
+  scripts: [
+    {
+      src: '/hackathon1-Q4/js/api-url-config.js',
+      async: false,
+    },
+  ],
+
   themeConfig: {
     colorMode: {
       defaultMode: "dark",

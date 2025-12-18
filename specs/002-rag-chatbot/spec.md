@@ -117,7 +117,7 @@ A student asks the chatbot a question about features not covered in the textbook
 
 - **FR-007**: System MUST embed user queries using the same Cohere embedding model as chunk vectors
 - **FR-008**: System MUST search Qdrant for top-k similar chunks (default k=5) using cosine similarity
-- **FR-009**: System MUST apply a relevance threshold and only return chunks with similarity score > [NEEDS CLARIFICATION: threshold value not specified - recommend 0.5 as default]
+- **FR-009**: System MUST apply a relevance threshold of 0.5 (configurable via RAG_SIMILARITY_THRESHOLD environment variable) and only return chunks with similarity score > 0.5 using cosine similarity
 - **FR-010**: System MUST retrieve metadata alongside vectors to reconstruct full context for the LLM
 - **FR-011**: System MUST handle selected-text queries by bypassing Qdrant and using only the provided text as context
 - **FR-012**: System MUST complete the entire retrieval pipeline (embed → search → retrieve metadata) in under 800ms
@@ -153,7 +153,7 @@ A student asks the chatbot a question about features not covered in the textbook
 **Data Management**
 
 - **FR-032**: System MUST store chat session metadata (user session ID, timestamp, question, answer, retrieval context) in Neon Postgres for analytics
-- **FR-033**: System MUST implement a retention policy to delete old chat logs after [NEEDS CLARIFICATION: retention period not specified - recommend 90 days default]
+- **FR-033**: System MUST implement a retention policy to delete chat logs older than 90 days automatically (configurable via CHAT_LOG_RETENTION_DAYS environment variable), maintaining compliance with data privacy regulations
 - **FR-034**: System MUST ensure all API keys and secrets are read from environment variables, not hardcoded
 
 **Performance & Reliability**
@@ -161,6 +161,8 @@ A student asks the chatbot a question about features not covered in the textbook
 - **FR-035**: System MUST be deployable to free-tier services (Qdrant Free, Neon Free, Render/Vercel Free)
 - **FR-036**: System MUST gracefully degrade when external services are unavailable (Qdrant offline, LLM rate-limited)
 - **FR-037**: System MUST log all errors and system events with timestamps for debugging
+- **FR-038**: System MUST validate backend API connectivity at page load by calling GET /api/ready and displaying a user-facing error message if the backend is unreachable (status code ≠ 200 within 2-second timeout)
+- **FR-039**: System MUST disable chatbot widget functionality and display "Backend temporarily unavailable. Please refresh the page or try again later." message when backend is offline, with a "Retry" button to attempt reconnection
 
 ### Key Entities *(include if feature involves data)*
 

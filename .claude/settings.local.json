@@ -46,7 +46,30 @@
       "Bash(cd:*)",
       "Bash(timeout 120 python:*)",
       "Bash(timeout 15 python:*)",
-      "Bash(timeout 20 python:*)"
+      "Bash(timeout 20 python:*)",
+      "Bash(python test_chatbot_integration.py:*)",
+      "Bash(git merge:*)",
+      "Bash(tree:*)",
+      "Bash(xxd:*)",
+      "Bash(grep:*)",
+      "Bash(for file in CHATBOT_TEST_REPORT.md FINAL_CHECKLIST.md QUICK_FIX_CHECKLIST.txt RAILWAY_ENVIRONMENT_SETUP.sh RAILWAY_SETUP_FIX.md RAILWAY_SETUP_COMPLETE.md RAILWAY_MANUAL_SETUP.md setup_railway_variables.py)",
+      "Bash(do echo \"Processing: $file\")",
+      "Bash(done)",
+      "Bash(uvicorn:*)",
+      "Bash(npm start -- --port 3001)",
+      "Bash(del \"C:\\Users\\haroon traders\\Desktop\\projects\\hackathon1-Q4\\backend\\src\\llm\\__init__.py\")",
+      "Bash(cat:*)",
+      "Bash(mkdir:*)",
+      "Bash(timeout 5 python:*)",
+      "Bash(timeout 120 bash:*)",
+      "Bash(netstat:*)",
+      "Bash(taskkill /PID 1152 /F)",
+      "Bash(taskkill:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nFix: SelectedTextResponse schema mismatch and field name errors\n\nResolved critical schema validation issues that were causing 500 errors on\nthe /api/selected-text/query endpoint.\n\n## Changes\n\n### Backend API (selected_text.py)\n- Fixed 4 occurrences of request.query_text → request.query\n- Aligns endpoint implementation with SelectedTextRequest model definition\n- Endpoints now properly access query field from request\n\n### Response Model (rag.py)\n- Updated SelectedTextResponse schema to match endpoint implementation\n- Changed from: response, source_text_length, processing_latency_ms, grounded, confidence\n- Changed to: success, response_text, used_selection, timestamp\n- Follows REST API best practices with explicit success flag\n\n### Frontend Integration\n- Deployed ChatbotWidget globally via swizzled Docusaurus Layout\n- Removed duplicate ChatbotWidget from home page\n- Frontend already expects correct field names (now properly aligned with backend)\n\n### Testing\n- Added comprehensive test_api.py with 5 test cases\n- Updated selected text query test expectations\n- Results: 4/5 tests PASS (chatbot query blocked by Gemini quota)\n\n## Impact\n\n- Endpoint status: 500 error → 200 OK\n- Response validation: Invalid → Valid\n- Type safety: Broken → Full Pydantic v2 validation\n- Frontend integration: Incompatible → Compatible\n\n## Verification\n\n✓ Schema fix verified with fresh backend process\n✓ All required fields present in response\n✓ Endpoint returns correct structure\n✓ No more validation errors\n\nCloses issue with selected text mode API contract.\n\nGenerated with Claude Code\nEOF\n)\")",
+      "Bash(git rev-list:*)",
+      "Bash(powershell:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nDocs: Clarify specification ambiguities and add health check requirements\n\n## Summary\n\nUpdated feature specification and task breakdown to address critical gaps\nidentified during cross-artifact analysis. Added backend health check\nrequirements (FR-038, FR-039) and new Phase 4.5 implementation phase.\n\n## Changes to specs/002-rag-chatbot/spec.md\n\n### Clarified Threshold Values (FR-009)\n- Changed from placeholder to explicit value: 0.5\n- Added reference to RAG_SIMILARITY_THRESHOLD environment variable\n- Cosine similarity threshold now clearly defined\n\n### Clarified Retention Period (FR-033)\n- Changed from placeholder to explicit value: 90 days\n- Added reference to CHAT_LOG_RETENTION_DAYS environment variable\n- Aligns with GDPR compliance requirements\n\n### Added Backend Health Check Requirements\n- **FR-038**: Validate backend connectivity at page load (GET /api/ready)\n  - 2-second timeout requirement\n  - User-facing error message if unreachable\n  - Prevents 404 errors for offline backends\n  \n- **FR-039**: Disable UI with graceful degradation message\n  - Display \"Backend temporarily unavailable...\" message\n  - Provide \"Retry\" button for user-initiated reconnection\n  - Improves user experience on backend failures\n\n## Changes to specs/002-rag-chatbot/tasks.md\n\n### Inserted New Phase 4.5: Backend Health Validation\n- Introduced 3 new tasks (T046-T048)\n- Implements frontend health checks and error handling\n- Critical for production reliability\n- All tasks marked parallelizable [P]\n\n### Renumbered Subsequent Phases\n- Phase 5 (Selected Text Mode): T046-T050 → T049-T053\n- Phase 6 (Performance & Quality): T051-T058 → T054-T061\n- Phase 7 (Testing & Deployment): T059-T064 → T062-T067\n\n### Updated Task Metadata\n- Updated Phase Organization summary to reflect 8 phases\n- Updated Task Summary table: 64 → 67 total tasks, 28 → 31 parallelizable\n- Updated Dependency Graph references for Phase 5-6\n- Updated Critical Path task numbers (T048→T051, T051-T054→T054-T057, etc.)\n\n## Impact\n\n- Specification is now complete and unambiguous\n- All environment variables are explicitly documented\n- Health check requirements prevent user-facing errors\n- Task breakdown updated to reflect actual implementation plan\n- 3 new parallelizable tasks enable faster implementation\n\n## Files Modified\n- specs/002-rag-chatbot/spec.md\n- specs/002-rag-chatbot/tasks.md\n\nGenerated with Claude Code\nEOF\n)\")",
+      "Bash(python3:*)"
     ]
   }
 }

@@ -52,7 +52,7 @@ async def query_selected_text(
     """
     try:
         # Validate request
-        if not request.query_text or len(request.query_text) < 10:
+        if not request.query or len(request.query) < 10:
             raise HTTPException(
                 status_code=400,
                 detail="Query must be at least 10 characters"
@@ -65,7 +65,7 @@ async def query_selected_text(
             )
 
         logger.info(
-            f"Processing selected-text query: {request.query_text[:50]}... "
+            f"Processing selected-text query: {request.query[:50]}... "
             f"(selection: {len(request.selected_text)} chars)"
         )
 
@@ -99,7 +99,7 @@ async def query_selected_text(
             full_response = ""
             try:
                 for token in chatbot_service.generate_response(
-                    query_text=request.query_text,
+                    query_text=request.query,
                     chunks=[selected_chunk],
                     stream=True
                 ):
@@ -126,7 +126,7 @@ async def query_selected_text(
         full_response = ""
         try:
             for token in chatbot_service.generate_response(
-                query_text=request.query_text,
+                query_text=request.query,
                 chunks=[selected_chunk],
                 stream=False
             ):

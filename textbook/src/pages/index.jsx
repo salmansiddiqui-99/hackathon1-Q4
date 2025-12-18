@@ -7,7 +7,6 @@ import React from 'react';
 import Layout from '@theme/Layout';
 import HeroSection from '@site/src/components/HeroSection';
 import ModuleCard from '@site/src/components/ModuleCard';
-import ChatbotWidget from '@site/src/components/ChatbotWidget';
 import styles from './index.module.css';
 
 const modules = [
@@ -83,8 +82,6 @@ export default function Home() {
           </div>
         </section>
       </main>
-
-      <ChatbotWidget />
     </Layout>
   );
 }

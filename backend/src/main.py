@@ -2,6 +2,11 @@
 FastAPI application entry point for Physical AI Textbook + RAG Chatbot
 """
 
+# CRITICAL: Print at module load time to ensure visibility in Railway logs
+print("=" * 80)
+print("MAIN MODULE LOADING - This should appear in Railway logs!")
+print("=" * 80)
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -10,6 +15,19 @@ from datetime import datetime
 from src.config import settings
 from src.errors import BaseAPIException
 from src.api import chapters, rag, health, chatbot, selected_text
+
+# Print config immediately after import (module-level)
+print("=" * 80)
+print("MODULE-LEVEL CONFIG CHECK (runs before startup event):")
+print("=" * 80)
+print(f"QDRANT_COLLECTION: {settings.QDRANT_COLLECTION}")
+print(f"QDRANT_VECTOR_SIZE: {settings.QDRANT_VECTOR_SIZE}")
+print(f"RAG_SIMILARITY_THRESHOLD: {settings.RAG_SIMILARITY_THRESHOLD}")
+print(f"COHERE_API_KEY: {'SET' if settings.COHERE_API_KEY else 'NOT SET'}")
+print(f"GEMINI_API_KEY: {'SET' if settings.GEMINI_API_KEY else 'NOT SET'}")
+print(f"QDRANT_API_KEY: {'SET' if settings.QDRANT_API_KEY else 'NOT SET'}")
+print(f"RAG_TOP_K: {settings.RAG_TOP_K}")
+print("=" * 80)
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -40,17 +58,67 @@ app_state = {
 @app.on_event("startup")
 async def startup_event():
     """Initialize application on startup"""
-    logger.info("✅ Physical AI Textbook API starting up...")
+    # Use print() to ensure logs appear even if logging is misconfigured
+    print("=" * 80)
+    print("Physical AI Textbook API starting up...")
+    print("=" * 80)
+
+    logger.info("=" * 80)
+    logger.info("Physical AI Textbook API starting up...")
+    logger.info("=" * 80)
     app_state["start_time"] = datetime.utcnow()
+
+    # Log critical configuration values for debugging
+    config_info = f"""
+Configuration Check:
+  API_TITLE: {settings.API_TITLE}
+  API_VERSION: {settings.API_VERSION}
+  DEBUG: {settings.DEBUG}
+
+Database Configuration:
+  DATABASE_URL: {settings.DATABASE_URL[:50] + '...' if settings.DATABASE_URL else 'NOT SET'}
+
+Qdrant Configuration:
+  QDRANT_URL: {settings.QDRANT_URL}
+  QDRANT_COLLECTION: {settings.QDRANT_COLLECTION}
+  QDRANT_VECTOR_SIZE: {settings.QDRANT_VECTOR_SIZE}
+  QDRANT_API_KEY: {'SET' if settings.QDRANT_API_KEY else 'NOT SET'}
+
+AI Configuration:
+  COHERE_API_KEY: {'SET' if settings.COHERE_API_KEY else 'NOT SET'}
+  GEMINI_API_KEY: {'SET' if settings.GEMINI_API_KEY else 'NOT SET'}
+  GEMINI_MODEL: {settings.GEMINI_MODEL if hasattr(settings, 'GEMINI_MODEL') else 'NOT SET'}
+
+RAG Configuration:
+  RAG_SIMILARITY_THRESHOLD: {settings.RAG_SIMILARITY_THRESHOLD}
+  RAG_TOP_K: {settings.RAG_TOP_K}
+
+CORS Configuration:
+  CORS_ORIGINS: {settings.get_cors_origins()}
+"""
+
+    # Print to stdout (will always show in Railway logs)
+    print(config_info)
+    # Also log normally
+    logger.info(config_info)
 
     try:
         # Validate required configuration
         settings.validate_required_keys()
-        logger.info("✅ Configuration validated")
+        print("OK: Configuration validation passed")
+        logger.info("OK: Configuration validation passed")
     except ValueError as e:
-        logger.error(f"⚠️ Configuration warning: {e}")
+        print(f"ERROR: Configuration validation failed: {e}")
+        print("WARNING: Application may not function correctly!")
+        logger.error(f"ERROR: Configuration validation failed: {e}")
+        logger.error("WARNING: Application may not function correctly!")
 
-    logger.info("✅ Startup complete")
+    print("=" * 80)
+    print("Startup complete")
+    print("=" * 80)
+    logger.info("=" * 80)
+    logger.info("Startup complete")
+    logger.info("=" * 80)
 
 @app.on_event("shutdown")
 async def shutdown_event():

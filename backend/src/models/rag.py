@@ -350,28 +350,24 @@ class SelectedTextRequest(BaseModel):
 
 
 class SelectedTextResponse(BaseModel):
-    """Response to selected text query with confidence score."""
+    """Response to selected text query with constraint verification."""
 
-    response: str = Field(..., description="Generated answer")
-    source_text_length: int = Field(..., ge=0, description="Selected text length")
-    processing_latency_ms: int = Field(..., ge=0, description="Processing time")
-    grounded: bool = Field(..., description="Is response grounded?")
-    confidence: float = Field(
-        ...,
-        ge=0.0,
-        le=1.0,
-        description="Confidence score (0.0-1.0)"
-    )
+    success: bool = Field(..., description="Whether response was generated successfully")
+    response_text: str = Field(..., description="Generated answer constrained to selected text")
+    used_selection: bool = Field(..., description="Whether selected text was used for response")
+    timestamp: datetime = Field(default_factory=datetime.utcnow, description="Response timestamp")
 
     class Config:
         json_schema_extra = {
             "example": {
-                "response": "Services provide strict ordering guarantees...",
-                "source_text_length": 150,
-                "processing_latency_ms": 1150,
-                "grounded": True,
-                "confidence": 0.88
+                "success": True,
+                "response_text": "Based on the selected text, services provide strict ordering guarantees and enable direct communication between nodes.",
+                "used_selection": True,
+                "timestamp": "2025-12-16T21:05:00.123456"
             }
+        }
+        json_encoders = {
+            datetime: lambda v: v.isoformat()
         }
 
 

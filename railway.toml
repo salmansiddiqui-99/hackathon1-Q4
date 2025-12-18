@@ -1,0 +1,83 @@
+[build]
+# Railway build settings
+rootDirectory = "backend"
+nixpacks.providers = ["python"]
+
+# ⚠️  SECURITY WARNING: Railway does NOT automatically load variables from this file!
+# Variables must be set manually in Railway Dashboard:
+# Project → Service → Variables tab
+#
+# This [variables] section is for REFERENCE ONLY
+# See backend/.env.example for all required variables and their descriptions
+
+[variables]
+# ============================================================================
+# 🔒 SENSITIVE CREDENTIALS - SET THESE IN RAILWAY DASHBOARD ONLY!
+# ============================================================================
+# DO NOT put actual API keys or credentials here - they will be exposed!
+#
+# Required variables to set in Railway Dashboard:
+# - DATABASE_URL (from Neon/PostgreSQL)
+# - QDRANT_URL (from Qdrant Cloud)
+# - QDRANT_API_KEY (from Qdrant Cloud)
+# - GEMINI_API_KEY (from Google AI Studio)
+# - COHERE_API_KEY (from Cohere Dashboard)
+#
+# See backend/.env.example for complete list and instructions
+
+# ============================================================================
+# 🔧 NON-SENSITIVE CONFIGURATION (can be set here or in Railway Dashboard)
+# ============================================================================
+
+# Vector Database Configuration
+QDRANT_COLLECTION = "chapter_chunks"
+QDRANT_VECTOR_SIZE = "1024"
+
+# CORS Configuration
+CORS_ORIGINS = "https://salmansiddiqui-99.github.io"
+
+# RAG Configuration
+RAG_SIMILARITY_THRESHOLD = "0.5"
+RAG_TOP_K = "5"
+RAG_TOP_K_CHUNKS = "5"
+RAG_MAX_RESPONSE_TOKENS = "1000"
+RAG_RESPONSE_TOKENS = "800"
+RAG_CONTEXT_MAX_TOKENS = "3000"
+
+# LLM Model Selection
+GEMINI_MODEL = "gemini-2.0-flash"
+
+# Feature Flags
+FEATURE_RAG_ENABLED = "true"
+FEATURE_TEXT_SELECTION_MODE = "true"
+FEATURE_PERFORMANCE_LOGGING = "true"
+FEATURE_HALLUCINATION_DETECTION = "true"
+FEATURE_STREAMING_RESPONSES = "true"
+
+# Logging
+LOG_LEVEL = "INFO"
+LOG_FORMAT = "json"
+
+# Performance Tuning
+EMBEDDING_CACHE_SIZE = "1000"
+QDRANT_BATCH_SIZE = "10"
+REQUEST_TIMEOUT_SECONDS = "30"
+BATCH_SIZE = "100"
+
+# API Configuration
+API_HOST = "0.0.0.0"
+API_PORT = "8000"
+API_TITLE = "Physical AI Textbook API"
+API_VERSION = "1.0.0"
+API_DESCRIPTION = "Backend API for AI/Spec-Driven Book Creation"
+DEBUG = "false"
+
+# Database Pool Configuration
+DB_ECHO = "false"
+DB_POOL_SIZE = "5"
+DB_MAX_OVERFLOW = "10"
+DB_POOL_TIMEOUT = "30"
+
+# GitHub Integration
+GITHUB_REPO_OWNER = "salmansiddiqui-99"
+GITHUB_REPO_NAME = "hackathon1-Q4"

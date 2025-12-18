@@ -1,10 +1,10 @@
-"""Chatbot service for generating RAG-based responses using Claude/OpenAI"""
+"""Chatbot service for generating RAG-based responses using LLM adapters"""
 import logging
 from typing import List, AsyncGenerator, Iterator
-import openai
 
 from src.config import settings
 from src.models.rag import RetrievedChunkData, ResponseStatus
+from src.llm import create_llm_adapter, LLMCompletionParams, LLMMessage
 
 logger = logging.getLogger(__name__)
 
@@ -13,23 +13,21 @@ class ChatbotService:
     """Service for generating context-aware responses using LLMs"""
 
     def __init__(self):
-        """Initialize chatbot service with OpenAI client"""
-        self._openai_client = None
-        self.model = settings.OPENAI_MODEL
+        """Initialize chatbot service with LLM adapter"""
+        self._llm_adapter = None
         self.max_tokens = settings.OPENAI_MAX_TOKENS
         self.temperature = settings.OPENAI_TEMPERATURE
 
     @property
-    def openai_client(self):
-        """Lazily initialize OpenAI client on first access."""
-        if self._openai_client is None:
-            if not settings.OPENAI_API_KEY:
-                raise ValueError(
-                    "OPENAI_API_KEY not configured. "
-                    "Please set OPENAI_API_KEY environment variable or .env file."
-                )
-            self._openai_client = openai.Client(api_key=settings.OPENAI_API_KEY)
-        return self._openai_client
+    def llm_adapter(self):
+        """Lazily initialize LLM adapter on first access."""
+        if self._llm_adapter is None:
+            self._llm_adapter = create_llm_adapter(settings)
+            logger.info(
+                f"Initialized LLM adapter: provider={self._llm_adapter.provider_name}, "
+                f"model={self._llm_adapter.model_name}"
+            )
+        return self._llm_adapter
 
     def generate_response(
         self,
@@ -87,38 +85,36 @@ Please answer the student's question using ONLY the provided context above.
 If the context doesn't contain relevant information, say you cannot answer based on available content."""
 
         try:
+            # Create completion parameters
+            params = LLMCompletionParams(
+                messages=[
+                    LLMMessage(role="system", content=system_prompt),
+                    LLMMessage(role="user", content=user_message)
+                ],
+                model=self.llm_adapter.model_name,
+                temperature=self.temperature,
+                max_tokens=self.max_tokens,
+                stream=stream
+            )
+
             if stream:
-                # Stream response
-                with self.openai_client.messages.stream(
-                    model=self.model,
-                    max_tokens=self.max_tokens,
-                    temperature=self.temperature,
-                    system=system_prompt,
-                    messages=[
-                        {"role": "user", "content": user_message}
-                    ]
-                ) as stream_response:
-                    for text in stream_response.text_stream:
-                        yield text
+                # Stream response using adapter
+                for chunk in self.llm_adapter.create_completion_stream(params):
+                    # Extract text from OpenAI-format chunk
+                    if chunk.choices and len(chunk.choices) > 0:
+                        delta = chunk.choices[0].get("delta", {})
+                        if "content" in delta:
+                            yield delta["content"]
             else:
                 # Generate full response at once
-                response = self.openai_client.messages.create(
-                    model=self.model,
-                    max_tokens=self.max_tokens,
-                    temperature=self.temperature,
-                    system=system_prompt,
-                    messages=[
-                        {"role": "user", "content": user_message}
-                    ]
-                )
-                yield response.content[0].text
+                response = self.llm_adapter.create_completion(params)
+                if response.choices and len(response.choices) > 0:
+                    message = response.choices[0].get("message", {})
+                    yield message.get("content", "")
 
-        except openai.APIError as e:
-            logger.error(f"OpenAI API error: {e}")
-            raise ValueError(f"Failed to generate response: {str(e)}")
         except Exception as e:
-            logger.error(f"Response generation error: {e}")
-            raise ValueError(f"Response generation failed: {str(e)}")
+            logger.error(f"LLM API error: {e}")
+            raise ValueError(f"Failed to generate response: {str(e)}")
 
     def _build_context(self, chunks: List[RetrievedChunkData]) -> str:
         """
@@ -183,7 +179,8 @@ If the context doesn't contain relevant information, say you cannot answer based
         """
         Estimate token count for text.
 
-        Uses a simple heuristic: ~1 token per 4 characters (approximation for GPT models).
+        Uses the LLM adapter's token counting method if available,
+        otherwise falls back to simple heuristic.
 
         Args:
             text: Text to count tokens for
@@ -191,8 +188,11 @@ If the context doesn't contain relevant information, say you cannot answer based
         Returns:
             Estimated token count
         """
-        # Simple approximation: 1 token ~ 4 characters
-        return len(text) // 4
+        try:
+            return self.llm_adapter.count_tokens(text)
+        except Exception:
+            # Fallback: Simple approximation (1 token ~ 4 characters)
+            return len(text) // 4
 
     def check_context_sufficiency(
         self,

@@ -90,7 +90,7 @@ class ChapterIngestion:
             logger.info(f"Creating Qdrant collection '{self.collection_name}'")
             self.qdrant_client.create_collection(
                 collection_name=self.collection_name,
-                vectors_config=VectorParams(size=384, distance=Distance.COSINE),
+                vectors_config=VectorParams(size=1024, distance=Distance.COSINE),
             )
             logger.info("✓ Collection created successfully")
             return True
@@ -218,9 +218,20 @@ class ChapterIngestion:
             self.db_session.add(chapter)
             self.db_session.flush()  # Get chapter.id
 
-            # Process and store chunks
+            # Process and store chunks (filter by token count: 100-500)
             vectors_to_upsert = []
-            for chunk_idx, chunk in enumerate(chunks):
+            valid_chunk_idx = 0
+            for chunk in chunks:
+                token_count = chunk.get("token_count", len(chunk["text"]) // 4)
+
+                # Skip chunks outside token bounds (must be 100-500 tokens)
+                if token_count < 100 or token_count > 500:
+                    logger.debug(
+                        f"Skipping chunk with {token_count} tokens (must be 100-500): "
+                        f"{chunk.get('section_title', '')[:50]}"
+                    )
+                    continue
+
                 # Embed chunk
                 embedding = self.embedding_service.embed_text(chunk["text"])
                 qdrant_id = str(uuid4())
@@ -231,13 +242,14 @@ class ChapterIngestion:
                     chapter_id=chapter.id,
                     section_title=chunk.get("section_title", ""),
                     text=chunk["text"],
-                    token_count=chunk.get("token_count", len(chunk["text"]) // 4),
+                    token_count=token_count,
                     embedding_model="text-embedding-3-small",
                     embedding_dimensions=384,
                     embedding_created_at=datetime.utcnow(),
-                    chunk_index=chunk_idx,
+                    chunk_index=valid_chunk_idx,
                 )
                 self.db_session.add(content_chunk)
+                valid_chunk_idx += 1
 
                 # Prepare Qdrant vector
                 vectors_to_upsert.append(
@@ -248,7 +260,7 @@ class ChapterIngestion:
                             "chapter_id": str(chapter.id),
                             "chunk_id": str(content_chunk.id),
                             "section_title": chunk.get("section_title", ""),
-                            "chunk_index": chunk_idx,
+                            "chunk_index": valid_chunk_idx - 1,
                         }
                     )
                 )

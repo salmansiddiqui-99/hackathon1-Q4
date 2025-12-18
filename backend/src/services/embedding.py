@@ -7,7 +7,7 @@ import asyncio
 from typing import List, Dict, Any, Optional
 from pathlib import Path
 
-from openai import OpenAI, AsyncOpenAI
+import cohere
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
 
@@ -17,42 +17,20 @@ logger = logging.getLogger(__name__)
 
 
 class EmbeddingService:
-    """Manages OpenAI embeddings and Qdrant vector storage."""
+    """Manages Cohere embeddings and Qdrant vector storage."""
 
     def __init__(self):
-        self._openai_client = None
-        self._openai_async = None
         self.qdrant_client = QdrantClient(
             url=settings.QDRANT_URL,
             api_key=settings.QDRANT_API_KEY,
         )
-        self.embedding_model = "text-embedding-3-small"
-        self.embedding_dims = 384
+        if settings.COHERE_API_KEY:
+            self.cohere_client = cohere.ClientV2(api_key=settings.COHERE_API_KEY)
+        else:
+            self.cohere_client = None
+        self.embedding_model = "embed-english-v3.0"  # Cohere's embedding model
+        self.embedding_dims = 1024  # Cohere embeddings are 1024-dimensional
         self.collection_name = "chapters"
-
-    @property
-    def openai_client(self):
-        """Lazily initialize OpenAI client on first access."""
-        if self._openai_client is None:
-            if not settings.OPENAI_API_KEY:
-                raise ValueError(
-                    "OPENAI_API_KEY not configured. "
-                    "Please set OPENAI_API_KEY environment variable or .env file."
-                )
-            self._openai_client = OpenAI(api_key=settings.OPENAI_API_KEY)
-        return self._openai_client
-
-    @property
-    def openai_async(self):
-        """Lazily initialize async OpenAI client on first access."""
-        if self._openai_async is None:
-            if not settings.OPENAI_API_KEY:
-                raise ValueError(
-                    "OPENAI_API_KEY not configured. "
-                    "Please set OPENAI_API_KEY environment variable or .env file."
-                )
-            self._openai_async = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
-        return self._openai_async
 
     def create_or_update_collection(self) -> bool:
         """
@@ -83,30 +61,36 @@ class EmbeddingService:
 
     def embed_text(self, text: str) -> List[float]:
         """
-        Generate embedding for a single text.
+        Generate embedding for a single text using Cohere.
 
         Args:
             text: Text to embed
 
         Returns:
-            Embedding vector (384 dims for text-embedding-3-small)
+            Embedding vector (1024 dims for Cohere embed-english-v3.0)
 
         Raises:
             Exception: If embedding fails
         """
         try:
-            response = self.openai_client.embeddings.create(
-                input=text,
+            if not self.cohere_client:
+                raise ValueError("Cohere client not initialized. COHERE_API_KEY not set.")
+
+            response = self.cohere_client.embed(
                 model=self.embedding_model,
+                input_type="search_document",
+                texts=[text]
             )
-            return response.data[0].embedding
+            # Extract embedding from response object (handle ClientV2 response format)
+            embeddings_list = response.embeddings.float if hasattr(response.embeddings, 'float') else response.embeddings
+            return embeddings_list[0]
         except Exception as e:
             logger.error(f"Embedding failed for text: {str(e)}")
             raise
 
     async def embed_text_async(self, text: str) -> List[float]:
         """
-        Async version of embed_text.
+        Async version of embed_text using Cohere.
 
         Args:
             text: Text to embed
@@ -115,11 +99,18 @@ class EmbeddingService:
             Embedding vector
         """
         try:
-            response = await self.openai_async.embeddings.create(
-                input=text,
+            if not self.cohere_client:
+                raise ValueError("Cohere client not initialized. COHERE_API_KEY not set.")
+
+            # Cohere SDK doesn't have async API, so we call sync version
+            response = self.cohere_client.embed(
                 model=self.embedding_model,
+                input_type="search_document",
+                texts=[text]
             )
-            return response.data[0].embedding
+            # Extract embedding from response object (handle ClientV2 response format)
+            embeddings_list = response.embeddings.float if hasattr(response.embeddings, 'float') else response.embeddings
+            return embeddings_list[0]
         except Exception as e:
             logger.error(f"Async embedding failed: {str(e)}")
             raise
@@ -149,15 +140,23 @@ class EmbeddingService:
             texts = [chunk["text"] for chunk in batch]
 
             try:
-                # Batch embed using OpenAI API
-                response = self.openai_client.embeddings.create(
-                    input=texts,
+                if not self.cohere_client:
+                    raise ValueError("Cohere client not initialized. COHERE_API_KEY not set.")
+
+                # Batch embed using Cohere API
+                texts = [chunk["text"] for chunk in batch]
+                response = self.cohere_client.embed(
                     model=self.embedding_model,
+                    input_type="search_document",
+                    texts=texts
                 )
 
+                # Extract embeddings from response object (handle ClientV2 response format)
+                embeddings_list = response.embeddings.float if hasattr(response.embeddings, 'float') else response.embeddings
+
                 # Add embeddings to chunks
-                for chunk, embedding_data in zip(batch, response.data):
-                    chunk["embedding"] = embedding_data.embedding
+                for chunk, embedding in zip(batch, embeddings_list):
+                    chunk["embedding"] = embedding
                     embedded_chunks.append(chunk)
 
             except Exception as e:

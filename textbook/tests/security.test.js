@@ -3,8 +3,8 @@
  * Verifies no API credentials leaked in frontend code or network traffic
  */
 
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
 describe('Security: No Credentials in Frontend', () => {
   const buildDir = path.join(__dirname, '../build');

@@ -61,7 +61,7 @@ export default {
       "title": "Physical AI",
       "logo": {
         "alt": "Physical AI Logo",
-        "src": "img/logo.svg"
+        "src": "img/logo.jpg"
       },
       "items": [
         {

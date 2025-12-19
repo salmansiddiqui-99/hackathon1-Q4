@@ -213,7 +213,7 @@
       "js": [
         {
           "file": "assets/js/runtime~main.763bb11b.js",
-          "hash": "cf1b833ade5bccf8",
+          "hash": "169297059bef2883",
           "publicPath": "/hackathon1-Q4/assets/js/runtime~main.763bb11b.js"
         }
       ]
@@ -433,9 +433,9 @@
     "792": {
       "js": [
         {
-          "file": "assets/js/main.47632012.js",
-          "hash": "a885e9980307a5ba",
-          "publicPath": "/hackathon1-Q4/assets/js/main.47632012.js"
+          "file": "assets/js/main.af962e11.js",
+          "hash": "1d5f2e41ddf86475",
+          "publicPath": "/hackathon1-Q4/assets/js/main.af962e11.js"
         }
       ]
     },
@@ -451,9 +451,9 @@
     "869": {
       "css": [
         {
-          "file": "assets/css/styles.7d4c73f5.css",
-          "hash": "e86afcef0c83f639",
-          "publicPath": "/hackathon1-Q4/assets/css/styles.7d4c73f5.css"
+          "file": "assets/css/styles.64bb5920.css",
+          "hash": "ab9c0c2df04313b5",
+          "publicPath": "/hackathon1-Q4/assets/css/styles.64bb5920.css"
         }
       ]
     },

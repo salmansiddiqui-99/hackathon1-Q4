@@ -126,7 +126,11 @@
       "Bash(node --experimental-vm-modules node_modules/jest/bin/jest.js:*)",
       "Skill(sp.git.commit_pr)",
       "mcp__github__create_pull_request",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(source:*)",
+      "Bash(lsof:*)",
+      "Bash(tasklist:*)",
+      "Bash(npm start:*)"
     ]
   }
 }

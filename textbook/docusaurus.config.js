@@ -6,7 +6,7 @@ const darkCodeTheme = prismThemes.dracula;
 module.exports = {
   title: "Physical AI & Humanoid Robotics",
   tagline: "Master the intersection of AI and robotics",
-  favicon: "img/favicon.ico",
+  favicon: "img/logo.svg",
 
   url: "https://salmansiddiqui-99.github.io",
   baseUrl: "/hackathon1-Q4/",
@@ -62,7 +62,7 @@ module.exports = {
     },
     navbar: {
       title: "Physical AI",
-      logo: { alt: "Physical AI Logo", src: "img/logo.jpg" },
+      logo: { alt: "Physical AI Logo", src: "img/logo.svg" },
       items: [
         { type: "docSidebar", sidebarId: "modules", label: "Modules", position: "left" },
         { href: "https://github.com/salmansiddiqui-99/hackathon1-Q4", label: "GitHub", position: "right" },

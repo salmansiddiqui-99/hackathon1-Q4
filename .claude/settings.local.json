@@ -124,7 +124,9 @@
       "Bash(TEST_REPORT.json)",
       "SlashCommand(/sp.plan)",
       "Bash(node --experimental-vm-modules node_modules/jest/bin/jest.js:*)",
-      "Skill(sp.git.commit_pr)"
+      "Skill(sp.git.commit_pr)",
+      "mcp__github__create_pull_request",
+      "Bash(git pull:*)"
     ]
   }
 }

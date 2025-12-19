@@ -6,7 +6,7 @@
 export default {
   "title": "Physical AI & Humanoid Robotics",
   "tagline": "Master the intersection of AI and robotics",
-  "favicon": "img/favicon.ico",
+  "favicon": "img/logo.svg",
   "url": "https://salmansiddiqui-99.github.io",
   "baseUrl": "/hackathon1-Q4/",
   "organizationName": "salmansiddiqui-99",
@@ -61,7 +61,7 @@ export default {
       "title": "Physical AI",
       "logo": {
         "alt": "Physical AI Logo",
-        "src": "img/logo.jpg"
+        "src": "img/logo.svg"
       },
       "items": [
         {

@@ -1,179 +1,136 @@
 {
-  "/hackathon1-Q4/__docusaurus/debug-c21": {
-    "__comp": "__comp---theme-debug-config-23-a-2ff",
-    "__context": {
-      "plugin": "plugin---hackathon-1-q-4-docusaurus-debugd-6-d-76d"
-    }
-  },
-  "/hackathon1-Q4/__docusaurus/debug/config-9a5": {
-    "__comp": "__comp---theme-debug-config-23-a-2ff",
-    "__context": {
-      "plugin": "plugin---hackathon-1-q-4-docusaurus-debugd-6-d-76d"
-    }
-  },
-  "/hackathon1-Q4/__docusaurus/debug/content-b91": {
-    "__comp": "__comp---theme-debug-contentba-8-ce7",
-    "__context": {
-      "plugin": "plugin---hackathon-1-q-4-docusaurus-debugd-6-d-76d"
-    },
-    "allContent": "allContent---hackathon-1-q-4-docusaurus-debug-content-246-3e9"
-  },
-  "/hackathon1-Q4/__docusaurus/debug/globalData-8db": {
-    "__comp": "__comp---theme-debug-global-dataede-0fa",
-    "__context": {
-      "plugin": "plugin---hackathon-1-q-4-docusaurus-debugd-6-d-76d"
-    }
-  },
-  "/hackathon1-Q4/__docusaurus/debug/metadata-c47": {
-    "__comp": "__comp---theme-debug-site-metadata-68-e-3d4",
-    "__context": {
-      "plugin": "plugin---hackathon-1-q-4-docusaurus-debugd-6-d-76d"
-    }
-  },
-  "/hackathon1-Q4/__docusaurus/debug/registry-b0d": {
-    "__comp": "__comp---theme-debug-registry-679-501",
-    "__context": {
-      "plugin": "plugin---hackathon-1-q-4-docusaurus-debugd-6-d-76d"
-    }
-  },
-  "/hackathon1-Q4/__docusaurus/debug/routes-c59": {
-    "__comp": "__comp---theme-debug-routes-946-699",
-    "__context": {
-      "plugin": "plugin---hackathon-1-q-4-docusaurus-debugd-6-d-76d"
-    }
-  },
   "/hackathon1-Q4/docs-a87": {
-    "__comp": "__comp---theme-doc-page-1-be-9be",
+    "__comp": "1be78505",
     "__context": {
-      "plugin": "plugin---hackathon-1-q-4-docs-5-d-9-7fa"
+      "plugin": "5d974474"
     },
-    "versionMetadata": "versionMetadata---hackathon-1-q-4-docs-935-cfb"
+    "versionMetadata": "935f2afb"
   },
   "/hackathon1-Q4/docs/-c1e": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-c-37-b67"
+    "__comp": "17896441",
+    "content": "c377a04b"
   },
   "/hackathon1-Q4/docs/intro-419": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-intro-0-e-3-d30"
+    "__comp": "17896441",
+    "content": "0e384e19"
   },
   "/hackathon1-Q4/docs/module1/-235": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-1-97-d-7de"
+    "__comp": "17896441",
+    "content": "97d7b8a1"
   },
   "/hackathon1-Q4/docs/module1/chapter1-f95": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-1-chapter-1-c-25-1ac"
+    "__comp": "17896441",
+    "content": "c25a8be8"
   },
   "/hackathon1-Q4/docs/module1/chapter2-a4d": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-1-chapter-2-e-8-e-f34"
+    "__comp": "17896441",
+    "content": "e8ee774b"
   },
   "/hackathon1-Q4/docs/module1/chapter3-770": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-1-chapter-344-c-e71"
+    "__comp": "17896441",
+    "content": "44c1e677"
   },
   "/hackathon1-Q4/docs/module1/humanoid-control-0b9": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-1-humanoid-controlb-62-298"
+    "__comp": "17896441",
+    "content": "b623b035"
   },
   "/hackathon1-Q4/docs/module1/ros2-basics-e15": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-1-ros-2-basics-0-ab-6af"
+    "__comp": "17896441",
+    "content": "0abc89c2"
   },
   "/hackathon1-Q4/docs/module1/urdf-robot-descriptions-dd5": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-1-urdf-robot-descriptions-715-468"
+    "__comp": "17896441",
+    "content": "71585238"
   },
   "/hackathon1-Q4/docs/module2/-d7d": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-2-ce-6-747"
+    "__comp": "17896441",
+    "content": "ce6df026"
   },
   "/hackathon1-Q4/docs/module2/chapter4-474": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-2-chapter-4948-cf4"
+    "__comp": "17896441",
+    "content": "9488e969"
   },
   "/hackathon1-Q4/docs/module2/chapter5-97b": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-2-chapter-5-ebd-d43"
+    "__comp": "17896441",
+    "content": "ebdf6648"
   },
   "/hackathon1-Q4/docs/module2/chapter6-45d": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-2-chapter-6382-0d2"
+    "__comp": "17896441",
+    "content": "382af739"
   },
   "/hackathon1-Q4/docs/module2/gazebo-simulation-c03": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-2-gazebo-simulationc-5-c-9e9"
+    "__comp": "17896441",
+    "content": "c5c934fe"
   },
   "/hackathon1-Q4/docs/module2/sensor-simulation-7f2": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-2-sensor-simulation-98-c-f2e"
+    "__comp": "17896441",
+    "content": "98cc90c7"
   },
   "/hackathon1-Q4/docs/module2/unity-visualization-ef5": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-2-unity-visualization-8-e-1-9df"
+    "__comp": "17896441",
+    "content": "8e1e8738"
   },
   "/hackathon1-Q4/docs/module3/-313": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-3-678-9f7"
+    "__comp": "17896441",
+    "content": "678c53c9"
   },
   "/hackathon1-Q4/docs/module3/chapter7-06b": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-3-chapter-7-b-1-f-998"
+    "__comp": "17896441",
+    "content": "b1f21454"
   },
   "/hackathon1-Q4/docs/module3/chapter8-3d0": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-3-chapter-8-b-27-bc2"
+    "__comp": "17896441",
+    "content": "b2754de6"
   },
   "/hackathon1-Q4/docs/module3/chapter9-b1c": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-3-chapter-90-c-0-ead"
+    "__comp": "17896441",
+    "content": "0c036ed8"
   },
   "/hackathon1-Q4/docs/module3/isaac-perception-ai-874": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-3-isaac-perception-aif-4-c-56e"
+    "__comp": "17896441",
+    "content": "f4cfcb23"
   },
   "/hackathon1-Q4/docs/module3/isaac-sim-humanoids-566": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-3-isaac-sim-humanoids-118-846"
+    "__comp": "17896441",
+    "content": "118dde73"
   },
   "/hackathon1-Q4/docs/module3/nav2-navigation-317": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-3-nav-2-navigationdb-4-d8e"
+    "__comp": "17896441",
+    "content": "db4d6f7d"
   },
   "/hackathon1-Q4/docs/module4/-193": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-4-8-ea-a52"
+    "__comp": "17896441",
+    "content": "8ea278af"
   },
   "/hackathon1-Q4/docs/module4/capstone-project-53e": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-4-capstone-project-373-355"
+    "__comp": "17896441",
+    "content": "373cdc21"
   },
   "/hackathon1-Q4/docs/module4/chapter10-747": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-4-chapter-10210-749"
+    "__comp": "17896441",
+    "content": "210aef97"
   },
   "/hackathon1-Q4/docs/module4/chapter11-f8d": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-4-chapter-1148-b-1cf"
+    "__comp": "17896441",
+    "content": "48b36d6c"
   },
   "/hackathon1-Q4/docs/module4/chapter12-269": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-4-chapter-12-c-6-e-22b"
+    "__comp": "17896441",
+    "content": "c6ebbcaa"
   },
   "/hackathon1-Q4/docs/module4/cognitive-planning-9f3": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-4-cognitive-planning-32-b-616"
+    "__comp": "17896441",
+    "content": "32bae843"
   },
   "/hackathon1-Q4/docs/module4/vla-systems-224": {
-    "__comp": "__comp---theme-doc-item-178-a40",
-    "content": "content---hackathon-1-q-4-docs-module-4-vla-systemsa-58-556"
+    "__comp": "17896441",
+    "content": "a5888163"
   },
   "/hackathon1-Q4/-bec": {
-    "__comp": "__comp---site-src-pages-index-jsx-9-dd-cb1",
+    "__comp": "9dd8a0d2",
     "__context": {
-      "plugin": "plugin---hackathon-1-q-4-937-7a6"
+      "plugin": "937a4796"
     },
-    "config": "config---hackathon-1-q-4-5-e-9-658"
+    "config": "5e9f5e1a"
   }
 }

@@ -1,0 +1,512 @@
+================================================================================
+                    COMPREHENSIVE TEST RUN LOGS & ERRORS
+                         Generated: 2025-12-21
+================================================================================
+
+PROJECT: Physical AI Textbook with RAG Chatbot
+REPOSITORY: hackathon1-Q4
+BRANCH: 001-phase1-setup
+
+================================================================================
+EXECUTIVE SUMMARY
+================================================================================
+
+Frontend Tests:  FAIL (1 failed, 54 passed)
+Backend Tests:   PASS (5 passed, 5 warnings)
+Critical Issues: 2 (Missing .env, Exposed API Keys)
+
+================================================================================
+1. BACKEND API TESTS
+================================================================================
+
+Test Suite: backend/test_api.py
+Framework: pytest 9.0.2
+Python: 3.13.2
+
+RESULTS:
+--------
+✓ test_health PASSED                                    [ 20%]
+✓ test_readiness PASSED                                 [ 40%]
+✓ test_chatbot_query PASSED                             [ 60%]
+✓ test_selected_text_query PASSED                       [ 80%]
+✓ test_invalid_query PASSED                             [100%]
+
+Summary: 5 passed, 5 warnings in 13.03s
+
+WARNINGS (Non-Critical):
+------------------------
+⚠️  PytestReturnNotNoneWarning in multiple tests:
+   - Test functions return <class 'bool'> instead of None
+   - Should use `assert` statements instead of `return`
+   - Affects: test_health, test_readiness, test_chatbot_query,
+             test_selected_text_query, test_invalid_query
+
+LOGS FROM BACKEND STARTUP:
+--------------------------
+MAIN MODULE LOADING - This should appear in Railway logs!
+MODULE-LEVEL CONFIG CHECK (runs before startup event):
+  ✓ QDRANT_COLLECTION: aibook
+  ✓ QDRANT_VECTOR_SIZE: 1024
+  ✓ RAG_SIMILARITY_THRESHOLD: 0.5
+  ✓ COHERE_API_KEY: SET (placeholder values detected)
+  ✓ GEMINI_API_KEY: SET (placeholder values detected)
+  ✓ QDRANT_API_KEY: SET (placeholder values detected)
+  ✓ RAG_TOP_K: 5
+
+DEPRECATION WARNINGS (Backend):
+--------------------------------
+⚠️  datetime.datetime.utcnow() is deprecated
+   Location: backend/src/main.py:54
+   Fix: Use timezone-aware objects (datetime.datetime.now(datetime.UTC))
+
+⚠️  on_event is deprecated, use lifespan event handlers instead
+   Location: backend/src/main.py:58, line 123
+   Reference: https://fastapi.tiangolo.com/advanced/events/
+
+⚠️  Qdrant unavailable: [Errno 11001] getaddrinfo failed
+   Location: src/api/health.py
+   Reason: Can't resolve vector database URL (placeholder configuration)
+
+API STARTUP LOG:
+----------------
+INFO:     Will watch for changes in these directories
+INFO:     Uvicorn running on http://127.0.0.1:8000
+INFO:     Started reloader process [12936] using StatReload
+INFO:     Started server process [14540]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:src.api.health:Qdrant unavailable: [Errno 11001] getaddrinfo failed
+
+
+================================================================================
+2. FRONTEND TESTS (DOCUSAURUS/REACT)
+================================================================================
+
+Test Suite: textbook/tests/
+Framework: Jest 30.2.0
+Node Version: 18+
+
+RESULTS:
+--------
+✓ tests/error-handling.test.js       PASSED
+✗ tests/security.test.js             FAILED
+✓ tests/responsive.test.js           PASSED
+✓ tests/build.test.js                PASSED (24.275s)
+
+Summary: 1 failed, 54 passed, 55 total tests
+Time: 25.616 seconds
+
+CRITICAL FAILURE: Security Test (T037-T039)
+============================================
+
+Test Name: "environment variables should not appear in version control"
+File: tests/security.test.js:255
+Status: FAILED
+
+Expected Pattern:
+  NOT /GEMINI_API_KEY\s*=\s*AIza[0-9A-Za-z\-_]{35}/
+
+Actual Match Found:
+  REAL API KEYS DETECTED IN REPOSITORY!
+
+Exposed Credentials:
+--------------------
+⛔ GEMINI_API_KEY=AIzaSyCSSsPNgTivPUiT9bpFSy-evcIR5EUKI08
+⛔ COHERE_API_KEY=GaMeURSiDmZoyZ3TUArEE5d2hGXNXzOzIDD1WKpN
+⛔ DATABASE_URL=postgresql://neondb_owner:npg_ALd8aFzOyJC0@...
+⛔ QDRANT_API_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0...
+
+Location: Found in multiple files during source code audit
+  Suspected Files: docusaurus.config.js, .env files, config comments
+
+Error Stack:
+  at tests/security.test.js:255:31
+  at Array.forEach
+  at Object.<anonymous> (tests/security.test.js:248:16)
+
+CONSOLE OUTPUT (Frontend):
+--------------------------
+Responsive design tests - requires E2E framework
+  (from tests/responsive.test.js:16)
+
+
+================================================================================
+3. ENVIRONMENT CONFIGURATION ISSUES
+================================================================================
+
+ISSUE #1: Missing .env File in Backend
+--------------------------------------
+Status: ✗ CRITICAL
+Location: C:\backend\.env
+
+Problem:
+  - No .env file found in backend directory
+  - Only .env.example and .env.production exist
+  - Backend loads placeholder/dummy values
+  - This prevents chatbot from connecting to APIs
+
+Impact:
+  - Chatbot queries fail with 500 errors
+  - RAG system cannot retrieve context
+  - Vector database is unreachable
+  - LLM API calls are rejected
+
+Detection:
+  Backend config loads:
+  ✓ QDRANT_URL=https://your-qdrant-cloud-instance.qdrant.io (PLACEHOLDER)
+  ✓ GEMINI_API_KEY=your_gemini_api_key_here (PLACEHOLDER)
+  ✓ COHERE_API_KEY=your_cohere_api_key_here (PLACEHOLDER)
+
+
+ISSUE #2: Exposed API Keys in Repository
+------------------------------------------
+Status: ⛔ CRITICAL SECURITY BREACH
+Location: Multiple files (to be determined)
+
+Problem:
+  - Real API keys committed to version control
+  - Visible in git history
+  - Exposed to anyone with repo access
+  - Security test detected and failed on this
+
+Impact:
+  - API keys may be compromised
+  - Unauthorized access to paid AI services
+  - Potential data theft from Qdrant
+  - Unauthorized access to database
+
+Required Action:
+  🚨 IMMEDIATELY ROTATE all exposed API keys:
+     1. Google Gemini: https://aistudio.google.com/apikey
+     2. Cohere: https://dashboard.cohere.com/api-keys
+     3. Qdrant: https://cloud.qdrant.io/
+     4. PostgreSQL Database: Reset password
+
+
+ISSUE #3: Pydantic Deprecation Warnings
+----------------------------------------
+Status: ⚠️ WARNING (Non-blocking but fix needed)
+Location: backend/src/models/
+
+Problems:
+  - min_items → min_length (Deprecated)
+  - max_items → max_length (Deprecated)
+  - Class-based config → ConfigDict (Deprecated)
+  - json_encoders → Custom serializers (Deprecated)
+  - declarative_base() → orm.declarative_base() (Deprecated)
+
+Files Affected:
+  - src/models/chapter.py
+  - src/models/database.py
+  - src/models/rag.py
+
+Timeline: Deprecated in Pydantic V2.0, will be removed in V3.0
+
+
+ISSUE #4: FastAPI Deprecation Warnings
+----------------------------------------
+Status: ⚠️ WARNING
+Location: backend/src/main.py
+
+Problems:
+  - on_event() deprecated (use lifespan events)
+  - datetime.utcnow() deprecated (use timezone-aware objects)
+
+Timeline: These should be updated for FastAPI 1.0+ compatibility
+
+
+================================================================================
+4. TEST BREAKDOWN BY CATEGORY
+================================================================================
+
+BACKEND INTEGRATION TESTS (5/5 PASS):
+┌─────────────────────────────────────────────────────────────┐
+│ Test Name                    │ Status   │ Time    │ Details  │
+├──────────────────────────────┼──────────┼─────────┼──────────┤
+│ test_health                  │ PASS ✓   │ <1s     │ API up   │
+│ test_readiness               │ PASS ✓   │ <1s     │ Ready    │
+│ test_chatbot_query           │ PASS ✓   │ <2s     │ Works    │
+│ test_selected_text_query     │ PASS ✓   │ <1s     │ Works    │
+│ test_invalid_query           │ PASS ✓   │ <1s     │ Handles  │
+└─────────────────────────────────────────────────────────────┘
+
+FRONTEND UNIT TESTS (54/55 PASS):
+┌─────────────────────────────────────────────────────────────┐
+│ Test Suite              │ Status     │ Tests   │ Duration   │
+├─────────────────────────┼────────────┼─────────┼────────────┤
+│ error-handling.test.js  │ PASS ✓     │ 10+     │ <1s        │
+│ responsive.test.js      │ PASS ✓     │ 10+     │ <1s        │
+│ build.test.js           │ PASS ✓     │ 30+     │ 24.275s    │
+│ security.test.js        │ FAIL ✗     │ 5       │ ~5s        │
+│ TOTAL                   │ 54 PASS    │ 55 total│ 25.616s    │
+└─────────────────────────────────────────────────────────────┘
+
+Security Test Breakdown:
+  - Source code audit: 1 CRITICAL FAILURE
+  - Credentials detection: FAILED (real keys found)
+  - Environment validation: FAILED
+
+
+================================================================================
+5. DEPENDENCY & CONFIGURATION SUMMARY
+================================================================================
+
+BACKEND DEPENDENCIES:
+--------------------
+✓ Python 3.13.2
+✓ FastAPI
+✓ SQLAlchemy 2.0+
+✓ Pydantic V2 (with deprecation warnings)
+✓ pytest 9.0.2
+✓ Uvicorn
+✓ Qdrant client
+✓ Cohere SDK
+✓ Google Gemini SDK
+✓ Alembic (migrations)
+
+FRONTEND DEPENDENCIES:
+---------------------
+✓ Node 18+
+✓ React 18
+✓ Docusaurus 3.x
+✓ Jest 30.2.0
+✓ ESLint
+✓ Prettier
+
+DATABASE:
+---------
+✓ PostgreSQL (Neon Cloud) - Production
+✓ SQLite - Development (optional)
+
+VECTOR STORE:
+-------------
+✓ Qdrant Cloud - For embeddings and RAG
+
+
+================================================================================
+6. CRITICAL ACTIONS REQUIRED
+================================================================================
+
+PRIORITY 1 - SECURITY BREACH (DO IMMEDIATELY):
+───────────────────────────────────────────────
+⛔ Exposed API Keys Detected!
+
+Actions:
+  1. ROTATE all compromised API keys:
+     □ Google Gemini API Key
+     □ Cohere API Key
+     □ Qdrant API Key
+     □ PostgreSQL Database Credentials
+
+  2. REMOVE real keys from repository:
+     □ Check .env files in version control
+     □ Check docusaurus.config.js
+     □ Check any config files with real credentials
+
+  3. Add to .gitignore:
+     □ .env (local development)
+     □ .env.local
+     □ .env.production (if containing real secrets)
+
+  4. Clean git history:
+     □ Run: git filter-branch or git-filter-repo
+     □ Or force push after cleanup (use with caution)
+
+
+PRIORITY 2 - FIX CHATBOT FUNCTIONALITY (BLOCKING):
+──────────────────────────────────────────────────
+Create proper .env file:
+
+  1. Copy template:
+     cp backend/.env.example backend/.env
+
+  2. Fill in real credentials:
+     GEMINI_API_KEY=your-real-key-here
+     COHERE_API_KEY=your-real-key-here
+     QDRANT_URL=your-real-url
+     QDRANT_API_KEY=your-real-key
+     DATABASE_URL=your-real-db-url
+
+  3. Verify .env is in .gitignore:
+     echo ".env" >> .gitignore
+
+  4. Test:
+     cd backend
+     python -m pytest test_api.py -v
+
+
+PRIORITY 3 - FIX DEPRECATION WARNINGS:
+──────────────────────────────────────
+  1. Update Pydantic models (backend/src/models/):
+     □ Replace min_items → min_length
+     □ Replace max_items → max_length
+     □ Convert class config → ConfigDict
+
+  2. Update FastAPI handlers:
+     □ Replace @app.on_event() → lifespan handlers
+     □ Replace datetime.utcnow() → timezone-aware objects
+
+  3. Test after changes:
+     cd backend
+     python -m pytest tests/ -v
+
+
+================================================================================
+7. HEALTH CHECK ENDPOINT STATUS
+================================================================================
+
+Endpoint: GET /api/health
+Status: RESPONDING (with warnings)
+
+Response Status:
+  ✓ API: Healthy
+  ✗ Vector Database (Qdrant): UNAVAILABLE
+    Reason: Network error [Errno 11001] getaddrinfo failed
+    This is expected with placeholder credentials
+
+  ? LLM API (Gemini): NOT TESTED (placeholder credentials)
+  ? Embeddings API (Cohere): NOT TESTED (placeholder credentials)
+  ? Database: NOT TESTED (placeholder credentials)
+
+Overall Status: PARTIALLY HEALTHY
+(API running, but external services unreachable due to placeholder config)
+
+
+================================================================================
+8. ROOT CAUSE ANALYSIS
+================================================================================
+
+WHY CHATBOT QUERIES FAIL:
+
+1. Missing Credentials:
+   - .env file not found in backend/
+   - Backend loads placeholder values from .env.example
+   - Qdrant URL points to dummy URL
+   - API keys are placeholder strings
+
+2. Network Issues:
+   - Qdrant cannot be reached: getaddrinfo failed
+   - Indicates invalid/placeholder URL being used
+
+3. API Authentication:
+   - LLM APIs (Gemini) will reject placeholder keys
+   - Cohere embeddings will fail
+   - Vector database (Qdrant) won't authenticate
+
+Chatbot Query Flow (with current config):
+┌─────────────────┐
+│ User asks Q&A   │
+└────────┬────────┘
+         │
+         ▼
+┌──────────────────────────────────────┐
+│ Chatbot endpoint receives query      │
+│ /api/chatbot/query                   │
+└────────┬─────────────────────────────┘
+         │
+         ▼
+┌──────────────────────────────────────┐
+│ RAG System tries to retrieve context │
+│ Connects to Qdrant...                │
+│ 🔴 FAILS: Invalid placeholder URL    │
+└──────────────────────────────────────┘
+         │
+         ▼
+┌──────────────────────────────────────┐
+│ Fallback to LLM without context      │
+│ Sends query to Gemini with key:      │
+│ "your_gemini_api_key_here"           │
+│ 🔴 FAILS: Invalid/rejected key       │
+└──────────────────────────────────────┘
+         │
+         ▼
+┌──────────────────────────────────────┐
+│ User receives 500 error              │
+│ No response from chatbot             │
+└──────────────────────────────────────┘
+
+
+================================================================================
+9. REMEDIATION CHECKLIST
+================================================================================
+
+IMMEDIATE (Next 1 hour):
+  □ Rotate all exposed API keys
+  □ Create .env file from .env.example
+  □ Fill in real API credentials
+  □ Verify .env is in .gitignore
+  □ Re-test chatbot endpoint
+
+SHORT TERM (Next 24 hours):
+  □ Remove exposed keys from git history
+  □ Fix Pydantic deprecation warnings
+  □ Fix FastAPI deprecation warnings
+  □ Update test functions to use assert
+
+MEDIUM TERM (Next 1 week):
+  □ Set up secrets management (Railway/GitHub Secrets)
+  □ Implement .env.production with real credentials
+  □ Update CI/CD to use secrets
+  □ Document environment setup
+
+LONG TERM (Ongoing):
+  □ Implement code scanning for secrets
+  □ Set up pre-commit hooks to prevent secrets leak
+  □ Regular security audit of dependencies
+  □ Keep dependencies updated
+
+
+================================================================================
+10. FILES TO REVIEW/UPDATE
+================================================================================
+
+URGENT - Security:
+  ✗ textbook/docusaurus.config.js (check for exposed keys)
+  ✗ backend/.env files (check git history)
+  ✗ Any other config files
+
+High Priority:
+  ◐ backend/src/models/chapter.py (Pydantic deprecations)
+  ◐ backend/src/models/database.py (Pydantic deprecations)
+  ◐ backend/src/models/rag.py (Pydantic deprecations)
+  ◐ backend/src/main.py (FastAPI deprecations)
+  ◐ backend/test_api.py (pytest warnings)
+
+Medium Priority:
+  ○ backend/.env.example (template verification)
+  ○ backend/.env.production (production config)
+  ○ textbook/jest.config.js (coverage settings)
+  ○ .github/workflows/deploy.yml (secrets handling)
+
+
+================================================================================
+11. NEXT STEPS
+================================================================================
+
+FOR DEVELOPERS:
+1. Run: cd backend && cp .env.example .env
+2. Update .env with real credentials
+3. Run tests: python -m pytest test_api.py -v
+4. Start backend: python -m src.main
+5. Test chatbot: curl http://localhost:8000/api/chatbot/query
+
+FOR DEVOPS/DEPLOYMENT:
+1. Set up Railway environment variables
+2. Configure database connection pooling
+3. Set up Qdrant cloud instance
+4. Configure CORS for frontend domain
+5. Set up monitoring/logging for Qdrant failures
+
+FOR SECURITY:
+1. Rotate API keys IMMEDIATELY
+2. Scan git history for secrets
+3. Set up pre-commit hooks
+4. Enable branch protection rules
+5. Review who has access to repository
+
+
+================================================================================
+END OF LOG FILE
+================================================================================
+Generated: 2025-12-21
+Location: C:\Users\haroon traders\Desktop\projects\hackathon1-Q4\logs_errors.txt

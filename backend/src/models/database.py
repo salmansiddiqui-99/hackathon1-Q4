@@ -17,8 +17,7 @@ from sqlalchemy import (
     Column, String, Integer, Text, DateTime, ForeignKey, CheckConstraint,
     UniqueConstraint, Index, func, ARRAY, Numeric, Boolean, Float
 )
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from datetime import datetime, timedelta

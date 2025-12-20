@@ -1,7 +1,7 @@
 """Pydantic models for Chapter and related entities"""
 from typing import List, Optional
 from uuid import UUID
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 from enum import Enum
 from datetime import datetime
 
@@ -18,13 +18,13 @@ class ChapterBase(BaseModel):
     title: str = Field(..., min_length=10, max_length=150)
     learning_objectives: List[str] = Field(
         ...,
-        min_items=3,
-        max_items=5,
+        min_length=3,
+        max_length=5,
         description="Learning objectives (3-5 items)"
     )
     references: List[str] = Field(
         ...,
-        min_items=1,
+        min_length=1,
         description="List of citations/sources"
     )
 
@@ -78,8 +78,7 @@ class Chapter(ChapterBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ChapterUpdate(BaseModel):
@@ -121,8 +120,7 @@ class ContentChunk(ContentChunkCreate):
     id: UUID
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ContentChunkResponse(ContentChunk):
@@ -142,8 +140,7 @@ class RetrievedChunk(RetrievedChunkCreate):
     """Full retrieved chunk schema"""
     id: UUID
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class RetrievedChunkResponse(RetrievedChunk):

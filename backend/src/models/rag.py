@@ -14,7 +14,7 @@ All models include validation, examples, and descriptions per API contracts:
 - selected-text-contract.md
 """
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict, field_serializer
 from typing import List, Optional
 from uuid import UUID
 from enum import Enum
@@ -47,8 +47,7 @@ class RetrievedChunkData(BaseModel):
     similarity_score: float = 0.0
     chapter_id: Optional[UUID] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class RAGResponseData(BaseModel):
@@ -60,10 +59,10 @@ class RAGResponseData(BaseModel):
     retrieved_chunks: List[RetrievedChunkData] = []
     timestamp: datetime = Field(default_factory=datetime.utcnow)
 
-    class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+    @field_serializer('timestamp')
+    def serialize_timestamp(self, value: datetime) -> str:
+        """Serialize datetime to ISO format string"""
+        return value.isoformat()
 
 
 class RAGRequest(BaseModel):
@@ -80,10 +79,10 @@ class RAGResponse(BaseModel):
     error: Optional[str] = None
     timestamp: datetime = Field(default_factory=datetime.utcnow)
 
-    class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+    @field_serializer('timestamp')
+    def serialize_timestamp(self, value: datetime) -> str:
+        """Serialize datetime to ISO format string"""
+        return value.isoformat()
 
 
 class RAGQueryCreate(BaseModel):
@@ -93,8 +92,7 @@ class RAGQueryCreate(BaseModel):
     chapter_id: Optional[UUID] = None
     selected_text: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============================================================================

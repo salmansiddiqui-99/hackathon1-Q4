@@ -11,7 +11,8 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import logging
-from datetime import datetime
+from datetime import datetime, UTC
+from contextlib import asynccontextmanager
 from src.config import settings
 from src.errors import BaseAPIException
 from src.api import chapters, rag, health, chatbot, selected_text
@@ -29,12 +30,13 @@ print(f"QDRANT_API_KEY: {'SET' if settings.QDRANT_API_KEY else 'NOT SET'}")
 print(f"RAG_TOP_K: {settings.RAG_TOP_K}")
 print("=" * 80)
 
-# Initialize FastAPI app
+# Initialize FastAPI app with lifespan
 app = FastAPI(
     title=settings.API_TITLE,
     description=settings.API_DESCRIPTION,
     version=settings.API_VERSION,
-    debug=settings.DEBUG
+    debug=settings.DEBUG,
+    lifespan=lifespan
 )
 
 # Configure CORS
@@ -51,14 +53,14 @@ logger = logging.getLogger(__name__)
 
 # Application startup state
 app_state = {
-    "start_time": datetime.utcnow(),
+    "start_time": datetime.now(UTC),
     "uptime_seconds": 0
 }
 
-@app.on_event("startup")
-async def startup_event():
-    """Initialize application on startup"""
-    # Use print() to ensure logs appear even if logging is misconfigured
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan context manager for startup and shutdown events"""
+    # Startup event
     print("=" * 80)
     print("Physical AI Textbook API starting up...")
     print("=" * 80)
@@ -66,7 +68,7 @@ async def startup_event():
     logger.info("=" * 80)
     logger.info("Physical AI Textbook API starting up...")
     logger.info("=" * 80)
-    app_state["start_time"] = datetime.utcnow()
+    app_state["start_time"] = datetime.now(UTC)
 
     # Log critical configuration values for debugging
     config_info = f"""
@@ -120,9 +122,9 @@ CORS Configuration:
     logger.info("Startup complete")
     logger.info("=" * 80)
 
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Clean up on shutdown"""
+    yield
+
+    # Shutdown event
     logger.info("🔴 Physical AI Textbook API shutting down...")
     # TODO: Close database connections
     # TODO: Clean up resources
@@ -135,7 +137,7 @@ async def root():
         "status": "ok",
         "service": settings.API_TITLE,
         "version": settings.API_VERSION,
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.now(UTC).isoformat()
     }
 
 # Include routers
@@ -164,7 +166,7 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={
             "detail": "Internal server error",
             "error": str(exc),
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(UTC).isoformat()
         }
     )
 

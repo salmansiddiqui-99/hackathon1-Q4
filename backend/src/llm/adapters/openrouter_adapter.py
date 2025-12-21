@@ -88,13 +88,21 @@ class OpenRouterAdapter(BaseLLMAdapter):
         """
         try:
             # Convert messages to OpenAI format
-            messages = [
-                {
-                    "role": msg.role,
-                    "content": msg.content
-                }
-                for msg in params.messages
-            ]
+            # Handle both LLMMessage objects and plain dictionaries
+            messages = []
+            for msg in params.messages:
+                if isinstance(msg, dict):
+                    # Already a dictionary
+                    messages.append({
+                        "role": msg["role"],
+                        "content": msg["content"]
+                    })
+                else:
+                    # LLMMessage object with attributes
+                    messages.append({
+                        "role": msg.role,
+                        "content": msg.content
+                    })
 
             # Create completion request
             response = self._client.chat.completions.create(
@@ -154,13 +162,21 @@ class OpenRouterAdapter(BaseLLMAdapter):
         """
         try:
             # Convert messages to OpenAI format
-            messages = [
-                {
-                    "role": msg.role,
-                    "content": msg.content
-                }
-                for msg in params.messages
-            ]
+            # Handle both LLMMessage objects and plain dictionaries
+            messages = []
+            for msg in params.messages:
+                if isinstance(msg, dict):
+                    # Already a dictionary
+                    messages.append({
+                        "role": msg["role"],
+                        "content": msg["content"]
+                    })
+                else:
+                    # LLMMessage object with attributes
+                    messages.append({
+                        "role": msg.role,
+                        "content": msg.content
+                    })
 
             # Create streaming request
             stream = self._client.chat.completions.create(

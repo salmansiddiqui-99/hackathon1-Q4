@@ -1,0 +1,664 @@
+================================================================================
+                    RAILWAY DEPLOYMENT & VARIABLES GUIDE
+                Physical AI Textbook Backend - Hackathon Q4
+================================================================================
+Last Updated: 2025-12-21
+Branch: 001-phase1-setup
+Latest Commit: 5a033b6
+
+================================================================================
+SECTION 1: QUICK DEPLOYMENT STEPS
+================================================================================
+
+STEP 1: Create Railway Project
+-------------------------------
+1. Go to https://railway.app and log in
+2. Click "New Project"
+3. Select "Deploy from GitHub repo"
+4. Choose repository: salmansiddiqui-99/hackathon1-Q4
+5. Select branch: 001-phase1-setup
+6. Railway will auto-detect the backend service
+
+STEP 2: Configure Service Settings
+-----------------------------------
+1. After project creation, click on the backend service
+2. Go to "Settings" tab
+3. Configure the following:
+
+   Root Directory: backend
+   Build Command: (leave default or use: pip install -r requirements.txt)
+   Start Command: uvicorn src.main:app --host 0.0.0.0 --port $PORT
+
+   OR if using Nixpacks (recommended):
+   - Railway will auto-detect Python
+   - It will use pyproject.toml or requirements.txt
+   - Start command: uvicorn src.main:app --host 0.0.0.0 --port $PORT
+
+STEP 3: Add Environment Variables
+----------------------------------
+Go to "Variables" tab and add all variables from SECTION 2 below.
+
+STEP 4: Deploy
+--------------
+1. Click "Deploy" button (or it will auto-deploy)
+2. Wait for build to complete (2-5 minutes)
+3. Once deployed, Railway will provide a public URL
+4. Copy the URL for frontend configuration
+
+STEP 5: Verify Deployment
+--------------------------
+1. Open the Railway URL in browser
+2. Add /health to the URL: https://your-app.railway.app/health
+3. Should return JSON with "status": "healthy"
+4. Check logs for startup messages
+
+
+================================================================================
+SECTION 2: ENVIRONMENT VARIABLES (REQUIRED)
+================================================================================
+
+Copy and paste these into Railway Dashboard → Variables tab.
+Replace placeholder values with your actual credentials.
+
+----------------------------
+🔑 LLM PROVIDER (REQUIRED)
+----------------------------
+# OpenRouter is the ONLY supported LLM provider
+OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+OPENROUTER_MODEL=mistralai/devstral-2512:free
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+LLM_PROVIDER=openrouter
+
+Get OpenRouter API key from: https://openrouter.ai/
+
+
+----------------------------
+🗄️ VECTOR DATABASE (REQUIRED)
+----------------------------
+# Qdrant Cloud configuration
+QDRANT_URL=https://your-cluster-id.region.gcp.cloud.qdrant.io
+QDRANT_API_KEY=your-qdrant-api-key-here
+QDRANT_COLLECTION=chapter_chunks
+QDRANT_VECTOR_SIZE=1024
+QDRANT_DISTANCE_METRIC=Cosine
+
+Get Qdrant from: https://cloud.qdrant.io/
+
+
+----------------------------
+💾 DATABASE (REQUIRED)
+----------------------------
+# PostgreSQL connection string
+# Example providers: Neon, Supabase, Railway Postgres
+DATABASE_URL=postgresql://user:password@host:port/database?sslmode=require
+
+# Database pool settings
+DB_ECHO=false
+DB_POOL_SIZE=5
+DB_MAX_OVERFLOW=10
+DB_POOL_TIMEOUT=30
+
+Examples:
+- Neon: postgresql://user:pass@ep-xxx.region.neon.tech/dbname?sslmode=require
+- Supabase: postgresql://postgres:pass@db.xxx.supabase.co:5432/postgres
+- Railway: Railway will auto-inject $DATABASE_URL if using Railway Postgres
+
+
+----------------------------
+🔤 EMBEDDINGS (REQUIRED)
+----------------------------
+# Cohere for text embeddings
+COHERE_API_KEY=your-cohere-api-key-here
+
+Get Cohere API key from: https://dashboard.cohere.com/api-keys
+
+
+----------------------------
+🌐 CORS CONFIGURATION
+----------------------------
+# Comma-separated list of allowed origins
+# IMPORTANT: Add your GitHub Pages URL and localhost
+CORS_ORIGINS=https://salmansiddiqui-99.github.io,http://localhost:3000,http://localhost:5173
+CORS_ALLOW_CREDENTIALS=true
+CORS_ALLOW_METHODS=GET,POST,PUT,DELETE,OPTIONS
+CORS_ALLOW_HEADERS=Content-Type,Authorization
+
+
+----------------------------
+🔧 API CONFIGURATION
+----------------------------
+API_HOST=0.0.0.0
+API_PORT=8000
+API_TITLE=Physical AI Textbook API
+API_VERSION=1.0.0
+API_DESCRIPTION=Backend API for AI/Spec-Driven Book Creation
+DEBUG=false
+
+
+----------------------------
+🎯 RAG CONFIGURATION
+----------------------------
+RAG_SIMILARITY_THRESHOLD=0.5
+RAG_TOP_K=5
+RAG_TOP_K_CHUNKS=5
+RAG_MAX_RESPONSE_TOKENS=1000
+RAG_RESPONSE_TOKENS=800
+RAG_CONTEXT_MAX_TOKENS=3000
+
+
+----------------------------
+📝 LOGGING
+----------------------------
+LOG_LEVEL=INFO
+LOG_FORMAT=json
+
+
+----------------------------
+🚀 FEATURE FLAGS
+----------------------------
+FEATURE_RAG_ENABLED=true
+FEATURE_CHAPTER_GENERATION_ENABLED=true
+FEATURE_TEXT_SELECTION_MODE=true
+FEATURE_PERFORMANCE_LOGGING=true
+FEATURE_HALLUCINATION_DETECTION=true
+FEATURE_STREAMING_RESPONSES=true
+
+
+----------------------------
+⚡ PERFORMANCE TUNING
+----------------------------
+REQUEST_TIMEOUT=30
+BATCH_SIZE=100
+MAX_RETRIES=3
+
+
+----------------------------
+⚠️ LEGACY/DEPRECATED (DO NOT ADD)
+----------------------------
+# DO NOT ADD THESE - They are no longer supported:
+# GEMINI_API_KEY (REMOVED)
+# GEMINI_MODEL (REMOVED)
+# OPENAI_API_KEY (REMOVED - use OpenRouter instead)
+# ANTHROPIC_API_KEY (REMOVED - use OpenRouter instead)
+
+
+================================================================================
+SECTION 3: RAILWAY-SPECIFIC CONFIGURATION
+================================================================================
+
+PORT Configuration:
+-------------------
+Railway automatically provides $PORT environment variable.
+Your start command MUST use it:
+
+  uvicorn src.main:app --host 0.0.0.0 --port $PORT
+
+DO NOT hardcode port 8000 in production.
+
+
+Public URL:
+-----------
+After deployment, Railway generates a URL:
+  https://your-backend-production-xxxx.up.railway.app
+
+This URL should be used in your frontend configuration:
+  - Update frontend .env with: VITE_API_URL=https://your-backend-url
+  - Add Railway URL to CORS_ORIGINS
+
+
+Health Check:
+-------------
+Railway can use health checks to verify service is running.
+Endpoint: /health
+Expected response: {"status": "healthy"}
+
+Configure in Settings → Health Check:
+  Path: /health
+  Expected Status: 200
+
+
+Logging:
+--------
+View logs in Railway Dashboard → Logs tab
+All Python print() and logging.logger() calls appear here
+Use LOG_FORMAT=json for structured logging
+
+
+Auto-Deploy:
+------------
+Railway can auto-deploy on git push:
+  Settings → GitHub → Enable "Auto-deploy on push"
+  Select branch: 001-phase1-setup
+
+
+================================================================================
+SECTION 4: DEPLOYMENT VERIFICATION CHECKLIST
+================================================================================
+
+After deployment, verify these items:
+
+□ Service Status
+  - Dashboard shows "Deployed" (green checkmark)
+  - No error messages in Logs tab
+  - Health check endpoint returns 200
+
+□ Environment Variables
+  - All required variables are set (see SECTION 2)
+  - OPENROUTER_API_KEY is present and valid
+  - QDRANT_URL and QDRANT_API_KEY are correct
+  - DATABASE_URL is properly formatted
+  - COHERE_API_KEY is set
+
+□ Startup Logs
+  Check logs for these SUCCESS messages:
+    ✓ "OPENROUTER_API_KEY: SET"
+    ✓ "LLM_PROVIDER: openrouter"
+    ✓ "Application startup complete"
+
+  Should NOT see these ERROR messages:
+    ✗ "GEMINI_API_KEY is required"
+    ✗ "Missing required environment variables"
+    ✗ "Failed to create LLM adapter"
+
+□ API Endpoints
+  Test these URLs (replace with your Railway URL):
+    ✓ GET  https://your-app.railway.app/health
+    ✓ GET  https://your-app.railway.app/docs (FastAPI Swagger docs)
+    ✓ GET  https://your-app.railway.app/redoc (ReDoc documentation)
+
+□ Database Connection
+  Logs should show:
+    ✓ Database connection successful
+    ✓ No "Connection refused" errors
+
+□ Qdrant Connection
+  Logs should show:
+    ✓ Qdrant client initialized
+    ✓ Collection 'chapter_chunks' accessible
+
+□ LLM Integration
+  Test chatbot endpoint:
+    ✓ POST /api/chatbot/query returns 200 OK
+    ✓ Streaming responses work
+    ✓ No "AttributeError" in logs
+
+□ CORS Configuration
+  Frontend should connect without CORS errors:
+    ✓ GitHub Pages URL in CORS_ORIGINS
+    ✓ Preflight OPTIONS requests return 200
+
+
+================================================================================
+SECTION 5: COMMON DEPLOYMENT ISSUES & SOLUTIONS
+================================================================================
+
+ISSUE 1: "GEMINI_API_KEY is required" Error
+--------------------------------------------
+CAUSE: Railway is running old/stale code
+SOLUTION:
+  1. Go to Railway Dashboard → Deployments
+  2. Check commit hash - should be 5a033b6 or later
+  3. If older commit, click "Redeploy" to pull latest code
+  4. Verify environment: LLM_PROVIDER=openrouter
+  5. Remove any GEMINI_API_KEY variable if present
+
+
+ISSUE 2: Build Fails with "No module named 'src'"
+--------------------------------------------------
+CAUSE: Incorrect working directory
+SOLUTION:
+  1. Settings → Root Directory: backend
+  2. Redeploy
+
+
+ISSUE 3: Port Binding Error
+----------------------------
+CAUSE: Not using Railway's $PORT variable
+SOLUTION:
+  Start command must be:
+    uvicorn src.main:app --host 0.0.0.0 --port $PORT
+
+
+ISSUE 4: CORS Errors from Frontend
+-----------------------------------
+CAUSE: Railway URL not in CORS_ORIGINS
+SOLUTION:
+  1. Copy Railway public URL
+  2. Add to CORS_ORIGINS variable:
+     CORS_ORIGINS=https://railway-url.railway.app,https://username.github.io
+
+
+ISSUE 5: Database Connection Failed
+------------------------------------
+CAUSE: Invalid DATABASE_URL or network issue
+SOLUTION:
+  1. Verify DATABASE_URL format includes ?sslmode=require
+  2. Test database is accessible
+  3. Check if using Railway Postgres - use $DATABASE_URL variable
+
+
+ISSUE 6: "Module not found" Errors
+-----------------------------------
+CAUSE: Dependencies not installed
+SOLUTION:
+  1. Verify requirements.txt exists in backend/
+  2. Check build logs for pip install errors
+  3. Ensure all dependencies listed in requirements.txt
+
+
+ISSUE 7: Slow Response Times
+-----------------------------
+CAUSE: Cold starts or insufficient resources
+SOLUTION:
+  1. Upgrade Railway plan for better performance
+  2. Consider keeping service warm with uptime monitors
+  3. Check OPENROUTER_MODEL - some models are slower
+
+
+ISSUE 8: Out of Memory (OOM)
+-----------------------------
+CAUSE: Insufficient RAM allocation
+SOLUTION:
+  1. Reduce DB_POOL_SIZE to 3
+  2. Reduce BATCH_SIZE to 50
+  3. Upgrade Railway plan for more memory
+
+
+================================================================================
+SECTION 6: MONITORING & MAINTENANCE
+================================================================================
+
+Logs:
+-----
+Access via: Dashboard → Logs tab
+Filter by severity: Info, Warning, Error
+Download logs for debugging
+
+
+Metrics:
+--------
+Monitor in Dashboard:
+  - CPU usage
+  - Memory usage
+  - Network traffic
+  - Response times
+
+
+Alerts:
+-------
+Configure alerts for:
+  - Deployment failures
+  - High error rates
+  - Service downtime
+  - Resource limits exceeded
+
+
+Backups:
+--------
+Database:
+  - Enable automated backups in your DB provider
+  - Test restore procedure regularly
+
+Environment Variables:
+  - Keep backup copy in password manager
+  - Document all changes
+
+
+Updates:
+--------
+To deploy new code:
+  1. Push changes to GitHub branch 001-phase1-setup
+  2. Railway auto-deploys (if enabled)
+  3. OR manually trigger deploy in Dashboard
+  4. Monitor logs for successful startup
+
+
+Rollback:
+---------
+If deployment fails:
+  1. Deployments tab → Previous successful deployment
+  2. Click three dots (⋮) → "Redeploy"
+  3. Railway restores previous version
+
+
+================================================================================
+SECTION 7: PRODUCTION BEST PRACTICES
+================================================================================
+
+Security:
+---------
+✓ Never commit .env files to git
+✓ Use strong, unique API keys
+✓ Rotate keys periodically (every 90 days)
+✓ Enable 2FA on all service accounts
+✓ Review CORS settings regularly
+✓ Monitor for suspicious API usage
+
+
+Performance:
+------------
+✓ Enable caching where appropriate
+✓ Use connection pooling (already configured)
+✓ Monitor response times
+✓ Optimize database queries
+✓ Consider CDN for static assets
+
+
+Reliability:
+------------
+✓ Set up health checks
+✓ Configure auto-restart on failure
+✓ Monitor error rates
+✓ Test rollback procedures
+✓ Document incident response plan
+
+
+Cost Optimization:
+------------------
+✓ Use free tier models when possible (mistralai/devstral-2512:free)
+✓ Monitor OpenRouter usage
+✓ Implement rate limiting
+✓ Cache frequently accessed data
+✓ Review Railway metrics for optimization
+
+
+================================================================================
+SECTION 8: CONNECTING FRONTEND TO RAILWAY BACKEND
+================================================================================
+
+After Railway deployment is complete:
+
+STEP 1: Get Railway Backend URL
+--------------------------------
+From Railway Dashboard, copy your backend URL:
+  Example: https://physical-ai-backend-production.up.railway.app
+
+
+STEP 2: Update Frontend Environment
+------------------------------------
+In your frontend project, create/update .env file:
+
+  VITE_API_URL=https://your-railway-backend-url.railway.app
+
+Or if using Next.js:
+  NEXT_PUBLIC_API_URL=https://your-railway-backend-url.railway.app
+
+
+STEP 3: Update CORS on Backend
+-------------------------------
+Add frontend URL to Railway environment variables:
+
+  CORS_ORIGINS=https://salmansiddiqui-99.github.io/hackathon1-Q4,https://your-railway-backend-url.railway.app,http://localhost:3000
+
+
+STEP 4: Rebuild Frontend
+-------------------------
+After updating .env:
+  npm run build
+  npm run deploy (for GitHub Pages)
+
+
+STEP 5: Test Connection
+------------------------
+1. Open frontend in browser
+2. Open browser DevTools → Network tab
+3. Try AI Assistant query
+4. Verify API calls go to Railway URL
+5. Check for 200 OK responses
+
+
+================================================================================
+SECTION 9: RAILWAY CLI (OPTIONAL)
+================================================================================
+
+Install Railway CLI:
+--------------------
+npm i -g @railway/cli
+
+Or:
+brew install railway
+
+
+Login:
+------
+railway login
+
+
+Link Project:
+-------------
+cd backend
+railway link
+
+
+Deploy from CLI:
+----------------
+railway up
+
+
+View Logs:
+----------
+railway logs
+
+
+Open Dashboard:
+---------------
+railway open
+
+
+Set Variables:
+--------------
+railway variables set OPENROUTER_API_KEY=sk-or-v1-xxx
+
+
+================================================================================
+SECTION 10: COMPLETE ENVIRONMENT VARIABLES REFERENCE
+================================================================================
+
+Quick Copy-Paste Template (replace values):
+--------------------------------------------
+
+# === LLM Provider (REQUIRED) ===
+OPENROUTER_API_KEY=sk-or-v1-your-key-here
+OPENROUTER_MODEL=mistralai/devstral-2512:free
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+LLM_PROVIDER=openrouter
+
+# === Embeddings (REQUIRED) ===
+COHERE_API_KEY=your-cohere-key-here
+
+# === Vector Database (REQUIRED) ===
+QDRANT_URL=https://your-cluster.region.gcp.cloud.qdrant.io
+QDRANT_API_KEY=your-qdrant-key-here
+QDRANT_COLLECTION=chapter_chunks
+QDRANT_VECTOR_SIZE=1024
+QDRANT_DISTANCE_METRIC=Cosine
+
+# === PostgreSQL Database (REQUIRED) ===
+DATABASE_URL=postgresql://user:pass@host:port/db?sslmode=require
+DB_ECHO=false
+DB_POOL_SIZE=5
+DB_MAX_OVERFLOW=10
+DB_POOL_TIMEOUT=30
+
+# === CORS (REQUIRED) ===
+CORS_ORIGINS=https://salmansiddiqui-99.github.io,http://localhost:3000
+CORS_ALLOW_CREDENTIALS=true
+CORS_ALLOW_METHODS=GET,POST,PUT,DELETE,OPTIONS
+CORS_ALLOW_HEADERS=Content-Type,Authorization
+
+# === API Configuration ===
+API_HOST=0.0.0.0
+API_PORT=8000
+API_TITLE=Physical AI Textbook API
+API_VERSION=1.0.0
+DEBUG=false
+
+# === RAG Settings ===
+RAG_SIMILARITY_THRESHOLD=0.5
+RAG_TOP_K=5
+RAG_CONTEXT_MAX_TOKENS=3000
+
+# === Logging ===
+LOG_LEVEL=INFO
+LOG_FORMAT=json
+
+# === Features ===
+FEATURE_RAG_ENABLED=true
+FEATURE_STREAMING_RESPONSES=true
+
+# === Performance ===
+REQUEST_TIMEOUT=30
+BATCH_SIZE=100
+MAX_RETRIES=3
+
+
+================================================================================
+DEPLOYMENT COMPLETE CHECKLIST
+================================================================================
+
+Before considering deployment complete, verify:
+
+□ Railway service shows "Deployed" status
+□ All environment variables set correctly
+□ Health check endpoint returns 200 OK
+□ Logs show successful startup
+□ No "GEMINI" or "AttributeError" in logs
+□ API documentation accessible at /docs
+□ Frontend can connect to backend
+□ AI Assistant queries work end-to-end
+□ Streaming responses function correctly
+□ CORS configured for GitHub Pages
+□ Database connections established
+□ Qdrant vector search operational
+
+
+================================================================================
+SUPPORT & RESOURCES
+================================================================================
+
+Railway Documentation:
+  https://docs.railway.app
+
+OpenRouter:
+  https://openrouter.ai/docs
+
+Qdrant Cloud:
+  https://qdrant.tech/documentation/cloud/
+
+Cohere:
+  https://docs.cohere.com/
+
+GitHub Repository:
+  https://github.com/salmansiddiqui-99/hackathon1-Q4
+
+Issues & Bug Reports:
+  Create issue at: https://github.com/salmansiddiqui-99/hackathon1-Q4/issues
+
+
+================================================================================
+END OF RAILWAY DEPLOYMENT GUIDE
+================================================================================
+Version: 1.0
+Last Updated: 2025-12-21
+Status: Production Ready
+================================================================================

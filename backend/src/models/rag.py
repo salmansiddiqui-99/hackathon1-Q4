@@ -113,13 +113,14 @@ class EmbedRequest(BaseModel):
         description="Embedding model (default: text-embedding-3-small, 384 dims)"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "text": "ROS 2 is a flexible middleware for robotics.",
                 "model": "text-embedding-3-small"
             }
         }
+    )
 
 
 class EmbedResponse(BaseModel):
@@ -131,8 +132,8 @@ class EmbedResponse(BaseModel):
     tokens_used: int = Field(..., ge=0, description="Input tokens consumed")
     cost_usd: float = Field(..., ge=0.0, description="Cost in USD")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "embedding": [0.001, -0.021, 0.008],
                 "dimensions": 384,
@@ -141,6 +142,7 @@ class EmbedResponse(BaseModel):
                 "cost_usd": 0.0000005
             }
         }
+    )
 
 
 # ============================================================================
@@ -169,14 +171,15 @@ class QueryRequest(BaseModel):
         description="Min similarity threshold (default: 0.5)"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "query": "How do ROS 2 services work?",
                 "top_k": 5,
                 "threshold": 0.5
             }
         }
+    )
 
 
 class ChunkResult(BaseModel):
@@ -191,8 +194,8 @@ class ChunkResult(BaseModel):
     similarity_score: float = Field(..., ge=0.0, le=1.0, description="Cosine similarity")
     rank: int = Field(..., ge=1, description="Position in results")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "id": "550e8400-e29b-41d4-a716-446655440050",
                 "chapter_id": "550e8400-e29b-41d4-a716-446655440001",
@@ -204,6 +207,7 @@ class ChunkResult(BaseModel):
                 "rank": 1
             }
         }
+    )
 
 
 class QueryResponse(BaseModel):
@@ -227,8 +231,8 @@ class QueryResponse(BaseModel):
         description="Threshold applied"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "chunks": [],
                 "total_found": 0,
@@ -237,6 +241,7 @@ class QueryResponse(BaseModel):
                 "threshold_used": 0.5
             }
         }
+    )
 
 
 # ============================================================================
@@ -270,14 +275,15 @@ class ChatRequest(BaseModel):
         description="Highlighted text (required if mode='selected_text')"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "query": "What is a ROS 2 service?",
                 "mode": "global",
                 "selected_text": None
             }
         }
+    )
 
 
 class MetadataEvent(BaseModel):
@@ -338,13 +344,14 @@ class SelectedTextRequest(BaseModel):
         description="Question about the selected text"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "selected_text": "ROS 2 services provide request-reply communication...",
                 "query": "What are the advantages of services?"
             }
         }
+    )
 
 
 class SelectedTextResponse(BaseModel):
@@ -355,8 +362,13 @@ class SelectedTextResponse(BaseModel):
     used_selection: bool = Field(..., description="Whether selected text was used for response")
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="Response timestamp")
 
-    class Config:
-        json_schema_extra = {
+    @field_serializer('timestamp')
+    def serialize_timestamp(self, value: datetime) -> str:
+        """Serialize datetime to ISO format string"""
+        return value.isoformat()
+
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "success": True,
                 "response_text": "Based on the selected text, services provide strict ordering guarantees and enable direct communication between nodes.",
@@ -364,9 +376,7 @@ class SelectedTextResponse(BaseModel):
                 "timestamp": "2025-12-16T21:05:00.123456"
             }
         }
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+    )
 
 
 # ============================================================================

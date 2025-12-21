@@ -10,6 +10,7 @@ import logging
 
 from .base import BaseLLMAdapter, LLMConfigurationError
 from .adapters.gemini_adapter import GeminiAdapter
+from .adapters.openrouter_adapter import OpenRouterAdapter
 
 # OpenAI adapter will be implemented later
 # from .adapters.openai_adapter import OpenAIAdapter
@@ -60,15 +61,59 @@ class LLMFactory:
             provider = LLMFactory._auto_detect_provider(settings)
             logger.info(f"Auto-detected provider: {provider}")
 
-        if provider == "gemini":
+        if provider == "openrouter":
+            return LLMFactory.create_openrouter_adapter(settings)
+        elif provider == "gemini":
             return LLMFactory.create_gemini_adapter(settings)
         elif provider == "openai":
             return LLMFactory.create_openai_adapter(settings)
         else:
             raise LLMConfigurationError(
                 f"Unknown LLM provider: {provider}. "
-                f"Supported providers: 'gemini', 'openai', 'auto'"
+                f"Supported providers: 'openrouter', 'gemini', 'openai', 'auto'"
             )
+
+    @staticmethod
+    def create_openrouter_adapter(settings: Any) -> BaseLLMAdapter:
+        """
+        Create an OpenRouter adapter from settings.
+
+        Args:
+            settings: Application settings with OPENROUTER_API_KEY and OPENROUTER_MODEL
+
+        Returns:
+            Configured OpenRouterAdapter instance
+
+        Raises:
+            LLMConfigurationError: If OpenRouter configuration is missing
+        """
+        api_key = getattr(settings, "OPENROUTER_API_KEY", None)
+        if not api_key:
+            raise LLMConfigurationError(
+                "OPENROUTER_API_KEY is required for OpenRouter provider. "
+                "Set it in your .env file or environment variables."
+            )
+
+        # Get model name, with fallback
+        model = getattr(settings, "OPENROUTER_MODEL", "mistralai/mistral-7b-instruct:free")
+        base_url = getattr(settings, "OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
+
+        # Get optional configuration
+        temperature = getattr(settings, "OPENAI_TEMPERATURE", 0.7)
+        max_tokens = getattr(settings, "OPENAI_MAX_TOKENS", 2000)
+
+        logger.info(
+            f"Creating OpenRouterAdapter with model={model}, "
+            f"temperature={temperature}, max_tokens={max_tokens}"
+        )
+
+        return OpenRouterAdapter(
+            api_key=api_key,
+            model=model,
+            base_url=base_url,
+            temperature=temperature,
+            max_tokens=max_tokens
+        )
 
     @staticmethod
     def create_gemini_adapter(settings: Any) -> BaseLLMAdapter:
@@ -201,6 +246,39 @@ class LLMFactory:
 
     @staticmethod
     def _auto_detect_provider(settings: Any) -> str:
+        """
+        Auto-detect the LLM provider based on available API keys.
+
+        Priority order:
+        1. OpenRouter (if OPENROUTER_API_KEY is set)
+        2. Gemini (if GEMINI_API_KEY is set)
+        3. OpenAI (if OPENAI_API_KEY is set)
+
+        Raises:
+            LLMConfigurationError: If no provider is available
+        """
+        openrouter_key = getattr(settings, "OPENROUTER_API_KEY", None)
+        if openrouter_key:
+            logger.info("Auto-detected OpenRouter as LLM provider")
+            return "openrouter"
+
+        gemini_key = getattr(settings, "GEMINI_API_KEY", None)
+        if gemini_key:
+            logger.info("Auto-detected Gemini as LLM provider")
+            return "gemini"
+
+        openai_key = getattr(settings, "OPENAI_API_KEY", None)
+        if openai_key:
+            logger.info("Auto-detected OpenAI as LLM provider")
+            return "openai"
+
+        raise LLMConfigurationError(
+            "No LLM provider configured. "
+            "Set one of: OPENROUTER_API_KEY, GEMINI_API_KEY, or OPENAI_API_KEY in your environment."
+        )
+
+    @staticmethod
+    def _old_auto_detect_provider(settings: Any) -> str:
         """
         Auto-detect which provider to use based on available API keys.
 

@@ -25,28 +25,12 @@ print(f"QDRANT_COLLECTION: {settings.QDRANT_COLLECTION}")
 print(f"QDRANT_VECTOR_SIZE: {settings.QDRANT_VECTOR_SIZE}")
 print(f"RAG_SIMILARITY_THRESHOLD: {settings.RAG_SIMILARITY_THRESHOLD}")
 print(f"COHERE_API_KEY: {'SET' if settings.COHERE_API_KEY else 'NOT SET'}")
+print(f"OPENROUTER_API_KEY: {'SET' if settings.OPENROUTER_API_KEY else 'NOT SET'}")
 print(f"GEMINI_API_KEY: {'SET' if settings.GEMINI_API_KEY else 'NOT SET'}")
+print(f"LLM_PROVIDER: {settings.LLM_PROVIDER}")
 print(f"QDRANT_API_KEY: {'SET' if settings.QDRANT_API_KEY else 'NOT SET'}")
 print(f"RAG_TOP_K: {settings.RAG_TOP_K}")
 print("=" * 80)
-
-# Initialize FastAPI app with lifespan
-app = FastAPI(
-    title=settings.API_TITLE,
-    description=settings.API_DESCRIPTION,
-    version=settings.API_VERSION,
-    debug=settings.DEBUG,
-    lifespan=lifespan
-)
-
-# Configure CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.get_cors_origins(),
-    allow_credentials=settings.CORS_ALLOW_CREDENTIALS,
-    allow_methods=settings.get_cors_methods(),
-    allow_headers=settings.get_cors_headers(),
-)
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -87,9 +71,12 @@ Qdrant Configuration:
   QDRANT_API_KEY: {'SET' if settings.QDRANT_API_KEY else 'NOT SET'}
 
 AI Configuration:
-  COHERE_API_KEY: {'SET' if settings.COHERE_API_KEY else 'NOT SET'}
+  LLM_PROVIDER: {settings.LLM_PROVIDER}
+  OPENROUTER_API_KEY: {'SET' if settings.OPENROUTER_API_KEY else 'NOT SET'}
+  OPENROUTER_MODEL: {settings.OPENROUTER_MODEL if hasattr(settings, 'OPENROUTER_MODEL') else 'NOT SET'}
   GEMINI_API_KEY: {'SET' if settings.GEMINI_API_KEY else 'NOT SET'}
   GEMINI_MODEL: {settings.GEMINI_MODEL if hasattr(settings, 'GEMINI_MODEL') else 'NOT SET'}
+  COHERE_API_KEY: {'SET' if settings.COHERE_API_KEY else 'NOT SET'}
 
 RAG Configuration:
   RAG_SIMILARITY_THRESHOLD: {settings.RAG_SIMILARITY_THRESHOLD}
@@ -129,6 +116,24 @@ CORS Configuration:
     # TODO: Close database connections
     # TODO: Clean up resources
     logger.info("✅ Shutdown complete")
+
+# Initialize FastAPI app with lifespan
+app = FastAPI(
+    title=settings.API_TITLE,
+    description=settings.API_DESCRIPTION,
+    version=settings.API_VERSION,
+    debug=settings.DEBUG,
+    lifespan=lifespan
+)
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.get_cors_origins(),
+    allow_credentials=settings.CORS_ALLOW_CREDENTIALS,
+    allow_methods=settings.get_cors_methods(),
+    allow_headers=settings.get_cors_headers(),
+)
 
 @app.get("/")
 async def root():

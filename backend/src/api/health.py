@@ -158,8 +158,10 @@ async def readiness_check() -> dict:
         uptime = int((datetime.utcnow() - app_state.get("start_time", datetime.utcnow())).total_seconds())
 
         # Check critical configuration
+        # At least one LLM provider must be configured (OpenRouter or Gemini)
+        llm_configured = settings.OPENROUTER_API_KEY or settings.GEMINI_API_KEY
         required_keys = [
-            settings.GEMINI_API_KEY,
+            llm_configured,
             settings.COHERE_API_KEY,
             settings.DATABASE_URL,
             settings.QDRANT_URL,

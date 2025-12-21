@@ -101,9 +101,15 @@ class Settings(BaseSettings):
     # LLM providers
     GEMINI_API_KEY: Optional[str] = None
     GEMINI_MODEL: Optional[str] = None
+
+    # OpenRouter configuration
+    OPENROUTER_API_KEY: Optional[str] = None
+    OPENROUTER_MODEL: Optional[str] = None
+    OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
+
     COHERE_API_KEY: Optional[str] = None
 
-    LLM_PROVIDER: str = "gemini"  # gemini | openai | auto
+    LLM_PROVIDER: str = "openrouter"  # openrouter | gemini | openai | auto
     LLM_DEFAULT_MODEL: Optional[str] = None
 
     # Chat & limits
@@ -136,11 +142,21 @@ class Settings(BaseSettings):
 
     def validate_required_keys(self) -> None:
         required_keys = [
-            "GEMINI_API_KEY",
             "COHERE_API_KEY",
             "QDRANT_URL",
             "DATABASE_URL",
         ]
+
+        # At least one LLM provider must be configured
+        llm_providers = [
+            "OPENROUTER_API_KEY",
+            "GEMINI_API_KEY",
+        ]
+        has_llm = any(getattr(self, key, None) for key in llm_providers)
+
+        if not has_llm:
+            required_keys.extend(llm_providers)
+
         missing = [key for key in required_keys if not getattr(self, key, None)]
         if missing:
             raise ValueError(

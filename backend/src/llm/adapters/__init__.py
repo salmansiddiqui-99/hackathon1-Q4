@@ -1,14 +1,13 @@
 """
 LLM provider adapters.
 
-This module contains adapter implementations for different LLM providers.
+This module contains adapter implementations for LLM providers.
 All adapters implement the BaseLLMAdapter interface defined in llm.base.
+
+NOTE: Only OpenRouter adapter is currently available and supported.
 """
 
-from .gemini_adapter import GeminiAdapter
+# OpenRouter is the only supported provider
+# from .openrouter_adapter import OpenRouterAdapter
 
-# Future: from .openai_adapter import OpenAIAdapter
-
-__all__ = [
-    "GeminiAdapter",
-]
+__all__ = []

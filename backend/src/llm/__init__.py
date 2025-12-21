@@ -1,15 +1,14 @@
 """
-LLM abstraction layer with OpenAI-compatible interface.
+LLM abstraction layer with OpenRouter API.
 
-This module provides a unified interface for working with different LLM providers
-(Gemini, OpenAI) through an adapter pattern. All adapters implement the same
-OpenAI-compatible interface, enabling seamless provider switching.
+This module provides a unified interface for working with OpenRouter LLM provider
+through an adapter pattern. The adapter implements an OpenAI-compatible interface.
 
 Usage:
     from src.llm import create_llm_adapter, LLMCompletionParams, LLMMessage
     from src.config import settings
 
-    # Create adapter (auto-detects provider from settings)
+    # Create adapter (uses OpenRouter from settings)
     adapter = create_llm_adapter(settings)
 
     # Create completion
@@ -18,7 +17,7 @@ Usage:
             LLMMessage(role="system", content="You are a helpful assistant."),
             LLMMessage(role="user", content="What is ROS 2?")
         ],
-        model="gemini-2.0-flash",
+        model="mistralai/devstral-2512:free",
         temperature=0.7,
         stream=True
     )
@@ -44,8 +43,6 @@ from .factory import (
     create_llm_adapter,
 )
 
-from .adapters.gemini_adapter import GeminiAdapter
-
 # Export main classes and functions
 __all__ = [
     # Base interfaces
@@ -63,7 +60,4 @@ __all__ = [
     # Factory
     "LLMFactory",
     "create_llm_adapter",
-
-    # Adapters
-    "GeminiAdapter",
 ]

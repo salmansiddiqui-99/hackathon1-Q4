@@ -98,18 +98,14 @@ class Settings(BaseSettings):
     FEATURE_HALLUCINATION_DETECTION: Optional[bool] = None
     FEATURE_STREAMING_RESPONSES: Optional[bool] = None
 
-    # LLM providers
-    GEMINI_API_KEY: Optional[str] = None
-    GEMINI_MODEL: Optional[str] = None
-
-    # OpenRouter configuration
+    # OpenRouter configuration (REQUIRED - only LLM provider supported)
     OPENROUTER_API_KEY: Optional[str] = None
     OPENROUTER_MODEL: Optional[str] = None
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
 
     COHERE_API_KEY: Optional[str] = None
 
-    LLM_PROVIDER: str = "openrouter"  # openrouter | gemini | openai | auto
+    LLM_PROVIDER: str = "openrouter"  # Must be "openrouter" - only supported provider
     LLM_DEFAULT_MODEL: Optional[str] = None
 
     # Chat & limits

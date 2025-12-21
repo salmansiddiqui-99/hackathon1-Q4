@@ -9,31 +9,19 @@ from typing import Optional, Dict, Any
 import logging
 
 from .base import BaseLLMAdapter, LLMConfigurationError
-from .adapters.gemini_adapter import GeminiAdapter
 from .adapters.openrouter_adapter import OpenRouterAdapter
 
-# OpenAI adapter will be implemented later
-# from .adapters.openai_adapter import OpenAIAdapter
+# NOTE: Only OpenRouter is supported. Gemini and OpenAI adapters have been removed.
 
 logger = logging.getLogger(__name__)
 
 
 class LLMFactory:
     """
-    Factory for creating LLM adapters based on configuration.
+    Factory for creating LLM adapters.
 
-    This factory abstracts provider selection, allowing runtime switching
-    between different LLM providers without changing application code.
+    IMPORTANT: Only OpenRouter is supported. All other providers have been removed.
     """
-
-    # Model mapping: OpenAI model names → Gemini equivalents
-    MODEL_MAPPING: Dict[str, str] = {
-        "gpt-4": "gemini-2.0-flash-thinking",
-        "gpt-4-turbo": "gemini-2.0-flash-thinking",
-        "gpt-4o": "gemini-2.0-flash",
-        "gpt-3.5-turbo": "gemini-1.5-flash",
-        "gpt-3.5-turbo-16k": "gemini-1.5-flash",
-    }
 
     @staticmethod
     def create_from_settings(settings: Any) -> BaseLLMAdapter:
@@ -112,134 +100,46 @@ class LLMFactory:
             max_tokens=max_tokens
         )
 
-    @staticmethod
-    def create_gemini_adapter(settings: Any) -> BaseLLMAdapter:
-        """
-        Create a Gemini adapter from settings.
-
-        Args:
-            settings: Application settings with GEMINI_API_KEY and GEMINI_MODEL
-
-        Returns:
-            Configured GeminiAdapter instance
-
-        Raises:
-            LLMConfigurationError: If Gemini configuration is missing
-        """
-        api_key = getattr(settings, "GEMINI_API_KEY", None)
-        if not api_key:
-            raise LLMConfigurationError(
-                "GEMINI_API_KEY is required for Gemini provider. "
-                "Set it in your .env file or environment variables."
-            )
-
-        # Get model name, with fallback
-        model = getattr(settings, "GEMINI_MODEL", "gemini-2.0-flash")
-
-        # Get optional configuration
-        temperature = getattr(settings, "OPENAI_TEMPERATURE", 0.7)
-        max_tokens = getattr(settings, "OPENAI_MAX_TOKENS", 2000)
-
-        logger.info(
-            f"Creating GeminiAdapter with model={model}, "
-            f"temperature={temperature}, max_tokens={max_tokens}"
-        )
-
-        return GeminiAdapter(
-            api_key=api_key,
-            model=model,
-            temperature=temperature,
-            max_tokens=max_tokens
-        )
-
-    @staticmethod
-    def create_openai_adapter(settings: Any) -> BaseLLMAdapter:
-        """
-        Create an OpenAI adapter from settings.
-
-        Args:
-            settings: Application settings with OPENAI_API_KEY and OPENAI_MODEL
-
-        Returns:
-            Configured OpenAIAdapter instance
-
-        Raises:
-            LLMConfigurationError: If OpenAI configuration is missing
-            NotImplementedError: OpenAI adapter not yet implemented
-        """
-        # TODO: Implement OpenAIAdapter
-        raise NotImplementedError(
-            "OpenAI adapter is not yet implemented. "
-            "Use 'gemini' provider for now."
-        )
-
-        # Future implementation:
-        # api_key = getattr(settings, "OPENAI_API_KEY", None)
-        # if not api_key:
-        #     raise LLMConfigurationError("OPENAI_API_KEY is required for OpenAI provider")
-        #
-        # model = getattr(settings, "OPENAI_MODEL", "gpt-4o")
-        # return OpenAIAdapter(api_key=api_key, model=model)
 
     @staticmethod
     def create_adapter(
         provider: str,
         api_key: str,
         model: Optional[str] = None,
+        base_url: Optional[str] = None,
         **kwargs
     ) -> BaseLLMAdapter:
         """
         Create an LLM adapter with explicit parameters.
 
+        IMPORTANT: Only OpenRouter is supported.
+
         This is a lower-level method for creating adapters when you have
         explicit configuration values instead of a settings object.
 
         Args:
-            provider: Provider name ("gemini" or "openai")
-            api_key: API key for the provider
-            model: Optional model name (uses provider default if None)
+            provider: Provider name ("openrouter" only)
+            api_key: API key for OpenRouter
+            model: Optional model name (uses OpenRouter default if None)
+            base_url: Optional base URL (defaults to OpenRouter API URL)
             **kwargs: Additional provider-specific configuration
 
         Returns:
-            Configured LLM adapter instance
+            Configured OpenRouter adapter instance
 
         Raises:
             LLMConfigurationError: If configuration is invalid
         """
         provider = provider.lower()
 
-        if provider == "gemini":
-            model = model or "gemini-2.0-flash"
-            return GeminiAdapter(api_key=api_key, model=model, **kwargs)
-        elif provider == "openai":
-            raise NotImplementedError("OpenAI adapter not yet implemented")
+        if provider == "openrouter":
+            model = model or "mistralai/devstral-2512:free"
+            base_url = base_url or "https://openrouter.ai/api/v1"
+            return OpenRouterAdapter(api_key=api_key, model=model, base_url=base_url, **kwargs)
         else:
             raise LLMConfigurationError(
-                f"Unknown provider: {provider}. Supported: 'gemini', 'openai'"
+                f"Unsupported provider: {provider}. Only 'openrouter' is supported."
             )
-
-    @staticmethod
-    def map_openai_model_to_gemini(openai_model: str) -> str:
-        """
-        Map OpenAI model name to equivalent Gemini model.
-
-        This enables drop-in compatibility where code uses OpenAI model names
-        but needs to run on Gemini backend.
-
-        Args:
-            openai_model: OpenAI model name (e.g., "gpt-4", "gpt-3.5-turbo")
-
-        Returns:
-            Equivalent Gemini model name
-
-        Example:
-            >>> LLMFactory.map_openai_model_to_gemini("gpt-4")
-            "gemini-2.0-flash-thinking"
-        """
-        return LLMFactory.MODEL_MAPPING.get(
-            openai_model,
-            "gemini-2.0-flash"  # Default fallback
-        )
 
     @staticmethod
     def _auto_detect_provider(settings: Any) -> str:
@@ -262,40 +162,6 @@ class LLMFactory:
             "Please set OPENROUTER_API_KEY in your environment variables or .env file. "
             "Get your API key from: https://openrouter.ai/"
         )
-
-    @staticmethod
-    def _old_auto_detect_provider(settings: Any) -> str:
-        """
-        Auto-detect which provider to use based on available API keys.
-
-        Priority order:
-        1. Gemini (if GEMINI_API_KEY is set)
-        2. OpenAI (if OPENAI_API_KEY is set)
-
-        Args:
-            settings: Application settings object
-
-        Returns:
-            Provider name ("gemini" or "openai")
-
-        Raises:
-            LLMConfigurationError: If no API keys are configured
-        """
-        gemini_key = getattr(settings, "GEMINI_API_KEY", None)
-        openai_key = getattr(settings, "OPENAI_API_KEY", None)
-
-        # Prefer Gemini (current primary provider)
-        if gemini_key:
-            logger.info("Auto-detected Gemini API key, using 'gemini' provider")
-            return "gemini"
-        elif openai_key:
-            logger.info("Auto-detected OpenAI API key, using 'openai' provider")
-            return "openai"
-        else:
-            raise LLMConfigurationError(
-                "No LLM provider configured. "
-                "Set either GEMINI_API_KEY or OPENAI_API_KEY in your environment."
-            )
 
     @staticmethod
     def get_available_providers(settings: Any) -> list[str]:

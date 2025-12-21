@@ -8,6 +8,6 @@ NOTE: Only OpenRouter adapter is currently available and supported.
 """
 
 # OpenRouter is the only supported provider
-# from .openrouter_adapter import OpenRouterAdapter
+from .openrouter_adapter import OpenRouterAdapter
 
-__all__ = []
+__all__ = ["OpenRouterAdapter"]

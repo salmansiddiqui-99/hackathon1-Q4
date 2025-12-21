@@ -145,17 +145,8 @@ class Settings(BaseSettings):
             "COHERE_API_KEY",
             "QDRANT_URL",
             "DATABASE_URL",
+            "OPENROUTER_API_KEY",  # OpenRouter is REQUIRED
         ]
-
-        # At least one LLM provider must be configured
-        llm_providers = [
-            "OPENROUTER_API_KEY",
-            "GEMINI_API_KEY",
-        ]
-        has_llm = any(getattr(self, key, None) for key in llm_providers)
-
-        if not has_llm:
-            required_keys.extend(llm_providers)
 
         missing = [key for key in required_keys if not getattr(self, key, None)]
         if missing:

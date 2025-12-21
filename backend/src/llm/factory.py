@@ -40,37 +40,34 @@ class LLMFactory:
         """
         Create an LLM adapter from application settings.
 
-        This method determines which provider to use based on settings.LLM_PROVIDER
-        or auto-detects based on available API keys.
+        IMPORTANT: OpenRouter is the REQUIRED provider. Other providers are not supported.
 
         Args:
             settings: Application settings object with LLM configuration
 
         Returns:
-            Configured LLM adapter instance
+            Configured OpenRouter LLM adapter instance
 
         Raises:
-            LLMConfigurationError: If configuration is invalid or no provider available
+            LLMConfigurationError: If OpenRouter is not properly configured
         """
-        provider = getattr(settings, "LLM_PROVIDER", "auto").lower()
+        provider = getattr(settings, "LLM_PROVIDER", "openrouter").lower()
 
         logger.info(f"Creating LLM adapter with provider: {provider}")
 
-        if provider == "auto":
-            # Auto-detect based on available API keys
-            provider = LLMFactory._auto_detect_provider(settings)
-            logger.info(f"Auto-detected provider: {provider}")
+        # Only OpenRouter is supported
+        if provider in ["openrouter", "auto"]:
+            # For "auto", detect and use OpenRouter
+            if provider == "auto":
+                provider = LLMFactory._auto_detect_provider(settings)
+                logger.info(f"Auto-detected provider: {provider}")
 
-        if provider == "openrouter":
             return LLMFactory.create_openrouter_adapter(settings)
-        elif provider == "gemini":
-            return LLMFactory.create_gemini_adapter(settings)
-        elif provider == "openai":
-            return LLMFactory.create_openai_adapter(settings)
         else:
             raise LLMConfigurationError(
-                f"Unknown LLM provider: {provider}. "
-                f"Supported providers: 'openrouter', 'gemini', 'openai', 'auto'"
+                f"Unsupported LLM provider: {provider}. "
+                f"Only 'openrouter' is supported. "
+                f"Please set LLM_PROVIDER='openrouter' and configure OPENROUTER_API_KEY."
             )
 
     @staticmethod
@@ -249,32 +246,21 @@ class LLMFactory:
         """
         Auto-detect the LLM provider based on available API keys.
 
-        Priority order:
-        1. OpenRouter (if OPENROUTER_API_KEY is set)
-        2. Gemini (if GEMINI_API_KEY is set)
-        3. OpenAI (if OPENAI_API_KEY is set)
+        OpenRouter is the REQUIRED and only supported provider.
+        This method ensures we use OpenRouter for all LLM operations.
 
         Raises:
-            LLMConfigurationError: If no provider is available
+            LLMConfigurationError: If OpenRouter is not configured
         """
         openrouter_key = getattr(settings, "OPENROUTER_API_KEY", None)
         if openrouter_key:
-            logger.info("Auto-detected OpenRouter as LLM provider")
+            logger.info("Using OpenRouter as LLM provider")
             return "openrouter"
 
-        gemini_key = getattr(settings, "GEMINI_API_KEY", None)
-        if gemini_key:
-            logger.info("Auto-detected Gemini as LLM provider")
-            return "gemini"
-
-        openai_key = getattr(settings, "OPENAI_API_KEY", None)
-        if openai_key:
-            logger.info("Auto-detected OpenAI as LLM provider")
-            return "openai"
-
         raise LLMConfigurationError(
-            "No LLM provider configured. "
-            "Set one of: OPENROUTER_API_KEY, GEMINI_API_KEY, or OPENAI_API_KEY in your environment."
+            "OPENROUTER_API_KEY is required and not configured. "
+            "Please set OPENROUTER_API_KEY in your environment variables or .env file. "
+            "Get your API key from: https://openrouter.ai/"
         )
 
     @staticmethod
@@ -316,19 +302,18 @@ class LLMFactory:
         """
         Get list of available providers based on configured API keys.
 
+        Currently, only OpenRouter is supported.
+
         Args:
             settings: Application settings object
 
         Returns:
-            List of available provider names
+            List of available provider names (only 'openrouter' if configured)
         """
         providers = []
 
-        if getattr(settings, "GEMINI_API_KEY", None):
-            providers.append("gemini")
-
-        if getattr(settings, "OPENAI_API_KEY", None):
-            providers.append("openai")
+        if getattr(settings, "OPENROUTER_API_KEY", None):
+            providers.append("openrouter")
 
         return providers
 

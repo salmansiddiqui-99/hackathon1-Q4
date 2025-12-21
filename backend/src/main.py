@@ -24,9 +24,8 @@ print("=" * 80)
 print(f"QDRANT_COLLECTION: {settings.QDRANT_COLLECTION}")
 print(f"QDRANT_VECTOR_SIZE: {settings.QDRANT_VECTOR_SIZE}")
 print(f"RAG_SIMILARITY_THRESHOLD: {settings.RAG_SIMILARITY_THRESHOLD}")
-print(f"COHERE_API_KEY: {'SET' if settings.COHERE_API_KEY else 'NOT SET'}")
-print(f"OPENROUTER_API_KEY: {'SET' if settings.OPENROUTER_API_KEY else 'NOT SET'}")
-print(f"GEMINI_API_KEY: {'SET' if settings.GEMINI_API_KEY else 'NOT SET'}")
+print(f"OPENROUTER_API_KEY: {'SET' if settings.OPENROUTER_API_KEY else 'NOT SET (REQUIRED!)'}")
+print(f"OPENROUTER_MODEL: {settings.OPENROUTER_MODEL if settings.OPENROUTER_MODEL else 'NOT SET'}")
 print(f"LLM_PROVIDER: {settings.LLM_PROVIDER}")
 print(f"QDRANT_API_KEY: {'SET' if settings.QDRANT_API_KEY else 'NOT SET'}")
 print(f"RAG_TOP_K: {settings.RAG_TOP_K}")
@@ -72,10 +71,8 @@ Qdrant Configuration:
 
 AI Configuration:
   LLM_PROVIDER: {settings.LLM_PROVIDER}
-  OPENROUTER_API_KEY: {'SET' if settings.OPENROUTER_API_KEY else 'NOT SET'}
+  OPENROUTER_API_KEY: {'SET' if settings.OPENROUTER_API_KEY else 'NOT SET (REQUIRED!)'}
   OPENROUTER_MODEL: {settings.OPENROUTER_MODEL if hasattr(settings, 'OPENROUTER_MODEL') else 'NOT SET'}
-  GEMINI_API_KEY: {'SET' if settings.GEMINI_API_KEY else 'NOT SET'}
-  GEMINI_MODEL: {settings.GEMINI_MODEL if hasattr(settings, 'GEMINI_MODEL') else 'NOT SET'}
   COHERE_API_KEY: {'SET' if settings.COHERE_API_KEY else 'NOT SET'}
 
 RAG Configuration:

@@ -3,7 +3,7 @@ import asyncio
 import logging
 from typing import List, Optional, Dict, Any
 from uuid import UUID
-from fastapi import APIRouter, Query, HTTPException, status, BackgroundTasks
+from fastapi import APIRouter, Query, HTTPException, status, BackgroundTasks, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
@@ -17,7 +17,6 @@ from src.services.validation import ContentValidationService
 from src.services.chapter_storage import ChapterStorageService
 from src.services.chunking import ChunkingService
 from src.services.embedding import EmbeddingService
-from src.config import get_db
 
 logger = logging.getLogger(__name__)
 
@@ -199,6 +198,22 @@ async def get_generation_job(job_id: str) -> dict:
     }
 
 
+from src.database import SessionLocal
+from src.models.database import Chapter as ChapterModel
+
+from fastapi import Depends
+
+# Database dependency
+def get_db_session():
+    logger.info("get_db_session dependency called")
+    db = SessionLocal()
+    try:
+        logger.info("Database session created")
+        yield db
+    finally:
+        logger.info("Closing database session")
+        db.close()
+
 @router.get("", response_model=List[ChapterListResponse])
 async def list_chapters(
     module_id: Optional[str] = Query(None),
@@ -213,10 +228,70 @@ async def list_chapters(
 
     Response: List of chapters with metadata
     """
-    # For MVP, return mock data
-    # In production, would query database
-    logger.info(f"Listing chapters (module_id={module_id}, status={chapter_status})")
-    return []
+    logger.info(f"list_chapters endpoint called with module_id={module_id}, status={chapter_status}")
+    # Force an obvious log to make sure this is called
+    print("DEBUG: list_chapters function is being executed!")
+    logger.info("DEBUG: list_chapters function is being executed!")
+
+    from src.database import SessionLocal
+    from sqlalchemy.orm import Session
+
+    # Create session directly for testing
+    db: Session = SessionLocal()
+    try:
+        logger.info("Starting database query...")
+        # Build query with optional filters
+        query = db.query(ChapterModel)
+
+        if module_id:
+            logger.info(f"Filtering by module_id: {module_id}")
+            # Convert module_id to UUID if needed
+            query = query.filter(ChapterModel.module_id == module_id)
+
+        if chapter_status:
+            logger.info(f"Filtering by status: {chapter_status}")
+            query = query.filter(ChapterModel.status == chapter_status)
+
+        # Execute query
+        logger.info("Executing query...")
+        chapters_db = query.all()
+        logger.info(f"Query returned {len(chapters_db)} results from database")
+
+        # Convert to response format
+        chapters = []
+        logger.info(f"Converting {len(chapters_db)} chapters to response format...")
+        for i, chapter_db in enumerate(chapters_db):
+            logger.info(f"Processing chapter {i+1}: {chapter_db.title} (ID: {chapter_db.id})")
+            try:
+                chapter_response = ChapterListResponse(
+                    id=chapter_db.id,
+                    module_id=chapter_db.module_id,
+                    number=chapter_db.number,
+                    title=chapter_db.title,
+                    token_count=chapter_db.token_count,
+                    status=chapter_db.status,
+                    created_at=chapter_db.created_at
+                )
+                chapters.append(chapter_response)
+                logger.info(f"Successfully created response for chapter: {chapter_response.title}")
+            except Exception as convert_error:
+                logger.error(f"Error converting chapter {chapter_db.id} to response: {convert_error}")
+                import traceback
+                logger.error(f"Traceback: {traceback.format_exc()}")
+                # Skip this chapter and continue with others
+                continue
+
+        logger.info(f"Successfully converted {len(chapters)} chapters, returning results")
+        return chapters
+
+    except Exception as e:
+        logger.error(f"Failed to list chapters: {e}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        # Fallback to empty list if database is unavailable
+        return []
+    finally:
+        db.close()
 
 
 @router.get("/{chapter_id}", response_model=ChapterResponse)

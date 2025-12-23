@@ -57,7 +57,7 @@ async def health_check() -> HealthCheckResponse:
         last_checked=now
     )
 
-    # 2. Database check
+    # 2. Vector Store check (Qdrant)
     try:
         # Try to create a Qdrant client connection
         qdrant_client = QdrantClient(
@@ -71,44 +71,108 @@ async def health_check() -> HealthCheckResponse:
             collection_names = [c.name for c in collections.collections]
 
             # Check if our target collection exists
-            has_rag_collection = settings.QDRANT_COLLECTION_NAME in collection_names
+            has_rag_collection = settings.QDRANT_COLLECTION in collection_names
 
             if has_rag_collection:
-                services["vector_store"] = ServiceStatus(
+                services["qdrant"] = ServiceStatus(
                     status="operational",
                     last_checked=now
                 )
             else:
-                services["vector_store"] = ServiceStatus(
+                services["qdrant"] = ServiceStatus(
                     status="degraded",
                     last_checked=now,
-                    error=f"Collection '{settings.QDRANT_COLLECTION_NAME}' not found. Available: {collection_names}"
+                    error=f"Collection '{settings.QDRANT_COLLECTION}' not found. Available: {collection_names}"
                 )
                 overall_status = "degraded"
         except Exception as e:
-            services["vector_store"] = ServiceStatus(
+            services["qdrant"] = ServiceStatus(
                 status="down",
                 last_checked=now,
                 error=f"Failed to access collections: {str(e)}"
             )
             overall_status = "degraded"
     except Exception as e:
-        services["vector_store"] = ServiceStatus(
+        services["qdrant"] = ServiceStatus(
             status="down",
             last_checked=now,
             error=f"Qdrant connection failed: {str(e)}"
         )
         overall_status = "degraded"
 
-    # 3. Cohere API check (embeddings service)
+    # 3. OpenRouter API check (LLM service) - this is what we should be checking, not OpenAI
+    try:
+        if settings.OPENROUTER_API_KEY:
+            # Test connectivity by trying to make a simple API call
+            import httpx
+            headers = {
+                "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+                "Content-Type": "application/json"
+            }
+
+            # Make a simple request to OpenRouter to test connectivity
+            with httpx.Client(timeout=5.0) as client:
+                response = client.get(
+                    f"{settings.OPENROUTER_BASE_URL.rstrip('/')}/models",
+                    headers=headers
+                )
+
+                if response.status_code == 200:
+                    services["openai"] = ServiceStatus(  # Keep "openai" for compatibility with frontend
+                        status="operational",
+                        last_checked=now
+                    )
+                else:
+                    services["openai"] = ServiceStatus(
+                        status="down",
+                        last_checked=now,
+                        error=f"OpenRouter API returned status {response.status_code}"
+                    )
+                    overall_status = "degraded"
+        else:
+            services["openai"] = ServiceStatus(
+                status="down",
+                last_checked=now,
+                error="OpenRouter API key not configured"
+            )
+            overall_status = "degraded"
+    except Exception as e:
+        services["openai"] = ServiceStatus(
+            status="down",
+            last_checked=now,
+            error=f"OpenRouter API check failed: {str(e)}"
+        )
+        overall_status = "degraded"
+
+    # 4. Cohere API check (embeddings service)
     try:
         if settings.COHERE_API_KEY:
-            cohere_client = cohere.ClientV2(api_key=settings.COHERE_API_KEY)
-            # Test connectivity with a simple embed call
-            services["cohere"] = ServiceStatus(
-                status="operational",
-                last_checked=now
-            )
+            # Test connectivity with a simple API call
+            import httpx
+            headers = {
+                "Authorization": f"Bearer {settings.COHERE_API_KEY}",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+
+            with httpx.Client(timeout=5.0) as client:
+                response = client.get(
+                    "https://api.cohere.ai/v1/check-api-key",
+                    headers=headers
+                )
+
+                if response.status_code == 200:
+                    services["cohere"] = ServiceStatus(
+                        status="operational",
+                        last_checked=now
+                    )
+                else:
+                    services["cohere"] = ServiceStatus(
+                        status="down",
+                        last_checked=now,
+                        error=f"Cohere API returned status {response.status_code}"
+                    )
+                    overall_status = "degraded"
         else:
             services["cohere"] = ServiceStatus(
                 status="down",
@@ -124,14 +188,37 @@ async def health_check() -> HealthCheckResponse:
         )
         overall_status = "degraded"
 
-    # 4. Database (PostgreSQL) check - simplified since we don't have session
+    # 5. Database (PostgreSQL) check - simplified since we don't have session
     # In production, this would test actual DB connection
-    services["database"] = ServiceStatus(
-        status="operational" if settings.DATABASE_URL else "down",
-        last_checked=now,
-        error=None if settings.DATABASE_URL else "DATABASE_URL not configured"
-    )
-    if not settings.DATABASE_URL:
+    try:
+        # Test database connectivity if URL is configured
+        if settings.DATABASE_URL:
+            # Try to parse the database URL
+            from sqlalchemy import create_engine
+            engine = create_engine(settings.DATABASE_URL, echo=False, pool_pre_ping=True)
+
+            # Try a simple connection test
+            with engine.connect() as conn:
+                conn.execute(text("SELECT 1"))
+
+            services["database"] = ServiceStatus(
+                status="operational",
+                last_checked=now,
+                error=None
+            )
+        else:
+            services["database"] = ServiceStatus(
+                status="down",
+                last_checked=now,
+                error="DATABASE_URL not configured"
+            )
+            overall_status = "degraded"
+    except Exception as e:
+        services["database"] = ServiceStatus(
+            status="down",
+            last_checked=now,
+            error=f"Database connection failed: {str(e)}"
+        )
         overall_status = "degraded"
 
     return HealthCheckResponse(
@@ -186,20 +273,42 @@ async def readiness_check() -> dict:
             )
             collections = qdrant_client.get_collections()
 
+            # Also verify OpenRouter connectivity
+            import httpx
+            headers = {
+                "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+                "Content-Type": "application/json"
+            }
+
+            with httpx.Client(timeout=2.0) as client:
+                response = client.get(
+                    f"{settings.OPENROUTER_BASE_URL.rstrip('/')}/models",
+                    headers=headers
+                )
+
+                if response.status_code != 200:
+                    return {
+                        "status": "unavailable",
+                        "uptime_seconds": uptime,
+                        "version": settings.API_VERSION,
+                        "timestamp": datetime.utcnow().isoformat() + "Z",
+                        "reason": f"OpenRouter API unavailable: status {response.status_code}"
+                    }
+
             return {
                 "status": "ok",
                 "uptime_seconds": uptime,
                 "version": settings.API_VERSION,
                 "timestamp": datetime.utcnow().isoformat() + "Z"
             }
-        except Exception as qdrant_error:
-            logger.warning(f"Qdrant unavailable: {str(qdrant_error)}")
+        except Exception as connection_error:
+            logger.warning(f"Connection unavailable: {str(connection_error)}")
             return {
                 "status": "unavailable",
                 "uptime_seconds": uptime,
                 "version": settings.API_VERSION,
                 "timestamp": datetime.utcnow().isoformat() + "Z",
-                "reason": f"Vector store unavailable: {str(qdrant_error)}"
+                "reason": f"Connection unavailable: {str(connection_error)}"
             }
     except Exception as e:
         logger.error(f"Health check error: {str(e)}")

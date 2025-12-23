@@ -30,7 +30,7 @@ class EmbeddingService:
             self.cohere_client = None
         self.embedding_model = "embed-english-v3.0"  # Cohere's embedding model
         self.embedding_dims = 1024  # Cohere embeddings are 1024-dimensional
-        self.collection_name = "chapters"
+        self.collection_name = settings.QDRANT_COLLECTION  # Use the configured collection name
 
     def create_or_update_collection(self) -> bool:
         """

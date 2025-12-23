@@ -1,8 +1,8 @@
 """
 LLM provider factory for creating adapters based on configuration.
 
-This factory enables runtime switching between different LLM providers
-(Gemini, OpenAI) through configuration settings.
+This factory creates OpenRouter adapters for LLM operations.
+OpenRouter is the only supported provider.
 """
 
 from typing import Optional, Dict, Any
@@ -11,7 +11,7 @@ import logging
 from .base import BaseLLMAdapter, LLMConfigurationError
 from .adapters.openrouter_adapter import OpenRouterAdapter
 
-# NOTE: Only OpenRouter is supported. Gemini and OpenAI adapters have been removed.
+# NOTE: Only OpenRouter is supported.
 
 logger = logging.getLogger(__name__)
 

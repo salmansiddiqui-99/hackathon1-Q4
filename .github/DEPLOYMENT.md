@@ -123,8 +123,10 @@ DATABASE_URL=postgresql://user:password@host/db
 QDRANT_URL=https://cloud.qdrant.io
 QDRANT_API_KEY=your_key
 
-# LLM API
-GEMINI_API_KEY=your_key
+# LLM API (OpenRouter)
+OPENROUTER_API_KEY=your_key
+OPENROUTER_MODEL=mistralai/devstral-2512:free
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
 
 # CORS
 CORS_ORIGINS=http://localhost:3000,https://salmansiddiqui-99.github.io
@@ -379,7 +381,9 @@ npm run deploy
 CORS_ORIGINS=http://localhost:3000,http://localhost:5173
 DATABASE_URL=postgresql://localhost/hackathon_db
 QDRANT_URL=http://localhost:6333  # or cloud URL
-GEMINI_API_KEY=your_dev_key
+OPENROUTER_API_KEY=your_dev_key
+OPENROUTER_MODEL=mistralai/devstral-2512:free
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
 ```
 
 ### Production (GitHub Pages + Railway)
@@ -390,7 +394,9 @@ GEMINI_API_KEY=your_dev_key
 CORS_ORIGINS=https://salmansiddiqui-99.github.io
 DATABASE_URL=postgresql://prod_user:prod_password@prod_host/prod_db
 QDRANT_URL=https://prod-cluster.region.qdrant.io
-GEMINI_API_KEY=your_prod_key
+OPENROUTER_API_KEY=your_prod_key
+OPENROUTER_MODEL=mistralai/devstral-2512:free
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
 PORT=8000
 ```
 

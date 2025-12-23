@@ -2,7 +2,7 @@
 Abstract base interface for LLM providers.
 
 This module defines the core interfaces and data models for LLM adapters,
-providing a unified API that works across different LLM providers (OpenAI, Gemini, etc.).
+providing a unified API for LLM providers. Currently supports OpenRouter.
 """
 
 from abc import ABC, abstractmethod
@@ -113,8 +113,8 @@ class BaseLLMAdapter(ABC):
     """
     Abstract base class for LLM provider adapters.
 
-    This class defines the interface that all LLM adapters must implement,
-    enabling seamless switching between different providers (OpenAI, Gemini, etc.).
+    This class defines the interface that all LLM adapters must implement.
+    Currently supports OpenRouter for LLM operations.
     """
 
     @abstractmethod
@@ -200,7 +200,7 @@ class BaseLLMAdapter(ABC):
         Get the provider name.
 
         Returns:
-            Provider name string (e.g., "openai", "gemini")
+            Provider name string (e.g., "openrouter")
         """
         pass
 

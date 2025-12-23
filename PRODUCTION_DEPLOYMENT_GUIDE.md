@@ -37,7 +37,9 @@ Create a checklist of all required environment variables:
 ```env
 # ========== Critical (Must Set) ==========
 COHERE_API_KEY=<your_cohere_api_key>
-GEMINI_API_KEY=<your_gemini_api_key>
+OPENROUTER_API_KEY=<your_openrouter_api_key>
+OPENROUTER_MODEL=mistralai/devstral-2512:free
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
 QDRANT_URL=<your_qdrant_cloud_url>
 QDRANT_API_KEY=<your_qdrant_api_key>
 DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<db>
@@ -48,7 +50,6 @@ QDRANT_COLLECTION=aibook
 QDRANT_VECTOR_SIZE=1024
 RAG_TOP_K=5
 RAG_SIMILARITY_THRESHOLD=0.5
-GEMINI_MODEL=gemini-2.0-flash
 
 # ========== Optional (Defaults Provided) ==========
 ENV=production
@@ -64,7 +65,8 @@ HOST=0.0.0.0
 | Variable | Source | Type | Notes |
 |----------|--------|------|-------|
 | `COHERE_API_KEY` | Cohere Dashboard | Required | For embeddings |
-| `GEMINI_API_KEY` | Google AI Studio | Required | For LLM responses |
+| `OPENROUTER_API_KEY` | OpenRouter Dashboard | Required | For LLM responses |
+| `OPENROUTER_MODEL` | Configuration | Required | Model to use (e.g., mistralai/devstral-2512:free) |
 | `QDRANT_URL` | Qdrant Cloud | Required | Vector database URL |
 | `QDRANT_API_KEY` | Qdrant Cloud | Required | Vector database API key |
 | `DATABASE_URL` | PostgreSQL Provider | Required | Database connection string |
@@ -123,7 +125,9 @@ railway up
 
 # Set environment variables in Railway
 railway variables set COHERE_API_KEY=<key>
-railway variables set GEMINI_API_KEY=<key>
+railway variables set OPENROUTER_API_KEY=<key>
+railway variables set OPENROUTER_MODEL=mistralai/devstral-2512:free
+railway variables set OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
 # ... set all other variables
 
 # Trigger deployment after setting variables

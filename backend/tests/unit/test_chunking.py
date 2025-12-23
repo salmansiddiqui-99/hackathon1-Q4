@@ -1,7 +1,7 @@
 """Unit tests for content chunking service."""
 
 import pytest
-from backend.src.services.chunking import ChunkingService
+from src.services.chunking import ChunkingService
 
 
 @pytest.fixture

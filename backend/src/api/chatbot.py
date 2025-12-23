@@ -17,16 +17,11 @@ from src.services.response_verifier import ResponseVerifier
 from src.config import settings
 from sqlalchemy.orm import Session
 
+from src.database import get_db
+
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/chatbot", tags=["chatbot"])
-
-
-def get_db():
-    """Database session dependency"""
-    # For now, return None since RAG service doesn't strictly require DB session
-    # Full database integration can be added later when using PostgreSQL for chat logs
-    return None
 
 
 @router.post("/query", response_model=RAGResponse)

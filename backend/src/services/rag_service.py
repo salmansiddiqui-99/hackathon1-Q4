@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class RAGService:
     """Service for RAG-based content retrieval and context management"""
 
-    def __init__(self, db_session: Session):
+    def __init__(self, db_session: Optional[Session] = None):
         """Initialize RAG service with database and vector store clients"""
         self.db = db_session
         self.qdrant_client = QdrantClient(url=settings.QDRANT_URL, api_key=settings.QDRANT_API_KEY)

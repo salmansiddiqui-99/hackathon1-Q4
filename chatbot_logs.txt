@@ -1,0 +1,363 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    58    0     0  100    58      0     47  0:00:01  0:00:01 --:--:--    47100    58    0     0  100    58      0     26  0:00:02  0:00:02 --:--:--    26100   409  100   351  100    58    153     25  0:00:02  0:00:02 --:--:--   179{"success":false,"data":{"query_id":"00000000-0000-0000-0000-000000000000","query_text":"What is the Physical AI approach to robotics?","retrieval_mode":"global","response_status":"no-context","retrieved_chunks":[],"timestamp":"2025-12-23T11:39:34.792389"},"error":"Cannot answer: No context chunks retrieved","timestamp":"2025-12-23T11:39:34.794118"}
+Testing RAG Service initialization...
+Error initializing RAG Service: RAGService.__init__() missing 1 required positional argument: 'db_session'
+Health check response: {'qdrant': 'down', 'openai': 'down', 'database': 'down', 'timestamp': '2025-12-23T11:40:47.331521'}
+
+================================================================================
+  RAG Chatbot API Test Suite
+  API Base URL: http://localhost:8000/api
+  Time: 2025-12-23T16:41:31.804744
+================================================================================
+
+================================================================================
+  Testing /health endpoint
+================================================================================
+Status: 404
+Overall Status: None
+Services: {}
+
+================================================================================
+  Testing /ready endpoint
+================================================================================
+Status: 404
+Ready: None
+Message: None
+
+================================================================================
+  Testing /chatbot/query endpoint
+================================================================================
+Request payload: {
+  "query_text": "What is ROS 2 and why is it important for robotics?",
+  "chapter_id": null,
+  "selected_text": null
+}
+Status: 422
+Content-Type: application/json
+Response body: {"detail":[{"type":"missing","loc":["body","query"],"msg":"Field required","input":{"query_text":"What is ROS 2 and why is it important for robotics?","chapter_id":null,"selected_text":null}}]}
+
+================================================================================
+  Testing /selected-text/query endpoint
+================================================================================
+Request payload: {
+  "query": "What does this text explain about robotics?",
+  "selected_text": "Robotics is the branch of technology that deals with the design, construction, operation, and application of robots, as well as computer systems for their control, sensory feedback, and information processing."
+}
+Status: 200
+Success: False
+Used Selection: False
+Timestamp: 2025-12-23T11:41:41.986929
+Response (first 200 chars): Error: Failed to generate response: Gemini API quota exceeded. Free tier daily limit reached. Please try again after 24 hours or use a paid API key....
+
+================================================================================
+  Testing error handling (short query)
+================================================================================
+Status: 422
+Validation error (expected): [{'type': 'missing', 'loc': ['body', 'query'], 'msg': 'Field required', 'input': {'query_text': 'Short', 'chapter_id': None, 'selected_text': None}}]
+
+================================================================================
+  Test Results Summary
+================================================================================
+  Health Check: FAIL
+  Readiness Check: FAIL
+  Chatbot Query: FAIL
+  Selected Text Query: PASS
+  Error Handling: PASS
+
+Total: 2/5 tests passed
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\haroon traders\AppData\Local\Programs\Python\Python313\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\haroon traders\Desktop\projects\hackathon1-Q4
+plugins: anyio-4.12.0, langsmith-0.4.58, benchmark-5.2.3, cov-7.0.0
+collecting ... collected 28 items / 6 errors
+
+=================================== ERRORS ====================================
+______ ERROR collecting backend/tests/contract/test_chapters_generate.py ______
+ImportError while importing test module 'C:\Users\haroon traders\Desktop\projects\hackathon1-Q4\backend\tests\contract\test_chapters_generate.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python313\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\tests\contract\test_chapters_generate.py:9: in <module>
+    from backend.src.main import app
+backend\src\main.py:16: in <module>
+    from src.config import settings
+E   ModuleNotFoundError: No module named 'src'
+------------------------------- Captured stdout -------------------------------
+================================================================================
+MAIN MODULE LOADING - This should appear in Railway logs!
+================================================================================
+____ ERROR collecting backend/tests/integration/test_chapter_generation.py ____
+ImportError while importing test module 'C:\Users\haroon traders\Desktop\projects\hackathon1-Q4\backend\tests\integration\test_chapter_generation.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python313\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\tests\integration\test_chapter_generation.py:8: in <module>
+    from backend.src.services.chapter_gen import ChapterGenerationService
+backend\src\services\chapter_gen.py:12: in <module>
+    from src.models.chapter import Chapter, ChapterCreate
+E   ModuleNotFoundError: No module named 'src'
+______________ ERROR collecting backend/tests/test_benchmark.py _______________
+ImportError while importing test module 'C:\Users\haroon traders\Desktop\projects\hackathon1-Q4\backend\tests\test_benchmark.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python313\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\tests\test_benchmark.py:15: in <module>
+    from src.main import app
+E   ModuleNotFoundError: No module named 'src'
+___________ ERROR collecting backend/tests/test_chatbot_service.py ____________
+ImportError while importing test module 'C:\Users\haroon traders\Desktop\projects\hackathon1-Q4\backend\tests\test_chatbot_service.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python313\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\tests\test_chatbot_service.py:6: in <module>
+    from src.services.chatbot_service import ChatbotService
+E   ModuleNotFoundError: No module named 'src'
+_____________ ERROR collecting backend/tests/test_integration.py ______________
+ImportError while importing test module 'C:\Users\haroon traders\Desktop\projects\hackathon1-Q4\backend\tests\test_integration.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python313\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\tests\test_integration.py:10: in <module>
+    from src.main import app
+E   ModuleNotFoundError: No module named 'src'
+_____________ ERROR collecting backend/tests/test_rag_service.py ______________
+ImportError while importing test module 'C:\Users\haroon traders\Desktop\projects\hackathon1-Q4\backend\tests\test_rag_service.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python313\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\tests\test_rag_service.py:7: in <module>
+    from src.services.rag_service import RAGService
+E   ModuleNotFoundError: No module named 'src'
+=========================== short test summary info ===========================
+ERROR backend/tests/contract/test_chapters_generate.py
+ERROR backend/tests/integration/test_chapter_generation.py
+ERROR backend/tests/test_benchmark.py
+ERROR backend/tests/test_chatbot_service.py
+ERROR backend/tests/test_integration.py
+ERROR backend/tests/test_rag_service.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 6 errors during collection !!!!!!!!!!!!!!!!!!!
+============================== 6 errors in 1.93s ==============================
+============================= test session starts =============================
+platform win32 -- Python 3.13.2, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\haroon traders\AppData\Local\Programs\Python\Python313\python.exe
+cachedir: .pytest_cache
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: C:\Users\haroon traders\Desktop\projects\hackathon1-Q4\backend
+plugins: anyio-4.12.0, langsmith-0.4.58, benchmark-5.2.3, cov-7.0.0
+collecting ... collected 69 items / 4 errors
+
+=================================== ERRORS ====================================
+__________ ERROR collecting tests/contract/test_chapters_generate.py __________
+ImportError while importing test module 'C:\Users\haroon traders\Desktop\projects\hackathon1-Q4\backend\tests\contract\test_chapters_generate.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\contract\test_chapters_generate.py:9: in <module>
+    from backend.src.main import app
+E   ModuleNotFoundError: No module named 'backend'
+________ ERROR collecting tests/integration/test_chapter_generation.py ________
+ImportError while importing test module 'C:\Users\haroon traders\Desktop\projects\hackathon1-Q4\backend\tests\integration\test_chapter_generation.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\integration\test_chapter_generation.py:8: in <module>
+    from backend.src.services.chapter_gen import ChapterGenerationService
+E   ModuleNotFoundError: No module named 'backend'
+________________ ERROR collecting tests/unit/test_chunking.py _________________
+ImportError while importing test module 'C:\Users\haroon traders\Desktop\projects\hackathon1-Q4\backend\tests\unit\test_chunking.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\unit\test_chunking.py:4: in <module>
+    from backend.src.services.chunking import ChunkingService
+E   ModuleNotFoundError: No module named 'backend'
+_______________ ERROR collecting tests/unit/test_validation.py ________________
+ImportError while importing test module 'C:\Users\haroon traders\Desktop\projects\hackathon1-Q4\backend\tests\unit\test_validation.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\unit\test_validation.py:4: in <module>
+    from backend.src.services.validation import ContentValidationService
+E   ModuleNotFoundError: No module named 'backend'
+============================== warnings summary ===============================
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\site-packages\pythonjsonlogger\jsonlogger.py:11
+  C:\Users\haroon traders\AppData\Local\Programs\Python\Python313\Lib\site-packages\pythonjsonlogger\jsonlogger.py:11: DeprecationWarning: pythonjsonlogger.jsonlogger has been moved to pythonjsonlogger.json
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/contract/test_chapters_generate.py
+ERROR tests/integration/test_chapter_generation.py
+ERROR tests/unit/test_chunking.py
+ERROR tests/unit/test_validation.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 4 errors during collection !!!!!!!!!!!!!!!!!!!
+======================== 1 warning, 4 errors in 7.52s =========================
+Successfully imported RAGService
+Successfully imported ChatbotService
+Successfully imported chatbot router
+Health check status: 200
+Health check response: {'qdrant': 'down', 'openai': 'down', 'database': 'down', 'timestamp': '2025-12-23T11:44:14.991353'}
+=== RAG Chatbot Test Suite Started at 2025-12-23T16:44:33.960045 ===
+
+1. Testing root endpoint...
+   Status: 200
+   Response: {'status': 'ok', 'service': 'Physical AI Textbook API', 'version': '1.0.0', 'timestamp': '2025-12-23T11:44:36.702773'}
+
+2. Testing health endpoint...
+   Status: 200
+   Response: {'qdrant': 'down', 'openai': 'down', 'database': 'down', 'timestamp': '2025-12-23T11:44:40.178247'}
+
+3. Testing chapters endpoint...
+   Status: 200
+   Response: []...
+
+4. Testing chatbot query...
+   Status: 200
+   Response: {'success': False, 'data': {'query_id': '00000000-0000-0000-0000-000000000000', 'query_text': 'What is the main concept of Physical AI in robotics?', 'retrieval_mode': 'global', 'response_status': 'no-context', 'retrieved_chunks': [], 'timestamp': '2025-12-23T11:44:46.111322'}, 'error': 'Cannot answer: No context chunks retrieved', 'timestamp': '2025-12-23T11:44:46.111350'}...
+
+5. Testing selected text endpoint...
+   Status: 200
+   Response: {'success': False, 'response_text': 'Error: Failed to generate response: Gemini API quota exceeded. Free tier daily limit reached. Please try again after 24 hours or use a paid API key.', 'used_selection': False, 'timestamp': '2025-12-23T11:44:50.810924'}...
+
+=== RAG Chatbot Test Suite Completed at 2025-12-23T16:44:50.813855 ===
+2025-12-23 17:04:51,996 - __main__ - ERROR - Ingestion failed: Could not parse SQLAlchemy URL from given URL string
+Traceback (most recent call last):
+  File "C:\Users\haroon traders\Desktop\projects\hackathon1-Q4\backend\scripts\ingest-chapters.py", line 377, in main
+    ingestion = ChapterIngestion(recreate_collections=args.recreate)
+  File "C:\Users\haroon traders\Desktop\projects\hackathon1-Q4\backend\scripts\ingest-chapters.py", line 50, in __init__
+    self.engine = create_engine(settings.DATABASE_URL)
+                  ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in create_engine
+  File "C:\Users\haroon traders\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\util\deprecations.py", line 281, in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+  File "C:\Users\haroon traders\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\create.py", line 564, in create_engine
+    u = _url.make_url(url)
+  File "C:\Users\haroon traders\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\url.py", line 856, in make_url
+    return _parse_url(name_or_url)
+  File "C:\Users\haroon traders\AppData\Local\Programs\Python\Python313\Lib\site-packages\sqlalchemy\engine\url.py", line 922, in _parse_url
+    raise exc.ArgumentError(
+        "Could not parse SQLAlchemy URL from given URL string"
+    )
+sqlalchemy.exc.ArgumentError: Could not parse SQLAlchemy URL from given URL string
+2025-12-23 17:05:20,535 - httpx - INFO - HTTP Request: GET https://7076ae15-6fe8-4ba4-b563-d93ba005dc18.europe-west3-0.gcp.cloud.qdrant.io:6333 "HTTP/1.1 200 OK"
+2025-12-23 17:05:22,198 - httpx - INFO - HTTP Request: GET https://7076ae15-6fe8-4ba4-b563-d93ba005dc18.europe-west3-0.gcp.cloud.qdrant.io:6333 "HTTP/1.1 200 OK"
+2025-12-23 17:05:22,233 - __main__ - INFO - Ingestion initialized: C:\Users\haroon traders\Desktop\projects\hackathon1-Q4\textbook\docs
+2025-12-23 17:05:22,233 - __main__ - INFO - Starting chapter ingestion...
+2025-12-23 17:05:22,678 - httpx - INFO - HTTP Request: GET https://7076ae15-6fe8-4ba4-b563-d93ba005dc18.europe-west3-0.gcp.cloud.qdrant.io:6333/collections/chapter_chunks "HTTP/1.1 200 OK"
+2025-12-23 17:05:22,695 - __main__ - INFO - Collection 'chapter_chunks' already exists
+2025-12-23 17:05:24,062 - __main__ - INFO - \u2713 Ensured 4 modules exist
+2025-12-23 17:05:24,071 - __main__ - INFO - Found 28 chapters across 4 modules
+2025-12-23 17:05:24,502 - __main__ - INFO - [1] Ingesting Module 1 Chapter 1: 01-ros2-basics.md
+2025-12-23 17:05:24,977 - __main__ - INFO - Chapter already exists: ROS 2 Basics: Architecture and Communication
+2025-12-23 17:05:24,977 - __main__ - INFO - [2] Ingesting Module 1 Chapter 2: 02-humanoid-control.md
+2025-12-23 17:05:25,194 - __main__ - INFO - Chapter already exists: Humanoid Control with ROS 2
+2025-12-23 17:05:25,195 - __main__ - INFO - [3] Ingesting Module 1 Chapter 3: 03-urdf-robot-descriptions.md
+2025-12-23 17:05:25,413 - __main__ - INFO - Chapter already exists: URDF and Robot Descriptions
+2025-12-23 17:05:25,414 - __main__ - INFO - [4] Ingesting Module 1 Chapter 4: chapter1.md
+2025-12-23 17:05:25,637 - __main__ - INFO - Chapter already exists: ROS 2 Basics: Architecture and Communication
+2025-12-23 17:05:25,637 - __main__ - INFO - [5] Ingesting Module 1 Chapter 5: chapter2.md
+2025-12-23 17:05:25,862 - __main__ - INFO - Chapter already exists: Humanoid Control with ROS 2
+2025-12-23 17:05:25,862 - __main__ - INFO - [6] Ingesting Module 1 Chapter 6: chapter3.md
+2025-12-23 17:05:26,079 - __main__ - INFO - Chapter already exists: URDF and Robot Descriptions
+2025-12-23 17:05:26,080 - __main__ - INFO - [7] Ingesting Module 1 Chapter 7: index.md
+2025-12-23 17:05:26,306 - __main__ - INFO - Chapter already exists: Module 1: ROS 2 Fundamentals
+2025-12-23 17:05:26,536 - __main__ - INFO - [8] Ingesting Module 2 Chapter 1: 04-gazebo-simulation.md
+2025-12-23 17:05:26,749 - __main__ - INFO - Chapter already exists: Gazebo Simulation Fundamentals
+2025-12-23 17:05:26,749 - __main__ - INFO - [9] Ingesting Module 2 Chapter 2: 05-sensor-simulation.md
+2025-12-23 17:05:26,967 - __main__ - INFO - Chapter already exists: Sensor Simulation and Perception
+2025-12-23 17:05:26,968 - __main__ - INFO - [10] Ingesting Module 2 Chapter 3: 06-unity-visualization.md
+2025-12-23 17:05:27,180 - __main__ - INFO - Chapter already exists: Unity for Robot Visualization
+2025-12-23 17:05:27,181 - __main__ - INFO - [11] Ingesting Module 2 Chapter 4: chapter4.md
+2025-12-23 17:05:27,397 - __main__ - INFO - Chapter already exists: Gazebo Simulation Fundamentals
+2025-12-23 17:05:27,398 - __main__ - INFO - [12] Ingesting Module 2 Chapter 5: chapter5.md
+2025-12-23 17:05:27,613 - __main__ - INFO - Chapter already exists: Sensor Simulation and Perception
+2025-12-23 17:05:27,613 - __main__ - INFO - [13] Ingesting Module 2 Chapter 6: chapter6.md
+2025-12-23 17:05:27,864 - __main__ - INFO - Chapter already exists: Unity for Robot Visualization
+2025-12-23 17:05:27,864 - __main__ - INFO - [14] Ingesting Module 2 Chapter 7: index.md
+2025-12-23 17:05:28,079 - __main__ - INFO - Chapter already exists: Module 2: Simulation with Gazebo & Isaac Sim
+2025-12-23 17:05:28,308 - __main__ - INFO - [15] Ingesting Module 3 Chapter 1: 07-isaac-sim-humanoids.md
+2025-12-23 17:05:28,527 - __main__ - INFO - Chapter already exists: NVIDIA Isaac Sim for Humanoids
+2025-12-23 17:05:28,527 - __main__ - INFO - [16] Ingesting Module 3 Chapter 2: 08-isaac-perception-ai.md
+2025-12-23 17:05:28,752 - __main__ - INFO - Chapter already exists: Isaac Perception and AI Models
+2025-12-23 17:05:28,752 - __main__ - INFO - [17] Ingesting Module 3 Chapter 3: 09-nav2-navigation.md
+2025-12-23 17:05:28,989 - __main__ - INFO - Chapter already exists: Nav2 and Bipedal Navigation
+2025-12-23 17:05:28,989 - __main__ - INFO - [18] Ingesting Module 3 Chapter 4: chapter7.md
+2025-12-23 17:05:29,205 - __main__ - INFO - Chapter already exists: NVIDIA Isaac Sim for Humanoids
+2025-12-23 17:05:29,205 - __main__ - INFO - [19] Ingesting Module 3 Chapter 5: chapter8.md
+2025-12-23 17:05:29,441 - __main__ - INFO - Chapter already exists: Isaac Perception and AI Models
+2025-12-23 17:05:29,442 - __main__ - INFO - [20] Ingesting Module 3 Chapter 6: chapter9.md
+2025-12-23 17:05:29,686 - __main__ - INFO - Chapter already exists: Nav2 and Bipedal Navigation
+2025-12-23 17:05:29,687 - __main__ - INFO - [21] Ingesting Module 3 Chapter 7: index.md
+2025-12-23 17:05:29,897 - __main__ - INFO - Chapter already exists: Module 3: NVIDIA Isaac Platform
+2025-12-23 17:05:30,150 - __main__ - INFO - [22] Ingesting Module 4 Chapter 1: 10-vla-systems.md
+2025-12-23 17:05:30,396 - __main__ - INFO - Chapter already exists: Voice and Language Action (VLA) Systems
+2025-12-23 17:05:30,397 - __main__ - INFO - [23] Ingesting Module 4 Chapter 2: 11-cognitive-planning.md
+2025-12-23 17:05:30,664 - __main__ - INFO - Chapter already exists: Cognitive Planning and Reasoning
+2025-12-23 17:05:30,664 - __main__ - INFO - [24] Ingesting Module 4 Chapter 3: 12-capstone-project.md
+2025-12-23 17:05:30,887 - __main__ - INFO - Chapter already exists: Capstone: Autonomous Humanoid System
+2025-12-23 17:05:30,887 - __main__ - INFO - [25] Ingesting Module 4 Chapter 4: chapter10.md
+2025-12-23 17:05:31,105 - __main__ - INFO - Chapter already exists: Voice and Language Action (VLA) Systems
+2025-12-23 17:05:31,105 - __main__ - INFO - [26] Ingesting Module 4 Chapter 5: chapter11.md
+2025-12-23 17:05:31,331 - __main__ - INFO - Chapter already exists: Cognitive Planning and Reasoning
+2025-12-23 17:05:31,332 - __main__ - INFO - [27] Ingesting Module 4 Chapter 6: chapter12.md
+2025-12-23 17:05:31,564 - src.services.chunking - INFO - Chunked chapter 53078dd2-3b06-4713-8af0-14c66f31266c into 30 chunks (avg 185 tokens)
+2025-12-23 17:05:31,564 - __main__ - INFO - Extracted 30 chunks from chapter12.md
+2025-12-23 17:05:32,152 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+C:\Users\haroon traders\Desktop\projects\hackathon1-Q4\backend\scripts\ingest-chapters.py:248: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  embedding_created_at=datetime.utcnow(),
+2025-12-23 17:05:32,428 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:32,717 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:32,984 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:33,272 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:33,562 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:33,857 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:34,156 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:34,432 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:34,704 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:34,970 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:35,264 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:35,531 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:35,805 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:36,095 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:36,386 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:36,663 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:36,947 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:37,231 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:37,505 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:37,781 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:38,053 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v2/embed "HTTP/1.1 200 OK"
+2025-12-23 17:05:38,771 - __main__ - INFO - \u2713 Stored 30 chunks in PostgreSQL for Capstone: Autonomous Humanoid System
+2025-12-23 17:05:39,938 - httpx - INFO - HTTP Request: PUT https://7076ae15-6fe8-4ba4-b563-d93ba005dc18.europe-west3-0.gcp.cloud.qdrant.io:6333/collections/chapter_chunks/points?wait=true "HTTP/1.1 200 OK"
+2025-12-23 17:05:39,940 - __main__ - INFO - \u2713 Uploaded 22 vectors to Qdrant
+2025-12-23 17:05:39,941 - __main__ - INFO - [28] Ingesting Module 4 Chapter 7: index.md
+2025-12-23 17:05:40,374 - __main__ - INFO - Chapter already exists: Module 4: Vision-Language-Action Models & Capstone Project
+2025-12-23 17:05:40,374 - __main__ - INFO - 
+============================================================
+2025-12-23 17:05:40,374 - __main__ - INFO - INGESTION COMPLETE
+2025-12-23 17:05:40,374 - __main__ - INFO -   Total chapters: 28
+2025-12-23 17:05:40,374 - __main__ - INFO -   Successfully ingested: 28
+2025-12-23 17:05:40,374 - __main__ - INFO -   Failed: 0
+2025-12-23 17:05:40,375 - __main__ - INFO -   Collection: chapter_chunks
+2025-12-23 17:05:40,375 - __main__ - INFO - ============================================================

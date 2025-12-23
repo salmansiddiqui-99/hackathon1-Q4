@@ -1,7 +1,7 @@
 """Unit tests for content validation service."""
 
 import pytest
-from backend.src.services.validation import ContentValidationService
+from src.services.validation import ContentValidationService
 
 
 @pytest.fixture

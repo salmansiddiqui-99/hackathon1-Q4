@@ -20,10 +20,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/selected-text", tags=["selected-text"])
 
 
-def get_db():
-    """Database session dependency"""
-    # TODO: Implement proper database session management
-    pass
+from src.database import get_db
 
 
 @router.post("/query", response_model=SelectedTextResponse)

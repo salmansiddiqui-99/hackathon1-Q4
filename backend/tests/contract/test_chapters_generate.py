@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, patch, MagicMock
 from fastapi.testclient import TestClient
 from datetime import datetime
 
-from backend.src.main import app
+from src.main import app
 
 
 @pytest.fixture

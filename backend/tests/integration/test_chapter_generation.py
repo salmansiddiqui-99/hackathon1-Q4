@@ -5,11 +5,11 @@ import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from pathlib import Path
 
-from backend.src.services.chapter_gen import ChapterGenerationService
-from backend.src.services.validation import ContentValidationService
-from backend.src.services.chapter_storage import ChapterStorageService
-from backend.src.services.chunking import ChunkingService
-from backend.src.services.embedding import EmbeddingService
+from src.services.chapter_gen import ChapterGenerationService
+from src.services.validation import ContentValidationService
+from src.services.chapter_storage import ChapterStorageService
+from src.services.chunking import ChunkingService
+from src.services.embedding import EmbeddingService
 
 
 @pytest.fixture

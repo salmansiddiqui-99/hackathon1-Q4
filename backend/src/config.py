@@ -39,10 +39,8 @@ class Settings(BaseSettings):
     QDRANT_API_KEY: Optional[str] = None
 
     # Canonical collection name (single source of truth)
-    QDRANT_COLLECTION: str = "aibook"
-
-    # Backward / alternate reference (never None now)
-    QDRANT_COLLECTION_NAME: str = "aibook"
+    QDRANT_COLLECTION: str = "chapter_chunks"
+    QDRANT_COLLECTION_NAME: str = "chapter_chunks"
 
     QDRANT_VECTOR_SIZE: int = 1024
     QDRANT_DISTANCE_METRIC: str = "Cosine"
@@ -155,9 +153,6 @@ class Settings(BaseSettings):
 settings = Settings()
 
 
-def get_db():
-    """Database session dependency (stub)"""
-    return None
 
 
 def configure_logging() -> logging.Logger:

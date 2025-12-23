@@ -13,11 +13,11 @@ import styles from './ChatbotWidget.module.css';
 // These are specific endpoints, NOT base URLs
 const CHATBOT_QUERY_ENDPOINT = typeof window !== 'undefined' && window.CHATBOT_QUERY_ENDPOINT
   ? window.CHATBOT_QUERY_ENDPOINT
-  : 'http://localhost:8000/api/chatbot/query';
+  : 'https://hackathon1-q4-production.up.railway.app//api/chatbot/query';
 
 const HEALTH_CHECK_ENDPOINT = typeof window !== 'undefined' && window.HEALTH_CHECK_ENDPOINT
   ? window.HEALTH_CHECK_ENDPOINT
-  : 'http://localhost:8000/api/ready';
+  : 'https://hackathon1-q4-production.up.railway.app//api/ready';
 
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);

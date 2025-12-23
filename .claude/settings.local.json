@@ -130,7 +130,25 @@
       "Bash(source:*)",
       "Bash(lsof:*)",
       "Bash(tasklist:*)",
-      "Bash(npm start:*)"
+      "Bash(npm start:*)",
+      "Bash(dir:*)",
+      "Bash(powershell -Command \"Get-ChildItem -Path ''C:\\\\Users\\\\haroon traders\\\\Desktop\\\\projects\\\\hackathon1-Q4\\\\backend'' | Select-Object Name\")",
+      "Bash(powershell -Command \"Get-ChildItem -Path ''C:\\\\Users\\\\haroon traders\\\\Desktop\\\\projects\\\\hackathon1-Q4'' -Directory | Select-Object Name\")",
+      "Bash(npm test:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(test:*)",
+      "Bash(python -m src.main:*)",
+      "Bash(echo:*)",
+      "Bash(tree -L 2 -I 'node_modules|__pycache__|.git|venv' .)",
+      "Bash(.specify/scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks)",
+      "Bash(if [ -f .env ])",
+      "Bash(then echo \"File exists\")",
+      "Bash(else echo \"File does not exist\")",
+      "Bash(python -c:*)",
+      "Bash(if [ -f .specify/scripts/bash/create-phr.sh ])",
+      "Bash(then bash .specify/scripts/bash/create-phr.sh --title \"Remove Gemini Use OpenRouter\" --stage \"green\" --json)",
+      "Bash(else echo \"Script not found\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nrefactor: remove Gemini and migrate to OpenRouter as sole LLM provider\n\n- Remove all Gemini references from codebase and documentation\n- Update LLM factory to use OpenRouter exclusively\n- Configure OpenRouter with mistralai/devstral-2512:free model\n- Update deployment guides with OpenRouter environment variables\n- Add openrouter to requirements.txt\n- Update .env.setup-guide.md with OpenRouter instructions\n\nModified files:\n- backend/src/llm/factory.py \\(removed Gemini support\\)\n- backend/src/llm/base.py \\(updated comments\\)\n- backend/requirements.txt \\(added openrouter\\)\n- backend/.env.setup-guide.md \\(OpenRouter setup\\)\n- .github/DEPLOYMENT.md \\(updated env vars\\)\n- PRODUCTION_DEPLOYMENT_GUIDE.md \\(updated deployment instructions\\)\n\nTests: Configuration loading, LLM factory creation, adapter verification all passed.\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }

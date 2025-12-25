@@ -160,7 +160,7 @@ class ResponseVerifier:
 
     def _embed_text(self, text: str) -> List[float]:
         """
-        Embed text using OpenAI embeddings.
+        Embed text using Cohere embeddings.
 
         Args:
             text: Text to embed
@@ -172,11 +172,17 @@ class ResponseVerifier:
             ValueError: If embedding fails
         """
         try:
-            response = self.openai_client.embeddings.create(
-                input=text,
-                model=settings.OPENAI_EMBEDDING_MODEL
+            if not self.cohere_client:
+                raise ValueError("Cohere client not initialized")
+
+            response = self.cohere_client.embed(
+                texts=[text],
+                model=self.embedding_model,
+                input_type="search_document"  # Required for Cohere V2
             )
-            return response.data[0].embedding
+            # Access embeddings correctly for Cohere V2 API
+            embeddings_list = response.embeddings.float if hasattr(response.embeddings, 'float') else response.embeddings
+            return embeddings_list[0]
         except Exception as e:
             logger.error(f"Embedding failed for text: {text[:50]}... - {e}")
             raise ValueError(f"Embedding failed: {str(e)}")
